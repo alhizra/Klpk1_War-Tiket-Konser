@@ -1,2 +1,2 @@
-# Praktikum Scalable Systems Design #
+# Praktikum Microservices: Design and Implementation #
 ## Kelompok 1 ##
