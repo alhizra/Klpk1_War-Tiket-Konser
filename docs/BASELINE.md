@@ -19,10 +19,12 @@ BASE=http://localhost:8080
 npx autocannon -c 50 -d 15 $BASE/events/1
 
 # Panas (skenario P1: 5000 request)
+# Body dari file order-body.json (di PowerShell: $b = Get-Content -Raw loadtest/order-body.json)
 npx autocannon -c 200 -a 5000 \
   -m POST -H "Content-Type: application/json" \
   -b "{\"eventId\":1,\"qty\":1}" \
   $BASE/orders
+# Atau: powershell -File loadtest/p1-baseline.ps1 / run-p1-local.ps1
 
 # Cek konsistensi (setelah serbuan)
 curl -s $BASE/events/1
@@ -42,30 +44,29 @@ docker compose exec api node src/seed.js
 
 ## P1 — Baseline "sebelum"
 
-### Endpoint baca
+### Endpoint baca (local :3000, 2026-08-18)
 
 | Endpoint | Beban | p50 | p95/p97.5 | p99 | Throughput (req/s) | Error non-2xx |
 |----------|-------|-----|-----------|-----|--------------------|---------------|
-| GET /events/1 | -c 50 -d 15 | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ |
+| GET /events/1 | -c 50 -d 15 | 13ms | 33ms | 60ms | ~3349 | 0 |
 
-### Endpoint panas
+### Endpoint panas (local :3000, body file `loadtest/order-body.json`)
 
-| Endpoint | Beban | p50 | p99 | Throughput | 2xx | 409 | 5xx | Oversell? |
-|----------|-------|-----|-----|------------|-----|-----|-----|-----------|
-| POST /orders | -c 100 -a 2000 (local verify 2026-08-18) | 50ms | 322ms | ~1000 rps | 499 | 1501 | 0 | **TIDAK** (terjual=500, sisa=0) |
-| POST /orders | -c 200 -a 5000 (ulang P1 resmi via compose :8080) | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _wajib 0_ |
+| Endpoint | Beban | p50 | p99 | Throughput | 2xx | non-2xx (≈409) | 5xx | Oversell? |
+|----------|-------|-----|-----|------------|-----|----------------|-----|-----------|
+| POST /orders | -c 200 -a 5000 | 164ms | 1620ms | ~714 rps | **500** | 4500 | 0 | **TIDAK** (terjual=500, sisa=0) |
 
-Catatan verifikasi lokal: 1 order manual + 2000 autocannon → tepat 500 CONFIRMED, sisa 0. Non-2xx = 409 kuota habis (sah).
+Catatan: tepat 500 × 201, sisanya 409 kuota habis (sah). p99 tinggi = baseline "sebelum" optimasi P2–P4.
 
-### Titik jenuh (concurrency)
+### Titik jenuh (concurrency, d=10, reset kuota tiap run)
 
-| Concurrency | Throughput (req/s) | p99 | Timeouts |
-|-------------|--------------------|-----|----------|
-| 10 | | | |
-| 100 | | | |
-| 500 | | | |
+| Concurrency | Throughput (req/s) | p99 | 2xx (max 500) | Timeouts |
+|-------------|--------------------|-----|---------------|----------|
+| 10 | ~844 | 39ms | 500 | 0 |
+| 100 | ~1510 | 249ms | 500 | 0 |
+| 500 | ~1394 | 1561ms | 500 | 0 |
 
-**Lutut kurva (knee):** concurrency = ___ (throughput mentok, p99 meledak)
+**Lutut kurva (knee):** sekitar concurrency **100→500** — throughput tidak naik (bahkan sedikit turun), p99 meledak 249ms → 1561ms.
 
 ---
 

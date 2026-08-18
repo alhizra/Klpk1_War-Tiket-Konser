@@ -2,8 +2,10 @@ const express = require("express");
 const config = require("./config");
 const { getEventView } = require("./services/eventCache");
 const { createOrder } = require("./services/orders");
-const { getQuotaSnapshot } = require("./services/quota");
+const { getQuotaSnapshot, resetQuotaCounters } = require("./services/quota");
 const { rateLimit } = require("./middleware/rateLimit");
+const db = require("./db");
+const { invalidateEventCache } = require("./services/eventCache");
 
 const router = express.Router();
 
@@ -87,6 +89,38 @@ router.get("/internal/quota/:id", async (req, res) => {
   const id = Number(req.params.id);
   const snap = await getQuotaSnapshot(id);
   res.json({ eventId: id, ...snap });
+});
+
+/**
+ * POST /internal/reset-quota/:id
+ * Reset counter Redis ke quota_total (untuk ulang uji beban).
+ * Header opsional: x-reset-token (default dev-reset).
+ */
+router.post("/internal/reset-quota/:id", async (req, res) => {
+  try {
+    const token = req.headers["x-reset-token"] || "";
+    const expected = process.env.RESET_TOKEN || "dev-reset";
+    if (token !== expected) {
+      return res.status(403).json({ error: "forbidden" });
+    }
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ error: "event id tidak valid" });
+    }
+    const event = await db.getEvent(id);
+    if (!event) return res.status(404).json({ error: "event tidak ditemukan" });
+    const snap = await resetQuotaCounters(id, event.quota_total);
+    await invalidateEventCache(id);
+    return res.json({
+      ok: true,
+      eventId: id,
+      quotaTotal: event.quota_total,
+      ...snap,
+    });
+  } catch (e) {
+    console.error("[reset-quota]", e);
+    return res.status(500).json({ error: "internal error" });
+  }
 });
 
 module.exports = router;

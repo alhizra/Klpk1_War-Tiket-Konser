@@ -11,3 +11,4 @@ Thumbs.db
 .vscode/
 coverage/
 dist/
+loadtest/p1-local-result.txt 

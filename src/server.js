@@ -11,8 +11,11 @@ app.use(express.json({ limit: "32kb" }));
 app.use(routes);
 
 app.use((err, _req, res, _next) => {
+  if (err?.type === "entity.parse.failed" || err instanceof SyntaxError) {
+    return res.status(400).json({ error: "JSON body tidak valid" });
+  }
   console.error("[unhandled]", err);
-  res.status(500).json({ error: "internal error" });
+  return res.status(500).json({ error: "internal error" });
 });
 
 async function waitReady(retries = 30) {
