@@ -52,7 +52,10 @@ docker compose exec api node src/seed.js
 
 | Endpoint | Beban | p50 | p99 | Throughput | 2xx | 409 | 5xx | Oversell? |
 |----------|-------|-----|-----|------------|-----|-----|-----|-----------|
-| POST /orders | -c 200 -a 5000 | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _ya/tidak_ |
+| POST /orders | -c 100 -a 2000 (local verify 2026-08-18) | 50ms | 322ms | ~1000 rps | 499 | 1501 | 0 | **TIDAK** (terjual=500, sisa=0) |
+| POST /orders | -c 200 -a 5000 (ulang P1 resmi via compose :8080) | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _isi_ | _wajib 0_ |
+
+Catatan verifikasi lokal: 1 order manual + 2000 autocannon → tepat 500 CONFIRMED, sisa 0. Non-2xx = 409 kuota habis (sah).
 
 ### Titik jenuh (concurrency)
 
