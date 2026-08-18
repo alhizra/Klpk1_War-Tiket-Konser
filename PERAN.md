@@ -5,7 +5,7 @@
 | Arsitek Sistem | Andi Hilyatul Mar'ah | Diklaim |
 | Backend/API Engineer | (kamu) | Diklaim — Milikmu |
 | Infrastructure & DevOps | AL-HIZRA | Diklaim |
-| Data & Persistence Engineer | (kamu) | Diambil — skema, cache, antrean, konsistensi kursi |
+| Data & Persistence Engineer | Astrid Tiar | Diambil — skema, cache, antrean, konsistensi kursi |
 | QA, Load-Test & Dokumentasi | TRI WAHYUNI | Diklaim |
 
 ## Tema
