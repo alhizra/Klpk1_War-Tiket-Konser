@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: wtk
+      POSTGRES_PASSWORD: wtk
+      POSTGRES_DB: wtk
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wtk -d wtk"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # ports tidak diekspos ke host agar multi-replika aman; opsional debug:
+    # ports:
+    #   - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # ports:
+    #   - "6379:6379"
+
+  # Layanan panas — JANGAN map ports: ke host (supaya bisa --scale)
+  api:
+    build: .
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgres://wtk:wtk@postgres:5432/wtk
+      REDIS_URL: redis://redis:6379
+      DEFAULT_QUOTA: "500"
+      RATE_LIMIT: "10000"
+      RATE_WINDOW_SEC: "60"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # tanpa ports: — hanya lewat nginx
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: ["node", "src/worker.js"]
+    environment:
+      DATABASE_URL: postgres://wtk:wtk@postgres:5432/wtk
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:

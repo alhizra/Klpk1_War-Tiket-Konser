@@ -1,0 +1,175 @@
+openapi: 3.0.3
+info:
+  title: War Tiket Konser API
+  description: |
+    Kontrak API — Praktikum Scalable Systems Design.
+    Tema: penjualan tiket dengan kuota kursi terbatas (anti-oversell).
+    Status: v1 starter (siap diukur P1). Dibekukan jadi v2 di pertemuan 4.
+  version: 1.0.0
+  x-frozen: false
+
+servers:
+  - url: http://localhost:8080
+    description: Local via Nginx LB
+
+paths:
+  /health:
+    get:
+      summary: Health check + identitas instance (bukti multi-replika)
+      operationId: getHealth
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  service: { type: string }
+                  instance: { type: string }
+                  pid: { type: integer }
+                  ts: { type: string, format: date-time }
+
+  /events:
+    get:
+      summary: Daftar event (pagination)
+      operationId: listEvents
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        "200":
+          description: Halaman event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventPage"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /events/{id}:
+    get:
+      summary: Detail event + sisa kursi (endpoint baca)
+      operationId: getEvent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200":
+          description: Detail event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Tidak ditemukan
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /orders:
+    post:
+      summary: Pesan tiket (endpoint panas — sumber daya rebutan kursi)
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+            example:
+              eventId: 1
+              qty: 1
+      responses:
+        "201":
+          description: Order berhasil
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Body tidak valid
+        "409":
+          description: Kuota habis (bukan error sistem — penolakan sah)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+                  sisa: { type: integer }
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      x-rateLimit:
+        limit: 60
+        windowSec: 60
+        note: Default production; loadtest boleh dinaikkan via env RATE_LIMIT
+
+components:
+  schemas:
+    CreateOrderRequest:
+      type: object
+      required: [eventId, qty]
+      properties:
+        eventId: { type: integer, minimum: 1 }
+        qty: { type: integer, minimum: 1, maximum: 4 }
+
+    Order:
+      type: object
+      properties:
+        orderId: { type: string, format: uuid }
+        eventId: { type: integer }
+        qty: { type: integer }
+        amountIdr: { type: integer }
+        sisa: { type: integer }
+        status: { type: string, enum: [CONFIRMED] }
+        note: { type: string }
+
+    Event:
+      type: object
+      properties:
+        eventId: { type: integer }
+        title: { type: string }
+        artist: { type: string }
+        venue: { type: string }
+        startsAt: { type: string, format: date-time }
+        salesOpensAt: { type: string, format: date-time }
+        quotaTotal: { type: integer }
+        priceIdr: { type: integer }
+        status: { type: string }
+        sisa: { type: integer, description: Live dari Redis — tidak di-cache }
+        terjual: { type: integer }
+        from: { type: string, enum: [cache, db], description: Sumber catalog saja }
+
+    EventPage:
+      type: object
+      properties:
+        page: { type: integer }
+        size: { type: integer }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+
+  responses:
+    TooManyRequests:
+      description: Rate limit terlampaui
+      headers:
+        X-RateLimit-Limit:
+          schema: { type: integer }
+        X-RateLimit-Remaining:
+          schema: { type: integer }
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }

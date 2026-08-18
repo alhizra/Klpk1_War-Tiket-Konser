@@ -1,0 +1,21 @@
+{
+  "name": "war-tiket-konser",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Praktikum Scalable Systems — War Tiket Konser",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "worker": "node src/worker.js",
+    "seed": "node src/seed.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ioredis": "^5.4.2",
+    "pg": "^8.13.1",
+    "uuid": "^11.0.5"
+  }
+}
