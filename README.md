@@ -14,7 +14,21 @@ Jalur: Microservices → **Scalable Systems** → Mobile.
 
 Skenario beban: **5000** permintaan, **500** kursi → wajib **0 oversell**.
 
-## Jalankan
+## Web Jumat (wajib revisi)
+
+Buka setelah API jalan:
+
+- **UI:** http://localhost:3000/  
+- Poster tiket + **pilih kursi** + info event + **sisa kursi live**
+- Diagram revisi: `architecture/container-revisi-jumat.html`
+
+```bash
+# Postgres + Redis harus hidup, lalu:
+npm start
+# buka browser → http://localhost:3000/
+```
+
+## Jalankan (stack penuh)
 
 ```bash
 docker compose up -d --build

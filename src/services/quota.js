@@ -50,7 +50,7 @@ async function resetQuotaCounters(eventId, quotaTotal) {
   await redis.set(keys.quota(eventId), String(quotaTotal));
   await redis.set(keys.sold(eventId), "0");
   await redis.del(keys.eventCache(eventId));
-  // pastikan tidak pernah negatif tersisa
+  await redis.del(`seats:sold:${eventId}`);
   return getQuotaSnapshot(eventId);
 }
 

@@ -13,10 +13,24 @@ const { getEventView, invalidateEventCache } = require("./eventCache");
  * 4) Persist order ke Postgres
  * 5) Enqueue e-ticket (async)
  */
-async function createOrder({ eventId, qty, clientIp }) {
+async function createOrder({ eventId, qty, clientIp, seatCodes }) {
   const q = Number(qty);
   if (!Number.isInteger(q) || q < 1 || q > config.maxQtyPerOrder) {
     const err = new Error(`qty harus 1–${config.maxQtyPerOrder}`);
+    err.status = 400;
+    throw err;
+  }
+
+  let seats = Array.isArray(seatCodes)
+    ? seatCodes.map((s) => String(s).trim().toUpperCase()).filter(Boolean)
+    : [];
+  if (seats.length && seats.length !== q) {
+    const err = new Error("jumlah seatCodes harus sama dengan qty");
+    err.status = 400;
+    throw err;
+  }
+  if (seats.length !== new Set(seats).size) {
+    const err = new Error("seatCodes duplikat");
     err.status = 400;
     throw err;
   }
@@ -59,24 +73,25 @@ async function createOrder({ eventId, qty, clientIp }) {
       qty: q,
       sisa: reserved.sisa,
       amountIdr,
+      seatCodes: seats,
     });
+    // simpan label kursi untuk denah web (best-effort)
+    if (seats.length) {
+      await redis.sadd(`seats:sold:${eventId}`, ...seats);
+    }
   } catch (dbErr) {
-    // kompensasi: kembalikan kuota jika persist gagal
     await redis.incrby(keys.quota(eventId), q);
     await redis.decrby(keys.sold(eventId), q);
     throw dbErr;
   }
 
-  // invalidasi cache catalog opsional (sisa selalu live; catalog jarang berubah)
-  // await invalidateEventCache(eventId);
-
-  // antrean e-ticket — tidak memblokir latency order
   await redis.lpush(
     keys.queueEticket,
     JSON.stringify({
       orderId,
       eventId,
       qty: q,
+      seatCodes: seats,
       email: `buyer-${orderId.slice(0, 8)}@example.com`,
       enqueuedAt: new Date().toISOString(),
     })
@@ -86,6 +101,7 @@ async function createOrder({ eventId, qty, clientIp }) {
     orderId,
     eventId,
     qty: q,
+    seatCodes: seats,
     amountIdr,
     sisa: reserved.sisa,
     status: "CONFIRMED",

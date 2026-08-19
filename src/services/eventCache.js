@@ -45,6 +45,8 @@ async function getEventView(eventId) {
         quotaTotal: row.quota_total,
         priceIdr: Number(row.price_idr),
         status: row.status,
+        description:
+          "Konser stadium — pilih kursi di denah web, kuota dipotong atomik di backend.",
       };
       await redis.set(cacheKey, JSON.stringify(catalog), "EX", ttlWithJitter());
       if (gotLock) await redis.del(lockKey);
@@ -62,10 +64,13 @@ async function getEventView(eventId) {
       ? Math.max(0, catalog.quotaTotal - sisa)
       : snap.terjual;
 
+  const soldSeats = await redis.smembers(`seats:sold:${eventId}`);
+
   return {
     ...catalog,
     sisa,
     terjual,
+    soldSeats,
     from,
   };
 }

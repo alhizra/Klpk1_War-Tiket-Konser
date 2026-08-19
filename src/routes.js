@@ -67,6 +67,7 @@ router.post("/orders", rateLimit(), async (req, res) => {
       eventId,
       qty,
       clientIp: req.ip,
+      seatCodes: req.body?.seatCodes,
     });
     return res.status(201).json(order);
   } catch (e) {
