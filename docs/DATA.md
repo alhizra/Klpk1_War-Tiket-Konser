@@ -6,6 +6,25 @@
 
 ---
 
+## Data manual (paling gampang untuk praktikum)
+
+Edit file di folder `data/`, **tidak perlu coding**:
+
+| File | Editor | Isi |
+|------|--------|-----|
+| `data/events.manual.json` | VS Code / Notepad | Daftar konser |
+| `data/seats.manual.csv` | **Excel** → Save CSV | Denah kursi |
+| `data/manual-seed.sql` | DBeaver / psql | Alternatif SQL |
+
+Load ke DB + Redis:
+```bash
+npm run data:manual
+```
+
+Panduan lengkap: `data/README-DATA-MANUAL.md`
+
+---
+
 ## 1. Prinsip
 
 | Data | Penyimpanan | Konsistensi |

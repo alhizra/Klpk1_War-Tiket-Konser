@@ -15,7 +15,7 @@
       <span class="logo">WTK</span>
       <div>
         <strong>War Tiket Konser</strong>
-        <small>Revisi Jumat · Web + Backend disederhanakan</small>
+        <small>K-pop war demo · Korea venues · seat lock</small>
       </div>
     </div>
     <div class="top-meta">
@@ -33,9 +33,10 @@
           <div class="orb o1"></div>
           <div class="orb o2"></div>
           <div class="orb o3"></div>
-          <p class="poster-kicker">CONCERT TICKET</p>
+          <p class="poster-kicker">K-POP WAR TICKET · KR</p>
           <h1 id="eventTitle">Memuat…</h1>
           <p id="eventArtist" class="artist">—</p>
+          <p id="eventCity" class="artist" style="opacity:.85;font-size:.95rem;margin-top:.25rem">—</p>
         </div>
         <div class="poster-footer">
           <span id="eventVenue">—</span>
@@ -43,9 +44,11 @@
         </div>
       </div>
 
+      <div class="event-switch" id="eventSwitch" style="display:flex;flex-wrap:wrap;gap:.4rem;margin:.85rem 0 .25rem"></div>
+
       <div class="info-grid">
         <div>
-          <label>Harga / kursi</label>
+          <label>Harga dari</label>
           <p id="eventPrice" class="big">—</p>
         </div>
         <div>
@@ -61,7 +64,9 @@
           <p id="eventSisa" class="big accent">—</p>
         </div>
       </div>
+      <div id="catList" class="hint" style="margin-top:.75rem"></div>
       <p class="hint" id="eventDesc">Pilih kursi di denah, lalu pesan. Satu kursi hanya bisa dibeli sekali.</p>
+      <p class="hint" id="eventGate" style="margin-top:.35rem"></p>
     </section>
 
     <!-- Denah + checkout -->

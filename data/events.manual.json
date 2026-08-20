@@ -1,0 +1,220 @@
+[
+  {
+    "event_id": 1,
+    "title": "BTS — Yet To Come in BUSAN (Encore Stadium)",
+    "artist": "BTS (방탄소년단)",
+    "venue": "Busan Asiad Main Stadium (부산아시아드주경기장), Busan, South Korea",
+    "starts_at": "2026-10-13T19:00:00+09:00",
+    "sales_opens_at": "2026-09-01T20:00:00+09:00",
+    "sales_closes_at": "2026-10-12T23:59:00+09:00",
+    "ends_at": "2026-10-13T22:30:00+09:00",
+    "quota_total": 500,
+    "price_idr": 2500000,
+    "status": "PUBLISHED",
+    "city": "Busan",
+    "country": "South Korea",
+    "currency_note": "Harga ditampilkan IDR (konversi demo praktikum); on-site KRW",
+    "age_rating": "All ages (under 13 with guardian)",
+    "gate_open": "16:00 KST",
+    "timezone": "Asia/Seoul",
+    "description": "Stadium encore di Busan Asiad. Sistem war tiket ala Weverse/Ticketlink: antrean virtual + seat lock. Denah: Soundcheck VIP, Purple Floor standing, Orange/Navy reserved seat. Satu seat code hanya boleh terjual sekali.",
+    "terms": [
+      "Max 4 tickets per account / transaction",
+      "ID verification required at entrance (name must match booking)",
+      "No professional cameras / selfie sticks on floor standing",
+      "Resale only via official platform (demo: no secondary market)",
+      "Tickets non-refundable except event cancellation by organizer"
+    ],
+    "categories": [
+      {
+        "code": "SCVIP",
+        "name": "Soundcheck VIP Package (Reserved)",
+        "price_idr": 4500000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Purple Floor Standing (P1–P2)",
+        "price_idr": 3200000,
+        "quota": 160,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "ORANGE",
+        "name": "Orange Seat — Lower Bowl",
+        "price_idr": 2500000,
+        "quota": 180,
+        "color": "#F97316"
+      },
+      {
+        "code": "NAVY",
+        "name": "Navy Seat — Upper Bowl",
+        "price_idr": 1800000,
+        "quota": 120,
+        "color": "#1E3A8A"
+      }
+    ]
+  },
+  {
+    "event_id": 2,
+    "title": "SEVENTEEN — RIGHT HERE World Tour in SEOUL (Day 1)",
+    "artist": "SEVENTEEN (세븐틴)",
+    "venue": "KSPO DOME (올림픽체조경기장), Olympic Park, Seoul",
+    "starts_at": "2026-11-08T18:00:00+09:00",
+    "sales_opens_at": "2026-10-05T20:00:00+09:00",
+    "sales_closes_at": "2026-11-07T23:59:00+09:00",
+    "ends_at": "2026-11-08T21:30:00+09:00",
+    "quota_total": 400,
+    "price_idr": 2200000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Demo IDR · original sale KRW via official ticketing",
+    "age_rating": "All ages",
+    "gate_open": "15:30 KST",
+    "timezone": "Asia/Seoul",
+    "description": "Dome show SEVENTEEN di KSPO DOME, Olympic Park. War fanclub pre-sale lalu general sale. Area: Diamond Standing, Gold Side, Silver Rear, Bronze Upper.",
+    "terms": [
+      "Fanclub pre-sale code required for early wave (demo: open general)",
+      "Max 2 tickets for standing zones, max 4 for seated",
+      "Lightstick official only inside venue",
+      "Re-entry not allowed after exit"
+    ],
+    "categories": [
+      {
+        "code": "DIA",
+        "name": "Diamond Standing — Center Floor",
+        "price_idr": 3800000,
+        "quota": 80,
+        "color": "#22D3EE"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat — Side Lower",
+        "price_idr": 2800000,
+        "quota": 100,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat — Rear Lower",
+        "price_idr": 2200000,
+        "quota": 120,
+        "color": "#94A3B8"
+      },
+      {
+        "code": "BRONZE",
+        "name": "Bronze Seat — Upper",
+        "price_idr": 1600000,
+        "quota": 100,
+        "color": "#B45309"
+      }
+    ]
+  },
+  {
+    "event_id": 3,
+    "title": "NewJeans — Super Shy Special Concert in INCHEON",
+    "artist": "NewJeans (뉴진스)",
+    "venue": "Inspire Arena, Incheon, South Korea",
+    "starts_at": "2026-12-20T19:00:00+09:00",
+    "sales_opens_at": "2026-11-10T19:00:00+09:00",
+    "sales_closes_at": "2026-12-19T22:00:00+09:00",
+    "ends_at": "2026-12-20T21:30:00+09:00",
+    "quota_total": 300,
+    "price_idr": 2000000,
+    "status": "PUBLISHED",
+    "city": "Incheon",
+    "country": "South Korea",
+    "currency_note": "Demo IDR pricing for lab",
+    "age_rating": "All ages (recommended 7+)",
+    "gate_open": "17:00 KST",
+    "timezone": "Asia/Seoul",
+    "description": "Arena intimate–mid size di Inspire Arena. Full reserved seating + limited front pit. Cocok untuk demo war dengan kuota 300 dan multi-kategori harga.",
+    "terms": [
+      "Max 4 tickets per transaction",
+      "No tower / folding chairs on pit",
+      "Official MD pickup separate queue outside hall",
+      "Ticket transfer locked 48h before show (policy demo)"
+    ],
+    "categories": [
+      {
+        "code": "PIT",
+        "name": "Front Pit Standing",
+        "price_idr": 3500000,
+        "quota": 50,
+        "color": "#F472B6"
+      },
+      {
+        "code": "A",
+        "name": "Seat A — Center Lower",
+        "price_idr": 2600000,
+        "quota": 90,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "Seat B — Side / Rear Lower",
+        "price_idr": 1900000,
+        "quota": 100,
+        "color": "#34D399"
+      },
+      {
+        "code": "C",
+        "name": "Seat C — Upper Bowl",
+        "price_idr": 1400000,
+        "quota": 60,
+        "color": "#A78BFA"
+      }
+    ]
+  },
+  {
+    "event_id": 4,
+    "title": "IU — The Winning Concert Tour Special in SEOUL",
+    "artist": "IU (아이유)",
+    "venue": "Jamsil Indoor Stadium (잠실실내체육관), Seoul Sports Complex",
+    "starts_at": "2027-01-24T18:00:00+09:00",
+    "sales_opens_at": "2026-12-01T20:00:00+09:00",
+    "sales_closes_at": "2027-01-23T23:59:00+09:00",
+    "ends_at": "2027-01-24T21:00:00+09:00",
+    "quota_total": 280,
+    "price_idr": 2100000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Demo IDR · Melon Ticket style sale window",
+    "age_rating": "All ages",
+    "gate_open": "16:30 KST",
+    "timezone": "Asia/Seoul",
+    "description": "Indoor arena IU di Jamsil. 100% numbered seats (no standing). Zona R/S/A mengikuti pola ticketing Korea: R paling mahal dekat stage, A upper.",
+    "terms": [
+      "Max 4 tickets per ID",
+      "Quiet zone policy during ballad segments (please follow staff)",
+      "No banner poles longer than 1m",
+      "Refund only if show canceled by organizer"
+    ],
+    "categories": [
+      {
+        "code": "R",
+        "name": "R Seat — Stage Side Premium",
+        "price_idr": 3300000,
+        "quota": 60,
+        "color": "#F43F5E"
+      },
+      {
+        "code": "S",
+        "name": "S Seat — Center Floor / Lower",
+        "price_idr": 2500000,
+        "quota": 100,
+        "color": "#FBBF24"
+      },
+      {
+        "code": "A",
+        "name": "A Seat — Upper / Side",
+        "price_idr": 1700000,
+        "quota": 120,
+        "color": "#60A5FA"
+      }
+    ]
+  }
+]

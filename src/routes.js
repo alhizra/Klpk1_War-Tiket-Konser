@@ -42,10 +42,15 @@ router.get("/events", async (req, res) => {
   try {
     const size = Math.min(Number(req.query.size) || 20, 50);
     const page = Math.max(Number(req.query.page) || 1, 1);
-    // starter: satu event; bentuk pagination siap Mobile
-    const view = await getEventView(1);
-    const items = view ? [view] : [];
-    return res.json({ page, size, items: items.slice(0, size) });
+    const rows = await db.listEvents();
+    const start = (page - 1) * size;
+    const slice = rows.slice(start, start + size);
+    const items = [];
+    for (const r of slice) {
+      const view = await getEventView(r.event_id);
+      if (view) items.push(view);
+    }
+    return res.json({ page, size, items });
   } catch (e) {
     console.error("[GET /events]", e);
     return res.status(500).json({ error: "internal error" });

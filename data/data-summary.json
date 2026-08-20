@@ -1,0 +1,57 @@
+[
+  {
+    "event_id": 1,
+    "artist": "BTS (방탄소년단)",
+    "venue": "Busan Asiad Main Stadium (부산아시아드주경기장), Busan, South Korea",
+    "city": "Busan",
+    "quota_total": 500,
+    "seats_generated": 500,
+    "by_category": {
+      "SCVIP": 40,
+      "FLOOR": 160,
+      "ORANGE": 180,
+      "NAVY": 120
+    }
+  },
+  {
+    "event_id": 2,
+    "artist": "SEVENTEEN (세븐틴)",
+    "venue": "KSPO DOME (올림픽체조경기장), Olympic Park, Seoul",
+    "city": "Seoul",
+    "quota_total": 400,
+    "seats_generated": 400,
+    "by_category": {
+      "DIA": 80,
+      "GOLD": 100,
+      "SILVER": 120,
+      "BRONZE": 100
+    }
+  },
+  {
+    "event_id": 3,
+    "artist": "NewJeans (뉴진스)",
+    "venue": "Inspire Arena, Incheon, South Korea",
+    "city": "Incheon",
+    "quota_total": 300,
+    "seats_generated": 300,
+    "by_category": {
+      "PIT": 50,
+      "A": 90,
+      "B": 100,
+      "C": 60
+    }
+  },
+  {
+    "event_id": 4,
+    "artist": "IU (아이유)",
+    "venue": "Jamsil Indoor Stadium (잠실실내체육관), Seoul Sports Complex",
+    "city": "Seoul",
+    "quota_total": 280,
+    "seats_generated": 280,
+    "by_category": {
+      "R": 60,
+      "S": 100,
+      "A": 120
+    }
+  }
+]

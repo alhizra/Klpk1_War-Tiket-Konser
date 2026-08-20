@@ -35,6 +35,18 @@ async function getEventView(eventId) {
     if (!catalog) {
       const row = await db.getEvent(eventId);
       if (!row) return null;
+      let description =
+        "K-pop war ticket — pilih seat di denah, kuota dipotong atomik di backend.";
+      const seatRows = await db.listSeats(eventId);
+      const catRows = await db.listCategories(eventId);
+      let meta = {};
+      try {
+        const metaRaw = await redis.get(`event:meta:${eventId}`);
+        if (metaRaw) meta = JSON.parse(metaRaw);
+      } catch {
+        /* */
+      }
+      if (meta.description) description = meta.description;
       catalog = {
         eventId: row.event_id,
         title: row.title,
@@ -45,8 +57,36 @@ async function getEventView(eventId) {
         quotaTotal: row.quota_total,
         priceIdr: Number(row.price_idr),
         status: row.status,
-        description:
-          "Konser stadium — pilih kursi di denah web, kuota dipotong atomik di backend.",
+        description,
+        city: meta.city || null,
+        country: meta.country || "South Korea",
+        gateOpen: meta.gate_open || null,
+        ageRating: meta.age_rating || null,
+        terms: meta.terms || [],
+        categories: (catRows.length
+          ? catRows
+          : meta.categories || []
+        ).map((c) => ({
+          code: c.code,
+          name: c.name,
+          priceIdr: Number(c.price_idr ?? c.priceIdr),
+          quota: Number(c.quota),
+          color: c.color_hex || c.color || null,
+        })),
+        // denah real dari CSV/DB; kosong = web pakai denah bawaan
+        seats: seatRows.map((s) => ({
+          code: s.seat_code,
+          category: s.category,
+          categoryName: s.category_name,
+          row: s.row_label,
+          number: s.seat_number,
+          section: s.section,
+          priceIdr:
+            s.price_idr != null ? Number(s.price_idr) : Number(row.price_idr),
+          color: s.color_hex,
+          posX: s.pos_x,
+          posY: s.pos_y,
+        })),
       };
       await redis.set(cacheKey, JSON.stringify(catalog), "EX", ttlWithJitter());
       if (gotLock) await redis.del(lockKey);
