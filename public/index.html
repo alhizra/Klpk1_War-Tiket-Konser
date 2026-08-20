@@ -3,108 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>War Tiket Konser</title>
+  <title>WTK Ticket — War Tiket Konser</title>
   <link rel="stylesheet" href="/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="bg-glow"></div>
-  <header class="top">
-    <div class="brand">
-      <span class="logo">WTK</span>
-      <div>
-        <strong>War Tiket Konser</strong>
-        <small>K-pop war demo · Korea venues · seat lock</small>
+  <!-- TOP BAR (Melon-like) -->
+  <header class="gnb">
+    <div class="gnb-inner">
+      <a class="logo" href="/">WTK<span>TICKET</span></a>
+      <nav class="gnb-nav">
+        <a href="/" class="active">Concert</a>
+        <a href="#list">Open Sale</a>
+        <a href="#detail">Booking</a>
+      </nav>
+      <div class="gnb-right">
+        <span id="apiStatus" class="chip">API …</span>
       </div>
-    </div>
-    <div class="top-meta">
-      <span id="apiStatus" class="pill ghost">API …</span>
-      <span id="quotaPill" class="pill">Sisa kursi: —</span>
     </div>
   </header>
 
-  <main class="layout">
-    <!-- Poster / info tiket -->
-    <section class="card poster-card">
-      <div class="poster" id="poster">
-        <div class="poster-badge">LIVE WAR</div>
-        <div class="poster-art">
-          <div class="orb o1"></div>
-          <div class="orb o2"></div>
-          <div class="orb o3"></div>
-          <p class="poster-kicker">K-POP WAR TICKET · KR</p>
-          <h1 id="eventTitle">Memuat…</h1>
-          <p id="eventArtist" class="artist">—</p>
-          <p id="eventCity" class="artist" style="opacity:.85;font-size:.95rem;margin-top:.25rem">—</p>
+  <!-- ========== LIST VIEW ========== -->
+  <section id="view-list" class="view">
+    <div class="hero-banner">
+      <div class="hero-text">
+        <p class="eyebrow">WAR TICKET · OPEN SALE</p>
+        <h1>Pilih konser favoritmu</h1>
+        <p>Foto event · harga zona · sisa kursi live · denah berwarna</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Open Concert</h2>
+        <span id="listCount" class="muted">— event</span>
+      </div>
+      <div id="eventGrid" class="event-grid"></div>
+    </div>
+  </section>
+
+  <!-- ========== DETAIL VIEW ========== -->
+  <section id="view-detail" class="view hidden">
+    <div class="wrap detail-top">
+      <button type="button" id="btnBack" class="btn-text">← Daftar konser</button>
+    </div>
+
+    <div class="wrap detail-layout">
+      <!-- LEFT: poster + info -->
+      <div class="detail-main">
+        <div class="poster-row">
+          <div class="poster-box">
+            <img id="dPoster" alt="Event poster" />
+            <span id="dTag" class="badge-sale">OPEN</span>
+          </div>
+          <div class="poster-info">
+            <p id="dGenre" class="genre">Concert</p>
+            <h1 id="dTitle">—</h1>
+            <p id="dArtist" class="artist-line">—</p>
+
+            <dl class="info-dl">
+              <div><dt>기간 / Periode</dt><dd id="dPeriod">—</dd></div>
+              <div><dt>장소 / Venue</dt><dd id="dVenue">—</dd></div>
+              <div><dt>관람등급 / Rating</dt><dd id="dRating">—</dd></div>
+              <div><dt>입장 / Gate open</dt><dd id="dGate">—</dd></div>
+              <div><dt>잔여석 / Sisa kursi</dt><dd id="dSisa" class="hl">—</dd></div>
+              <div><dt>총 좌석 / Total</dt><dd id="dQuota">—</dd></div>
+            </dl>
+
+            <div class="price-box">
+              <span class="label">Harga zona</span>
+              <div id="dPriceList" class="price-list"></div>
+            </div>
+          </div>
         </div>
-        <div class="poster-footer">
-          <span id="eventVenue">—</span>
-          <span id="eventDate">—</span>
+
+        <!-- Tabs -->
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="tab-detail">상세정보 / Detail</button>
+          <button type="button" class="tab" data-tab="tab-seat">좌석배치 / Denah & Booking</button>
+          <button type="button" class="tab" data-tab="tab-benefit">혜택 / Benefit</button>
+          <button type="button" class="tab" data-tab="tab-notice">유의사항 / Notice</button>
+        </div>
+
+        <div id="tab-detail" class="tab-panel active">
+          <h3>작품 설명 / Deskripsi</h3>
+          <p id="dDesc" class="body-text">—</p>
+          <h3>일정</h3>
+          <ul id="dSchedule" class="bullet"></ul>
+        </div>
+
+        <div id="tab-seat" class="tab-panel">
+          <div class="seat-toolbar">
+            <div>
+              <h3>Denah venue (berwarna per zona)</h3>
+              <p class="muted">Klik kursi sesuai warna legenda. Maks 4 kursi / pesanan.</p>
+            </div>
+            <div id="legendColors" class="legend-colors"></div>
+          </div>
+
+          <div class="venue-map-wrap">
+            <div class="stage-bar">STAGE / 무대</div>
+            <div id="venueSketch" class="venue-sketch" aria-hidden="true"></div>
+            <div id="seatMap" class="seat-map"></div>
+          </div>
+
+          <div class="checkout-bar">
+            <div>
+              <div class="co-label">Kursi dipilih</div>
+              <div id="selectedList" class="co-seats">Belum ada</div>
+              <div class="co-meta">
+                <span id="selectedCount">0</span> kursi ·
+                Total <strong id="totalPrice">Rp 0</strong>
+              </div>
+              <div id="benefitPreview" class="benefit-preview"></div>
+            </div>
+            <div class="co-actions">
+              <button type="button" id="btnClear" class="btn ghost">Reset</button>
+              <button type="button" id="btnOrder" class="btn primary" disabled>예매하기 · Pesan</button>
+            </div>
+          </div>
+          <div id="toast" class="toast hidden"></div>
+          <div id="orderResult" class="order-result hidden"></div>
+        </div>
+
+        <div id="tab-benefit" class="tab-panel">
+          <h3>Benefit per zona tiket</h3>
+          <p class="muted">Benefit menyesuaikan kategori kursi yang kamu beli.</p>
+          <div id="benefitAll" class="benefit-grid"></div>
+        </div>
+
+        <div id="tab-notice" class="tab-panel">
+          <h3>예매 유의사항 / Syarat</h3>
+          <ul id="dTerms" class="bullet"></ul>
         </div>
       </div>
 
-      <div class="event-switch" id="eventSwitch" style="display:flex;flex-wrap:wrap;gap:.4rem;margin:.85rem 0 .25rem"></div>
+      <!-- RIGHT sticky booking card (Melon style) -->
+      <aside class="book-card">
+        <div class="book-card-inner">
+          <img id="dPosterSm" class="book-thumb" alt="" />
+          <h2 id="dTitleSm">—</h2>
+          <p id="dDateSm" class="muted">—</p>
+          <div class="book-stat">
+            <div><span>Sisa</span><strong id="dSisaSm">—</strong></div>
+            <div><span>Total</span><strong id="dQuotaSm">—</strong></div>
+          </div>
+          <div id="dPriceMin" class="book-price">—</div>
+          <button type="button" id="btnGoSeat" class="btn primary block">좌석 선택 · Pilih kursi</button>
+          <p class="book-note">Anti-oversell · 1 seat = 1 penjualan</p>
+        </div>
+      </aside>
+    </div>
+  </section>
 
-      <div class="info-grid">
-        <div>
-          <label>Harga dari</label>
-          <p id="eventPrice" class="big">—</p>
-        </div>
-        <div>
-          <label>Kuota total</label>
-          <p id="eventQuota" class="big">—</p>
-        </div>
-        <div>
-          <label>Terjual</label>
-          <p id="eventSold" class="big">—</p>
-        </div>
-        <div>
-          <label>Sisa (live)</label>
-          <p id="eventSisa" class="big accent">—</p>
-        </div>
-      </div>
-      <div id="catList" class="hint" style="margin-top:.75rem"></div>
-      <p class="hint" id="eventDesc">Pilih kursi di denah, lalu pesan. Satu kursi hanya bisa dibeli sekali.</p>
-      <p class="hint" id="eventGate" style="margin-top:.35rem"></p>
-    </section>
-
-    <!-- Denah + checkout -->
-    <section class="card seat-card">
-      <div class="seat-head">
-        <div>
-          <h2>Pilih kursi</h2>
-          <p class="muted">Klik kursi hijau. Abu = terjual. Maks 4 kursi / pesanan.</p>
-        </div>
-        <div class="legend">
-          <span><i class="dot avail"></i> Tersedia</span>
-          <span><i class="dot sel"></i> Dipilih</span>
-          <span><i class="dot sold"></i> Terjual</span>
-        </div>
-      </div>
-
-      <div class="stage">PANGGUNG</div>
-      <div id="seatMap" class="seat-map" aria-label="Denah kursi"></div>
-
-      <div class="checkout">
-        <div class="selected-box">
-          <label>Kursi dipilih</label>
-          <p id="selectedList" class="selected-list">Belum ada</p>
-          <p class="muted"><span id="selectedCount">0</span> kursi · Total <strong id="totalPrice">Rp 0</strong></p>
-        </div>
-        <button id="btnOrder" class="btn primary" disabled>Pesan tiket</button>
-        <button id="btnClear" class="btn ghost" type="button">Reset pilih</button>
-      </div>
-
-      <div id="toast" class="toast hidden" role="status"></div>
-      <div id="orderResult" class="order-result hidden"></div>
-    </section>
-  </main>
-
-  <footer class="foot">
-    Backend monolit (event + ticket) · PostgreSQL + Redis · Tanpa payment/notif eksternal (revisi arsitektur)
+  <footer class="site-foot">
+    <div class="wrap">
+      WTK Ticket · War Tiket Konser lab · Data dari dataset squad · UI inspired by Melon Ticket layout
+    </div>
   </footer>
 
+  <script src="/event-meta.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

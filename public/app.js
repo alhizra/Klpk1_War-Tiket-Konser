@@ -1,46 +1,28 @@
 (() => {
-  const EVENT_ID = Number(new URLSearchParams(location.search).get("event") || 1);
   const MAX_SELECT = 4;
-  /** Denah bawaan jika API belum kirim seats (data manual kosong) */
-  const DEFAULT_ROWS = [
-    { label: "A", count: 12, cat: "VIP" },
-    { label: "B", count: 14, cat: "CAT1" },
-    { label: "C", count: 14, cat: "CAT1" },
-    { label: "D", count: 16, cat: "CAT2" },
-    { label: "E", count: 16, cat: "CAT2" },
-    { label: "F", count: 12, cat: "FEST" },
-  ];
+  const params = new URLSearchParams(location.search);
+  let currentEventId = Number(params.get("event") || 0);
 
   const el = (id) => document.getElementById(id);
   const selected = new Set();
   let eventData = null;
   let soldCodes = new Set();
-  let seatLayout = []; // [{code, category, row, number, priceIdr}]
+  let seatLayout = [];
+  let allEvents = [];
 
-  function buildLayoutFromEvent(data) {
-    if (data?.seats?.length) {
-      seatLayout = data.seats.map((s) => ({
-        code: String(s.code).toUpperCase(),
-        category: s.category || "REG",
-        row: s.row || String(s.code)[0],
-        number: s.number || 0,
-        priceIdr: s.priceIdr || data.priceIdr,
-      }));
-      return;
-    }
-    // fallback denah bawaan
-    seatLayout = [];
-    for (const row of DEFAULT_ROWS) {
-      for (let i = 1; i <= row.count; i++) {
-        seatLayout.push({
-          code: `${row.label}${String(i).padStart(2, "0")}`,
-          category: row.cat,
-          row: row.label,
-          number: i,
-          priceIdr: data?.priceIdr || 0,
-        });
-      }
-    }
+  function metaOf(id) {
+    return (window.EVENT_META && window.EVENT_META[id]) || {};
+  }
+
+  function benefitsOf(eventId, catCode) {
+    const m = metaOf(eventId);
+    const map = m.benefits || {};
+    return map[catCode] || map[String(catCode).toUpperCase()] || window.defaultBenefits(catCode);
+  }
+
+  function posterOf(ev) {
+    return metaOf(ev.eventId).poster ||
+      `https://picsum.photos/seed/wtk${ev.eventId}/600/800`;
   }
 
   function fmtRp(n) {
@@ -55,105 +37,144 @@
     if (!iso) return "—";
     try {
       return new Date(iso).toLocaleString("id-ID", {
-        dateStyle: "full",
-        timeStyle: "short",
+        weekday: "short",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
-      return iso;
+      return String(iso);
+    }
+  }
+
+  function fmtDateShort(iso) {
+    if (!iso) return "—";
+    try {
+      return new Date(iso).toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      return String(iso);
     }
   }
 
   function toast(msg, type = "") {
     const t = el("toast");
+    if (!t) return;
     t.textContent = msg;
     t.className = `toast ${type}`;
+    if (!msg) t.classList.add("hidden");
+    else t.classList.remove("hidden");
   }
 
-  function allSeatCodes() {
-    return seatLayout.map((s) => s.code);
+  function showList() {
+    el("view-list").classList.remove("hidden");
+    el("view-detail").classList.add("hidden");
+    currentEventId = 0;
+    history.replaceState({}, "", "/");
   }
 
-  function markSoldFromQuota(sisa, quotaTotal) {
-    const codes = allSeatCodes();
+  function showDetail(id) {
+    currentEventId = Number(id);
+    el("view-list").classList.add("hidden");
+    el("view-detail").classList.remove("hidden");
+    history.replaceState({}, "", `/?event=${currentEventId}`);
+    selected.clear();
+    loadEventDetail(currentEventId);
+  }
+
+  async function loadHealth() {
+    try {
+      const res = await fetch("/api/health");
+      const data = await res.json();
+      const chip = el("apiStatus");
+      chip.textContent = data.ok ? "API OK" : "API down";
+      chip.className = data.ok ? "chip ok" : "chip";
+    } catch {
+      el("apiStatus").textContent = "API offline";
+    }
+  }
+
+  async function loadEventList() {
+    const res = await fetch("/api/events?size=50");
+    if (!res.ok) throw new Error("Gagal memuat daftar event");
+    const data = await res.json();
+    allEvents = data.items || [];
+    el("listCount").textContent = `${allEvents.length} event`;
+    const grid = el("eventGrid");
+    grid.innerHTML = "";
+
+    for (const ev of allEvents) {
+      const m = metaOf(ev.eventId);
+      const minP =
+        ev.categories?.length
+          ? Math.min(...ev.categories.map((c) => c.priceIdr || ev.priceIdr))
+          : ev.priceIdr;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "event-card";
+      btn.innerHTML = `
+        <img class="thumb" src="${posterOf(ev)}" alt="" loading="lazy" />
+        <div class="body">
+          ${m.tag ? `<span class="tag">${m.tag}</span>` : ""}
+          <h3>${ev.title || ev.artist || "Event"}</h3>
+          <p class="meta">${fmtDateShort(ev.startsAt)}</p>
+          <p class="meta">${ev.venue || "—"}</p>
+          <p class="meta">${ev.city || ""} · ${ev.quotaTotal ?? "—"} seats</p>
+          <div class="price">${fmtRp(minP)} ~</div>
+          <div class="stock">Sisa ${ev.sisa ?? "—"} / ${ev.quotaTotal ?? "—"}</div>
+        </div>
+      `;
+      btn.addEventListener("click", () => showDetail(ev.eventId));
+      grid.appendChild(btn);
+    }
+  }
+
+  function buildLayoutFromEvent(data) {
+    if (data?.seats?.length) {
+      seatLayout = data.seats.map((s) => ({
+        code: String(s.code).toUpperCase(),
+        category: s.category || "REG",
+        categoryName: s.categoryName || s.category,
+        row: s.row || String(s.code)[0],
+        number: s.number || 0,
+        priceIdr: s.priceIdr || data.priceIdr,
+        color: s.color || catColor(data, s.category),
+      }));
+      return;
+    }
+    seatLayout = [];
+  }
+
+  function catColor(data, code) {
+    const c = (data.categories || []).find((x) => x.code === code);
+    return c?.color || "#94a3b8";
+  }
+
+  function markSold() {
     if (eventData?.soldSeats?.length) {
       soldCodes = new Set(eventData.soldSeats.map((c) => String(c).toUpperCase()));
       return;
     }
+    const codes = seatLayout.map((s) => s.code);
     const soldCount = Math.max(
       0,
-      Math.min(codes.length, (quotaTotal || codes.length) - (sisa ?? 0))
+      Math.min(codes.length, (eventData.quotaTotal || 0) - (eventData.sisa ?? 0))
     );
     soldCodes = new Set(codes.slice(codes.length - soldCount));
-  }
-
-  function renderEvent() {
-    if (!eventData) return;
-    el("eventTitle").textContent = eventData.title || "Event";
-    el("eventArtist").textContent = eventData.artist || "—";
-    if (el("eventCity")) {
-      el("eventCity").textContent = eventData.city
-        ? `${eventData.city}${eventData.country ? ", " + eventData.country : ""}`
-        : "South Korea";
-    }
-    el("eventVenue").textContent = eventData.venue || "—";
-    el("eventDate").textContent = fmtDate(eventData.startsAt);
-    const minPrice =
-      eventData.categories?.length
-        ? Math.min(...eventData.categories.map((c) => c.priceIdr || eventData.priceIdr))
-        : eventData.priceIdr;
-    el("eventPrice").textContent = fmtRp(minPrice);
-    el("eventQuota").textContent = String(eventData.quotaTotal ?? "—");
-    el("eventSold").textContent = String(eventData.terjual ?? 0);
-    el("eventSisa").textContent = String(eventData.sisa ?? "—");
-    el("quotaPill").textContent = `Sisa: ${eventData.sisa ?? "—"} / ${eventData.quotaTotal ?? "—"}`;
-    el("eventDesc").textContent =
-      eventData.description ||
-      "Pilih kursi di denah. Satu seat code hanya terjual sekali (anti-oversell).";
-    if (el("eventGate")) {
-      const bits = [];
-      if (eventData.gateOpen) bits.push(`Gate open ${eventData.gateOpen}`);
-      if (eventData.ageRating) bits.push(eventData.ageRating);
-      el("eventGate").textContent = bits.join(" · ");
-    }
-    if (el("catList") && eventData.categories?.length) {
-      el("catList").innerHTML = eventData.categories
-        .map(
-          (c) =>
-            `<div style="display:flex;justify-content:space-between;gap:.5rem;border-bottom:1px solid #1e293b;padding:.25rem 0">
-              <span><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${c.color || "#64748b"};margin-right:.35rem"></i>${c.name || c.code}</span>
-              <span>${fmtRp(c.priceIdr)} · ${c.quota} seats</span>
-            </div>`
-        )
-        .join("");
-    }
-  }
-
-  async function renderEventSwitch() {
-    const box = el("eventSwitch");
-    if (!box) return;
-    try {
-      const res = await fetch("/api/events?size=20");
-      const data = await res.json();
-      const items = data.items || [];
-      box.innerHTML = items
-        .map((ev) => {
-          const active = Number(ev.eventId) === EVENT_ID;
-          return `<a href="/?event=${ev.eventId}" style="
-            text-decoration:none;font-size:.75rem;font-weight:700;
-            padding:.35rem .65rem;border-radius:999px;
-            border:1px solid ${active ? "#38bdf8" : "#334155"};
-            background:${active ? "rgba(56,189,248,.15)" : "#0f172a"};
-            color:${active ? "#7dd3fc" : "#94a3b8"}">${ev.artist || "Event " + ev.eventId}</a>`;
-        })
-        .join("");
-    } catch {
-      box.innerHTML = "";
-    }
   }
 
   function priceOf(code) {
     const s = seatLayout.find((x) => x.code === code);
     return s?.priceIdr || eventData?.priceIdr || 0;
+  }
+
+  function catOf(code) {
+    return seatLayout.find((x) => x.code === code)?.category || "";
   }
 
   function updateCheckout() {
@@ -163,12 +184,50 @@
     const total = list.reduce((sum, c) => sum + priceOf(c), 0);
     el("totalPrice").textContent = fmtRp(total);
     el("btnOrder").disabled = list.length === 0;
+
+    const bp = el("benefitPreview");
+    if (list.length) {
+      const cats = [...new Set(list.map(catOf))];
+      const lines = cats.flatMap((c) => {
+        const bens = benefitsOf(currentEventId, c).slice(0, 2);
+        return bens.map((b) => `· [${c}] ${b}`);
+      });
+      bp.innerHTML = `<strong>Benefit zona:</strong><br>${lines.join("<br>")}`;
+      bp.classList.add("show");
+    } else {
+      bp.classList.remove("show");
+      bp.innerHTML = "";
+    }
+  }
+
+  function renderVenueSketch() {
+    const box = el("venueSketch");
+    const cats = eventData.categories || [];
+    box.innerHTML = cats
+      .map(
+        (c) =>
+          `<div class="zone-block" style="background:${c.color || "#64748b"}">${c.code}<br><small style="font-weight:600;opacity:.9">${c.quota}</small></div>`
+      )
+      .join("");
+  }
+
+  function renderLegend() {
+    const box = el("legendColors");
+    const cats = eventData.categories || [];
+    box.innerHTML =
+      cats
+        .map(
+          (c) =>
+            `<span><i class="swatch" style="background:${c.color || "#94a3b8"}"></i>${c.code} · ${fmtRp(c.priceIdr)}</span>`
+        )
+        .join("") +
+      `<span><i class="swatch" style="background:#334155"></i>SOLD</span>
+       <span><i class="swatch" style="background:#00cd3c;outline:2px solid #111"></i>SELECTED</span>`;
   }
 
   function renderMap() {
     const root = el("seatMap");
     root.innerHTML = "";
-    // group by category then row
     const byCat = new Map();
     for (const s of seatLayout) {
       if (!byCat.has(s.category)) byCat.set(s.category, new Map());
@@ -177,9 +236,10 @@
       byRow.get(s.row).push(s);
     }
     for (const [cat, byRow] of byCat) {
+      const catInfo = (eventData.categories || []).find((c) => c.code === cat);
       const tag = document.createElement("div");
       tag.className = "cat-tag";
-      tag.textContent = cat;
+      tag.innerHTML = `<i class="swatch" style="background:${catInfo?.color || "#94a3b8"}"></i> ${catInfo?.name || cat} · ${fmtRp(catInfo?.priceIdr || 0)} · quota ${catInfo?.quota ?? "—"}`;
       root.appendChild(tag);
       for (const [rowLabel, seatsInRow] of byRow) {
         seatsInRow.sort((a, b) => a.number - b.number);
@@ -191,20 +251,21 @@
         const seats = document.createElement("div");
         seats.className = "seats";
         for (const s of seatsInRow) {
-          const code = s.code;
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "seat";
-          btn.dataset.code = code;
-          btn.textContent = String(s.number || code.replace(/\D/g, "") || "·");
-          btn.title = `${code} · ${fmtRp(s.priceIdr)}`;
-          if (soldCodes.has(code)) {
+          btn.dataset.code = s.code;
+          btn.textContent = String(s.number || "").slice(-2) || "·";
+          btn.title = `${s.code} · ${fmtRp(s.priceIdr)}`;
+          const color = s.color || catInfo?.color || "#94a3b8";
+          if (soldCodes.has(s.code)) {
             btn.classList.add("sold");
             btn.disabled = true;
-          } else if (selected.has(code)) {
-            btn.classList.add("selected");
+          } else {
+            btn.style.background = color;
+            if (selected.has(s.code)) btn.classList.add("selected");
           }
-          btn.addEventListener("click", () => toggleSeat(code));
+          btn.addEventListener("click", () => toggleSeat(s.code));
           seats.appendChild(btn);
         }
         rowEl.appendChild(lab);
@@ -217,9 +278,8 @@
 
   function toggleSeat(code) {
     if (soldCodes.has(code)) return;
-    if (selected.has(code)) {
-      selected.delete(code);
-    } else {
+    if (selected.has(code)) selected.delete(code);
+    else {
       if (selected.size >= MAX_SELECT) {
         toast(`Maksimal ${MAX_SELECT} kursi per pesanan`, "err");
         return;
@@ -231,34 +291,90 @@
       selected.add(code);
     }
     toast("");
-    el("toast").classList.add("hidden");
     renderMap();
   }
 
-  async function loadEvent() {
-    const res = await fetch(`/api/events/${EVENT_ID}`);
-    if (!res.ok) throw new Error("Gagal memuat event");
+  function renderBenefitsAll() {
+    const box = el("benefitAll");
+    const cats = eventData.categories || [];
+    box.innerHTML = cats
+      .map((c) => {
+        const bens = benefitsOf(currentEventId, c.code);
+        return `<div class="benefit-card">
+          <h4><i class="swatch" style="background:${c.color || "#94a3b8"}"></i> ${c.name || c.code}</h4>
+          <p class="muted" style="margin:0 0 .4rem;font-size:.8rem">${fmtRp(c.priceIdr)} · ${c.quota} seats</p>
+          <ul>${bens.map((b) => `<li>${b}</li>`).join("")}</ul>
+        </div>`;
+      })
+      .join("");
+  }
+
+  function renderDetail() {
+    const m = metaOf(currentEventId);
+    const poster = posterOf(eventData);
+    el("dPoster").src = poster;
+    el("dPosterSm").src = poster;
+    el("dTag").textContent = m.tag || "OPEN SALE";
+    el("dGenre").textContent = m.genre || "Concert";
+    el("dTitle").textContent = eventData.title || eventData.artist;
+    el("dTitleSm").textContent = eventData.title || eventData.artist;
+    el("dArtist").textContent = eventData.artist || "—";
+    el("dPeriod").textContent = fmtDate(eventData.startsAt);
+    el("dDateSm").textContent = fmtDate(eventData.startsAt);
+    el("dVenue").textContent = `${eventData.venue || "—"}${eventData.city ? " · " + eventData.city : ""}`;
+    el("dRating").textContent = eventData.ageRating || "All ages";
+    el("dGate").textContent = eventData.gateOpen || "—";
+    el("dSisa").textContent = `${eventData.sisa ?? "—"} seats`;
+    el("dSisaSm").textContent = String(eventData.sisa ?? "—");
+    el("dQuota").textContent = String(eventData.quotaTotal ?? "—");
+    el("dQuotaSm").textContent = String(eventData.quotaTotal ?? "—");
+    el("dDesc").textContent = eventData.description || "—";
+
+    const minP =
+      eventData.categories?.length
+        ? Math.min(...eventData.categories.map((c) => c.priceIdr || eventData.priceIdr))
+        : eventData.priceIdr;
+    el("dPriceMin").textContent = `${fmtRp(minP)} ~`;
+
+    el("dPriceList").innerHTML = (eventData.categories || [])
+      .map(
+        (c) =>
+          `<div class="price-row">
+            <span><i class="swatch" style="background:${c.color || "#94a3b8"}"></i>${c.name || c.code}</span>
+            <strong>${fmtRp(c.priceIdr)}</strong>
+          </div>`
+      )
+      .join("");
+
+    el("dSchedule").innerHTML = `
+      <li>Show: <strong>${fmtDate(eventData.startsAt)}</strong></li>
+      <li>Sale open: ${fmtDate(eventData.salesOpensAt)}</li>
+      <li>Gate open: ${eventData.gateOpen || "—"}</li>
+      <li>Venue: ${eventData.venue || "—"}</li>
+    `;
+
+    el("dTerms").innerHTML = (eventData.terms || [])
+      .map((t) => `<li>${t}</li>`)
+      .join("") || "<li>—</li>";
+
+    renderVenueSketch();
+    renderLegend();
+    renderBenefitsAll();
+    renderMap();
+  }
+
+  async function loadEventDetail(id) {
+    toast("");
+    el("orderResult").classList.add("hidden");
+    const res = await fetch(`/api/events/${id}`);
+    if (!res.ok) {
+      toast("Event tidak ditemukan", "err");
+      return;
+    }
     eventData = await res.json();
     buildLayoutFromEvent(eventData);
-    markSoldFromQuota(eventData.sisa, eventData.quotaTotal);
-    for (const c of [...selected]) {
-      if (soldCodes.has(c)) selected.delete(c);
-    }
-    renderEvent();
-    renderMap();
-  }
-
-  async function loadHealth() {
-    try {
-      const res = await fetch("/api/health");
-      const data = await res.json();
-      const pill = el("apiStatus");
-      pill.textContent = data.ok ? `API OK · ${data.instance || "backend"}` : "API down";
-      pill.className = data.ok ? "pill ok" : "pill bad";
-    } catch {
-      el("apiStatus").textContent = "API offline";
-      el("apiStatus").className = "pill bad";
-    }
+    markSold();
+    renderDetail();
   }
 
   async function placeOrder() {
@@ -266,44 +382,66 @@
     if (!qty) return;
     el("btnOrder").disabled = true;
     el("btnOrder").textContent = "Memesan…";
-    el("orderResult").classList.add("hidden");
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          eventId: EVENT_ID,
+          eventId: currentEventId,
           qty,
           seatCodes: [...selected],
         }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 201) {
-        toast(`Berhasil pesan ${qty} tiket · sisa ${data.sisa}`, "ok");
+        const cats = [...new Set([...selected].map(catOf))];
+        const benLines = cats.flatMap((c) =>
+          benefitsOf(currentEventId, c).map((b) => `• [${c}] ${b}`)
+        );
+        toast(`Berhasil · sisa ${data.sisa}`, "ok");
         el("orderResult").classList.remove("hidden");
         el("orderResult").innerHTML = `
-          <strong>Pesanan berhasil</strong>
+          <strong>예매 완료 · Pesanan berhasil</strong>
           <code>orderId: ${data.orderId}</code>
           <code>kursi: ${(data.seatCodes || [...selected]).join(", ")}</code>
           <code>total: ${fmtRp(data.amountIdr)}</code>
-          <code>status: ${data.status}</code>
+          <code style="margin-top:.5rem;color:#fde68a">Benefit yang didapat:</code>
+          <code style="white-space:pre-wrap;color:#e2e8f0">${benLines.join("\n")}</code>
         `;
         selected.clear();
-        await loadEvent();
+        await loadEventDetail(currentEventId);
       } else if (res.status === 409) {
-        toast(data.error || "Kuota habis / kursi tidak tersedia", "err");
-        await loadEvent();
+        toast(data.error || "Kuota habis", "err");
+        await loadEventDetail(currentEventId);
       } else {
         toast(data.error || `Gagal (${res.status})`, "err");
       }
     } catch (e) {
       toast(e.message || "Jaringan error", "err");
     } finally {
-      el("btnOrder").textContent = "Pesan tiket";
+      el("btnOrder").textContent = "예매하기 · Pesan";
       updateCheckout();
     }
   }
 
+  // tabs
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+      tab.classList.add("active");
+      el(tab.dataset.tab).classList.add("active");
+    });
+  });
+
+  el("btnBack").addEventListener("click", () => {
+    showList();
+    loadEventList().catch(() => {});
+  });
+  el("btnGoSeat").addEventListener("click", () => {
+    document.querySelector('.tab[data-tab="tab-seat"]').click();
+    el("seatMap").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   el("btnClear").addEventListener("click", () => {
     selected.clear();
     renderMap();
@@ -313,17 +451,18 @@
 
   async function boot() {
     await loadHealth();
-    await renderEventSwitch();
     try {
-      await loadEvent();
-      toast("Siap war K-pop · pilih zona/kursi lalu pesan", "ok");
+      await loadEventList();
+      if (currentEventId > 0) showDetail(currentEventId);
+      else showList();
     } catch (e) {
-      toast(e.message || "Gagal load data event — jalankan npm run data:manual", "err");
+      el("eventGrid").innerHTML = `<p class="muted">${e.message || "Gagal load. Pastikan API & dataset jalan."}</p>`;
     }
     setInterval(() => {
-      loadEvent().catch(() => {});
       loadHealth().catch(() => {});
-    }, 8000);
+      if (currentEventId > 0) loadEventDetail(currentEventId).catch(() => {});
+      else loadEventList().catch(() => {});
+    }, 12000);
   }
 
   boot();
