@@ -88,36 +88,33 @@ Web UI: `http://localhost:8080/` · API sama host.
 
 ## Menjalankan
 
+Panduan lengkap (laptop + **GitHub Codespaces**): [`docs/CARA-JALANKAN.md`](./docs/CARA-JALANKAN.md)
+
+### GitHub Codespaces (teman / demo online)
+1. Repo → **Code** → **Codespaces** → Create / Open  
+2. Tunggu `postCreate` (compose + data Korea)  
+3. Tab **PORTS** → **8080** → Visibility **Public** → Open in Browser  
+
+### Laptop (Docker)
 ```bash
-# salin env
 copy .env.example .env
-
 docker compose up -d --build
-docker compose ps
-
-curl -s http://localhost:8080/health
-curl -s http://localhost:8080/events/1
-# buka browser
-start http://localhost:8080/
-```
-
-Load data Korea (setelah DB up):
-
-```bash
 docker compose exec api node data/generate-real-seats.js
 docker compose exec api node src/load-manual-data.js
+# browser → http://localhost:8080/
 ```
 
-Scale API (P2):
-
+### Scale API (P2)
 ```bash
 docker compose up -d --scale api=3
 ```
 
-Dev tanpa Docker image app (Postgres/Redis container + Node lokal):
-
+### Dev Node lokal (+ Postgres/Redis dari compose)
 ```bash
+docker compose up -d postgres redis
 npm install
+set DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
+set REDIS_URL=redis://localhost:6379
 npm run data:korea
 npm start
 # http://localhost:3000/
