@@ -1,93 +1,150 @@
-# War Tiket Konser
+# War Tiket Konser — Klpk1
 
-Praktikum **Scalable Systems Design** · Tema: penjualan tiket + kuota kursi terbatas.
+Praktikum **Scalable Systems Design** · Tema war tiket · **Data K-pop Korea** (bukan copy dataset lab lain).
 
-Jalur: Microservices → **Scalable Systems** → Mobile.
+Pola repo mengikuti lab microservices (gateway · services · openapi · ADR · compose),  
+implementasi **revisi Jumat**: backend monolit `event + ticket + web`.
 
-## Endpoint kritis
+---
 
-| Jenis | Method | Path |
-|-------|--------|------|
-| Panas | `POST` | `/orders` |
-| Baca | `GET` | `/events/:id` |
-| Health | `GET` | `/health` |
+## Context Map
 
-Skenario beban: **5000** permintaan, **500** kursi → wajib **0 oversell**.
-
-## Web Jumat (wajib revisi)
-
-Buka setelah API jalan:
-
-- **UI:** http://localhost:3000/  
-- Poster tiket + **pilih kursi** + info event + **sisa kursi live**
-- Diagram revisi: `architecture/container-revisi-jumat.html`
-
-```bash
-# Postgres + Redis harus hidup, lalu:
-npm start
-# buka browser → http://localhost:3000/
+```mermaid
+graph LR
+  Web((Web UI)) --> GW[Gateway :8080]
+  Mobile((Mobile later)) --> GW
+  GW --> API[api monolit<br/>event + ticket + static]
+  API --> PG[(PostgreSQL)]
+  API --> RD[(Redis kuota atomik)]
+  API -.->|queue eticket| W[worker]
 ```
 
-## Jalankan (stack penuh)
+> Panah penuh = request sinkron. Putus-putus = async Redis list.
+
+---
+
+## Services (mapping)
+
+| Komponen | Port / role | Tanggung jawab | Data |
+|----------|-------------|----------------|------|
+| `gateway` (Nginx) | **8080** | Entry Web/API, siap scale | — |
+| `api` | 3000 internal | Event catalog, denah, **POST /orders** anti-oversell, web UI | events, seats, orders |
+| `worker` | — | Konsumsi antrean e-ticket | audit |
+| `postgres` | internal | Persist catalog + order | `wtk` DB |
+| `redis` | internal | **Kuota kursi atomik** + cache + queue | keys `quota:*` |
+
+Aturan: **sumber daya rebutan = kursi** → hanya dipotong atomik di Redis (lihat ADR-002).
+
+Ditunda (sesuai revisi Jumat): `payment-service`, `notification-service` eksternal, payment gateway.
+
+---
+
+## Data domain (Korea — milik squad ini)
+
+| ID | Artis | Venue | Kursi |
+|----|--------|--------|------:|
+| 1 | BTS | Busan Asiad Main Stadium | 500 |
+| 2 | SEVENTEEN | KSPO DOME, Seoul | 400 |
+| 3 | NewJeans | Inspire Arena, Incheon | 300 |
+| 4 | IU | Jamsil Indoor Stadium | 280 |
+
+Total denah: **1480** seat codes · folder `data/`.
 
 ```bash
+npm run data:korea   # generate CSV + load Postgres/Redis
+```
+
+---
+
+## Kontrak API
+
+| File | Versi | Status |
+|------|-------|--------|
+| [`openapi.yaml`](./openapi.yaml) | 1.0.0 | Development |
+| [`openapi-final.yaml`](./openapi-final.yaml) | 2.0.0 | Draft beku (P4) |
+
+### Endpoint kritis
+
+| Endpoint | Keterangan |
+|----------|------------|
+| `GET /events` | Daftar konser + paginasi |
+| `GET /events/{id}` | Detail + seats + **sisa live** |
+| `POST /orders` | **Panas** — lock kuota, 409 jika habis |
+| `GET /health` | Instance id (bukti replika) |
+
+Web UI: `http://localhost:8080/` · API sama host.
+
+---
+
+## ADR
+
+| ADR | Keputusan |
+|-----|-----------|
+| [ADR-001](./docs/adr/ADR-001-pagination.md) | Paginasi wajib |
+| [ADR-002](./docs/adr/ADR-002-seat-lock-redis.md) | Redis Lua anti-oversell |
+| [ADR-003](./docs/adr/ADR-003-monolit-revisi-jumat.md) | Monolit dulu untuk Jumat |
+
+---
+
+## Menjalankan
+
+```bash
+# salin env
+copy .env.example .env
+
 docker compose up -d --build
 docker compose ps
+
 curl -s http://localhost:8080/health
 curl -s http://localhost:8080/events/1
+# buka browser
+start http://localhost:8080/
 ```
 
-### Order manual
+Load data Korea (setelah DB up):
 
 ```bash
-curl -s -X POST http://localhost:8080/orders \
-  -H "Content-Type: application/json" \
-  -d "{\"eventId\":1,\"qty\":1}"
+docker compose exec api node data/generate-real-seats.js
+docker compose exec api node src/load-manual-data.js
 ```
 
-### Baseline (P1)
-
-```bash
-npx autocannon -c 50 -d 15 http://localhost:8080/events/1
-
-npx autocannon -c 200 -a 5000 \
-  -m POST -H "Content-Type: application/json" \
-  -b "{\"eventId\":1,\"qty\":1}" \
-  http://localhost:8080/orders
-
-curl -s http://localhost:8080/events/1
-```
-
-Catat angka di [`docs/BASELINE.md`](docs/BASELINE.md).
-
-### Multi-salinan (P2)
+Scale API (P2):
 
 ```bash
 docker compose up -d --scale api=3
-for /L %i in (1,1,6) do @curl -s http://localhost:8080/health
 ```
 
-## Struktur
+Dev tanpa Docker image app (Postgres/Redis container + Node lokal):
+
+```bash
+npm install
+npm run data:korea
+npm start
+# http://localhost:3000/
+```
+
+---
+
+## Struktur repo
 
 ```
 ├── docker-compose.yml
-├── nginx.conf
-├── openapi.yaml
+├── .env.example
+├── openapi.yaml / openapi-final.yaml
+├── nginx/default.conf          # gateway
+├── services/api/Dockerfile     # build context = root
+├── src/                        # kode backend
+├── public/                     # web Jumat
+├── data/                       # events + seats Korea
 ├── db/init.sql
-├── src/                 # Backend API + worker
-├── docs/DATA.md         # Strategi data/cache/antrean
-├── docs/BASELINE.md     # Logbook load test
+├── docs/adr/
+├── loadtest/
 ├── AI-LOG.md
-├── PERAN.md
-└── architecture/        # Diagram arsitek
+└── PERAN.md
 ```
+
+---
 
 ## Peran
 
-Lihat [`PERAN.md`](PERAN.md). Backend + Data diimplementasikan di `src/` dan `docs/DATA.md`.
-
-## Artefak Scalable Systems (target P5)
-
-1. `openapi-final` — `openapi.yaml` (naik ke 2.0.0 di P4)
-2. `baseurl` — `http://<host>:8080` + rate limit + page size 20
-3. `loadtest` — tabel sebelum vs sesudah di `docs/BASELINE.md`
+Lihat [`PERAN.md`](./PERAN.md). AI usage: [`AI-LOG.md`](./AI-LOG.md).

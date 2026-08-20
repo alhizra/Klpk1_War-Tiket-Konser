@@ -1,19 +1,19 @@
-# PERAN.md — Squad War Tiket Konser
+# PERAN.md — Klpk1 War Tiket Konser
 
-| Peran | Nama | Status |
-|-------|------|--------|
-| Arsitek Sistem | Andi Hilyatul Mar'ah | Diklaim |
-| Backend/API Engineer | (kamu) | Diklaim — Milikmu |
-| Infrastructure & DevOps | AL-HIZRA | Diklaim |
-| Data & Persistence Engineer | Astrid Tiar | Diklaim |
-| QA, Load-Test & Dokumentasi | TRI WAHYUNI | Diklaim |
+| Peran | Nama | Fokus file |
+|-------|------|------------|
+| Arsitek Sistem | Andi Hilyatul Mar'ah | `docs/adr/`, `architecture/`, `openapi*.yaml` |
+| Backend/API Engineer | (Milikmu) | `src/`, `public/`, `docs/BACKEND.md` |
+| Infrastructure & DevOps | AL-HIZRA | `docker-compose.yml`, `nginx/`, `services/api/Dockerfile`, `docs/DEPLOY.md` |
+| Data & Persistence | ASTRID TIAR | `data/`, `db/`, `docs/DATA.md`, `src/load-manual-data.js` |
+| QA, Load-Test & Dokumentasi | TRI WAHYUNI | `loadtest/`, `docs/BASELINE.md`, `README.md` uji |
 
-## Tema
-War Tiket Konser — penjualan tiket + antrean beban + kursi terbatas (1 kursi = 1 penjualan).
+## Tema data
+K-pop Korea — BTS Busan, SEVENTEEN KSPO, NewJeans Incheon, IU Jamsil (`data/events.manual.json`).
 
 ## Endpoint kritis
-| Jenis | Method | Path |
-|-------|--------|------|
-| Panas | POST | `/orders` |
-| Baca | GET | `/events/:id` |
-| Hidup | GET | `/health` |
+| Method | Path | PIC |
+|--------|------|-----|
+| GET | `/events`, `/events/{id}` | Backend + Data |
+| POST | `/orders` | Backend (anti-oversell) |
+| GET | `/health` | Backend + Infra |
