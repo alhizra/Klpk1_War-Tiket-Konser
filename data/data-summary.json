@@ -1,9 +1,40 @@
 [
   {
     "event_id": 1,
-    "artist": "BTS (방탄소년단)",
-    "venue": "Busan Asiad Main Stadium (부산아시아드주경기장), Busan, South Korea",
-    "city": "Busan",
+    "event_code": "EVT001",
+    "artist": "TREASURE (트레저)",
+    "venue": "KSPO DOME, Olympic Park",
+    "city": "Seoul",
+    "quota_total": 400,
+    "seats_generated": 400,
+    "by_category": {
+      "VIP": 50,
+      "FLOOR": 120,
+      "GOLD": 140,
+      "SILVER": 90
+    }
+  },
+  {
+    "event_id": 2,
+    "event_code": "EVT002",
+    "artist": "LYKN (ไลแคน)",
+    "venue": "Impact Arena, Muang Thong Thani",
+    "city": "Bangkok Metro",
+    "quota_total": 280,
+    "seats_generated": 280,
+    "by_category": {
+      "VVIP": 40,
+      "A": 80,
+      "B": 100,
+      "C": 60
+    }
+  },
+  {
+    "event_id": 3,
+    "event_code": "EVT003",
+    "artist": "BLACKPINK (블랙핑크)",
+    "venue": "Seoul World Cup Stadium (Sangam)",
+    "city": "Seoul",
     "quota_total": 500,
     "seats_generated": 500,
     "by_category": {
@@ -14,44 +45,62 @@
     }
   },
   {
-    "event_id": 2,
-    "artist": "SEVENTEEN (세븐틴)",
-    "venue": "KSPO DOME (올림픽체조경기장), Olympic Park, Seoul",
-    "city": "Seoul",
-    "quota_total": 400,
-    "seats_generated": 400,
-    "by_category": {
-      "DIA": 80,
-      "GOLD": 100,
-      "SILVER": 120,
-      "BRONZE": 100
-    }
-  },
-  {
-    "event_id": 3,
-    "artist": "NewJeans (뉴진스)",
-    "venue": "Inspire Arena, Incheon, South Korea",
-    "city": "Incheon",
-    "quota_total": 300,
-    "seats_generated": 300,
-    "by_category": {
-      "PIT": 50,
-      "A": 90,
-      "B": 100,
-      "C": 60
-    }
-  },
-  {
     "event_id": 4,
-    "artist": "IU (아이유)",
-    "venue": "Jamsil Indoor Stadium (잠실실내체육관), Seoul Sports Complex",
+    "event_code": "EVT004",
+    "artist": "NCT DREAM (엔시티 드림)",
+    "venue": "Gocheok Sky Dome",
     "city": "Seoul",
-    "quota_total": 280,
-    "seats_generated": 280,
+    "quota_total": 350,
+    "seats_generated": 350,
+    "by_category": {
+      "DIA": 70,
+      "GOLD": 90,
+      "SILVER": 110,
+      "BRONZE": 80
+    }
+  },
+  {
+    "event_id": 5,
+    "event_code": "EVT005",
+    "artist": "EXO (엑소)",
+    "venue": "Jamsil Indoor Stadium",
+    "city": "Seoul",
+    "quota_total": 320,
+    "seats_generated": 320,
     "by_category": {
       "R": 60,
-      "S": 100,
-      "A": 120
+      "S": 120,
+      "A": 140
+    }
+  },
+  {
+    "event_id": 6,
+    "event_code": "EVT006",
+    "artist": "ATEEZ (에이티즈)",
+    "venue": "BEXCO Auditorium",
+    "city": "Busan",
+    "quota_total": 380,
+    "seats_generated": 380,
+    "by_category": {
+      "PIT": 60,
+      "A": 110,
+      "B": 120,
+      "C": 90
+    }
+  },
+  {
+    "event_id": 7,
+    "event_code": "EVT007",
+    "artist": "BUS (บัส)",
+    "venue": "Thunder Dome, Muang Thong Thani",
+    "city": "Bangkok Metro",
+    "quota_total": 250,
+    "seats_generated": 250,
+    "by_category": {
+      "VVIP": 30,
+      "A": 70,
+      "B": 90,
+      "C": 60
     }
   }
 ]

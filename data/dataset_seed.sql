@@ -1,0 +1,3 @@
+-- Generated from DATA_WAR_TIKET_KONSER.xlsx
+-- Load via: python data/import_excel_dataset.py --load
+-- Events: 7, Seats: 2480

@@ -1,122 +1,245 @@
 [
   {
     "event_id": 1,
-    "code": "SCVIP",
-    "name": "Soundcheck VIP Package (Reserved)",
-    "price_idr": 4500000,
-    "quota": 40,
+    "event_code": "EVT001",
+    "code": "VIP",
+    "name": "VIP Package",
+    "price_idr": 4200000,
+    "quota": 50,
     "color_hex": "#A855F7"
   },
   {
     "event_id": 1,
+    "event_code": "EVT001",
     "code": "FLOOR",
-    "name": "Purple Floor Standing (P1–P2)",
-    "price_idr": 3200000,
-    "quota": 160,
+    "name": "Floor Standing",
+    "price_idr": 3100000,
+    "quota": 120,
     "color_hex": "#7C3AED"
   },
   {
     "event_id": 1,
-    "code": "ORANGE",
-    "name": "Orange Seat — Lower Bowl",
-    "price_idr": 2500000,
-    "quota": 180,
-    "color_hex": "#F97316"
-  },
-  {
-    "event_id": 1,
-    "code": "NAVY",
-    "name": "Navy Seat — Upper Bowl",
-    "price_idr": 1800000,
-    "quota": 120,
-    "color_hex": "#1E3A8A"
-  },
-  {
-    "event_id": 2,
-    "code": "DIA",
-    "name": "Diamond Standing — Center Floor",
-    "price_idr": 3800000,
-    "quota": 80,
-    "color_hex": "#22D3EE"
-  },
-  {
-    "event_id": 2,
+    "event_code": "EVT001",
     "code": "GOLD",
-    "name": "Gold Seat — Side Lower",
-    "price_idr": 2800000,
-    "quota": 100,
+    "name": "Gold Lower",
+    "price_idr": 2400000,
+    "quota": 140,
     "color_hex": "#EAB308"
   },
   {
-    "event_id": 2,
+    "event_id": 1,
+    "event_code": "EVT001",
     "code": "SILVER",
-    "name": "Silver Seat — Rear Lower",
-    "price_idr": 2200000,
-    "quota": 120,
+    "name": "Silver Upper",
+    "price_idr": 1700000,
+    "quota": 90,
     "color_hex": "#94A3B8"
   },
   {
     "event_id": 2,
-    "code": "BRONZE",
-    "name": "Bronze Seat — Upper",
-    "price_idr": 1600000,
-    "quota": 100,
-    "color_hex": "#B45309"
-  },
-  {
-    "event_id": 3,
-    "code": "PIT",
-    "name": "Front Pit Standing",
+    "event_code": "EVT002",
+    "code": "VVIP",
+    "name": "VVIP Stage Side",
     "price_idr": 3500000,
-    "quota": 50,
-    "color_hex": "#F472B6"
+    "quota": 40,
+    "color_hex": "#EF4444"
   },
   {
-    "event_id": 3,
+    "event_id": 2,
+    "event_code": "EVT002",
     "code": "A",
-    "name": "Seat A — Center Lower",
-    "price_idr": 2600000,
-    "quota": 90,
+    "name": "Zone A",
+    "price_idr": 2400000,
+    "quota": 80,
     "color_hex": "#38BDF8"
   },
   {
-    "event_id": 3,
+    "event_id": 2,
+    "event_code": "EVT002",
     "code": "B",
-    "name": "Seat B — Side / Rear Lower",
-    "price_idr": 1900000,
+    "name": "Zone B",
+    "price_idr": 1700000,
     "quota": 100,
     "color_hex": "#34D399"
   },
   {
-    "event_id": 3,
+    "event_id": 2,
+    "event_code": "EVT002",
     "code": "C",
-    "name": "Seat C — Upper Bowl",
-    "price_idr": 1400000,
+    "name": "Zone C",
+    "price_idr": 1200000,
     "quota": 60,
     "color_hex": "#A78BFA"
   },
   {
+    "event_id": 3,
+    "event_code": "EVT003",
+    "code": "SCVIP",
+    "name": "SCVIP Soundcheck",
+    "price_idr": 4800000,
+    "quota": 40,
+    "color_hex": "#C026D3"
+  },
+  {
+    "event_id": 3,
+    "event_code": "EVT003",
+    "code": "FLOOR",
+    "name": "Pink Floor",
+    "price_idr": 3600000,
+    "quota": 160,
+    "color_hex": "#7C3AED"
+  },
+  {
+    "event_id": 3,
+    "event_code": "EVT003",
+    "code": "ORANGE",
+    "name": "Orange Lower",
+    "price_idr": 2700000,
+    "quota": 180,
+    "color_hex": "#F97316"
+  },
+  {
+    "event_id": 3,
+    "event_code": "EVT003",
+    "code": "NAVY",
+    "name": "Navy Upper",
+    "price_idr": 1900000,
+    "quota": 120,
+    "color_hex": "#1E3A8A"
+  },
+  {
     "event_id": 4,
+    "event_code": "EVT004",
+    "code": "DIA",
+    "name": "DIA Standing",
+    "price_idr": 3900000,
+    "quota": 70,
+    "color_hex": "#22D3EE"
+  },
+  {
+    "event_id": 4,
+    "event_code": "EVT004",
+    "code": "GOLD",
+    "name": "GOLD",
+    "price_idr": 2900000,
+    "quota": 90,
+    "color_hex": "#EAB308"
+  },
+  {
+    "event_id": 4,
+    "event_code": "EVT004",
+    "code": "SILVER",
+    "name": "SILVER",
+    "price_idr": 2200000,
+    "quota": 110,
+    "color_hex": "#94A3B8"
+  },
+  {
+    "event_id": 4,
+    "event_code": "EVT004",
+    "code": "BRONZE",
+    "name": "BRONZE",
+    "price_idr": 1600000,
+    "quota": 80,
+    "color_hex": "#B45309"
+  },
+  {
+    "event_id": 5,
+    "event_code": "EVT005",
     "code": "R",
-    "name": "R Seat — Stage Side Premium",
-    "price_idr": 3300000,
+    "name": "R Seat",
+    "price_idr": 3600000,
     "quota": 60,
     "color_hex": "#F43F5E"
   },
   {
-    "event_id": 4,
+    "event_id": 5,
+    "event_code": "EVT005",
     "code": "S",
-    "name": "S Seat — Center Floor / Lower",
-    "price_idr": 2500000,
-    "quota": 100,
+    "name": "S Seat",
+    "price_idr": 2700000,
+    "quota": 120,
     "color_hex": "#FBBF24"
   },
   {
-    "event_id": 4,
+    "event_id": 5,
+    "event_code": "EVT005",
     "code": "A",
-    "name": "A Seat — Upper / Side",
-    "price_idr": 1700000,
+    "name": "A Seat",
+    "price_idr": 1800000,
+    "quota": 140,
+    "color_hex": "#38BDF8"
+  },
+  {
+    "event_id": 6,
+    "event_code": "EVT006",
+    "code": "PIT",
+    "name": "Front Pit",
+    "price_idr": 3400000,
+    "quota": 60,
+    "color_hex": "#F472B6"
+  },
+  {
+    "event_id": 6,
+    "event_code": "EVT006",
+    "code": "A",
+    "name": "Seat A",
+    "price_idr": 2600000,
+    "quota": 110,
+    "color_hex": "#38BDF8"
+  },
+  {
+    "event_id": 6,
+    "event_code": "EVT006",
+    "code": "B",
+    "name": "Seat B",
+    "price_idr": 2000000,
     "quota": 120,
-    "color_hex": "#60A5FA"
+    "color_hex": "#34D399"
+  },
+  {
+    "event_id": 6,
+    "event_code": "EVT006",
+    "code": "C",
+    "name": "Seat C",
+    "price_idr": 1500000,
+    "quota": 90,
+    "color_hex": "#A78BFA"
+  },
+  {
+    "event_id": 7,
+    "event_code": "EVT007",
+    "code": "VVIP",
+    "name": "VVIP Barrier",
+    "price_idr": 3200000,
+    "quota": 30,
+    "color_hex": "#EF4444"
+  },
+  {
+    "event_id": 7,
+    "event_code": "EVT007",
+    "code": "A",
+    "name": "Zone A",
+    "price_idr": 2200000,
+    "quota": 70,
+    "color_hex": "#38BDF8"
+  },
+  {
+    "event_id": 7,
+    "event_code": "EVT007",
+    "code": "B",
+    "name": "Zone B",
+    "price_idr": 1500000,
+    "quota": 90,
+    "color_hex": "#34D399"
+  },
+  {
+    "event_id": 7,
+    "event_code": "EVT007",
+    "code": "C",
+    "name": "Zone C",
+    "price_idr": 1100000,
+    "quota": 60,
+    "color_hex": "#A78BFA"
   }
 ]

@@ -1,17 +1,26 @@
-# Data Real — War Tiket Konser Korea
+# Dataset — War Tiket Konser
 
-Dataset katalog + denah untuk skenario **war tiket K-pop** (gaya Weverse / Ticketlink / Melon Ticket).
+Sumber utama: **`DATA_WAR_TIKET_KONSER.xlsx`** (sheet venues, events, seat_categories).
 
-## Event
+Import:
+```bash
+npm run data:excel
+# atau: python data/import_excel_dataset.py --load
+```
 
-| ID | Artis | Venue | Kota | Kursi |
-|----|--------|--------|------|------:|
-| 1 | **BTS** (방탄소년단) | Busan Asiad Main Stadium | Busan | **500** |
-| 2 | **SEVENTEEN** (세븐틴) | KSPO DOME, Olympic Park | Seoul | **400** |
-| 3 | **NewJeans** (뉴진스) | Inspire Arena | Incheon | **300** |
-| 4 | **IU** (아이유) | Jamsil Indoor Stadium | Seoul | **280** |
+## Event (setelah import Excel)
 
-**Total denah: 1.480 seat codes** (`seats.manual.csv`)
+| ID | Code | Artis | Venue | Kota | Kursi |
+|----|------|--------|--------|------|------:|
+| 1 | EVT001 | TREASURE | KSPO DOME | Seoul | 400 |
+| 2 | EVT002 | LYKN | Impact Arena | Bangkok | 280 |
+| 3 | EVT003 | BLACKPINK | Seoul World Cup Stadium | Seoul | 500 |
+| 4 | EVT004 | NCT DREAM | Gocheok Sky Dome | Seoul | 350 |
+| 5 | EVT005 | EXO | Jamsil Indoor | Seoul | 320 |
+| 6 | EVT006 | ATEEZ | BEXCO Auditorium | Busan | 380 |
+| 7 | EVT007 | BUS | Thunder Dome | Bangkok | 250 |
+
+**Total denah: 2.480 seat codes** (`seats.manual.csv`)
 
 ---
 

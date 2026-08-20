@@ -10,7 +10,8 @@
     "seed": "node src/seed.js",
     "data:generate": "node data/generate-real-seats.js",
     "data:manual": "node src/load-manual-data.js",
-    "data:korea": "node data/generate-real-seats.js && node src/load-manual-data.js"
+    "data:korea": "node data/generate-real-seats.js && node src/load-manual-data.js",
+    "data:excel": "python data/import_excel_dataset.py --load"
   },
   "engines": {
     "node": ">=18"
