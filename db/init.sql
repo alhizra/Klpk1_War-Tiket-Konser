@@ -1,6 +1,3 @@
--- War Tiket Konser — skema awal (Data & Persistence)
--- Sumber daya rebutan: kursi (quota). SSOT kuota runtime di Redis; Postgres = audit + catalog.
-
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS events (
