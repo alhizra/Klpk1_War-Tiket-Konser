@@ -52,7 +52,7 @@ Harga dalam **IDR** untuk lab; di dunia nyata biasanya **KRW** + currency gatewa
 | `categories.manual.json` | Ringkas kategori |
 | `data-summary.json` | Verifikasi seats = quota |
 | `generate_init_sql.py` | Regenerasi `db/init.sql` untuk Docker |
-| `manual-seed.sql` | Backup catalog SQL (tanpa full denah) |
+| `db/init.sql` | Schema + seed penuh (Docker/Codespace) |
 
 ---
 

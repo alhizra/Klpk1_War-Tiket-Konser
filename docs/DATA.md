@@ -14,11 +14,13 @@ Edit file di folder `data/`, **tidak perlu coding**:
 |------|--------|-----|
 | `data/events.manual.json` | VS Code / Notepad | Daftar konser |
 | `data/seats.manual.csv` | **Excel** → Save CSV | Denah kursi |
-| `data/manual-seed.sql` | DBeaver / psql | Alternatif SQL |
+| `data/DATA_WAR_TIKET_KONSER.xlsx` | Excel | Sumber master |
+| `db/init.sql` | Docker first boot | Schema + seed penuh |
 
 Load ke DB + Redis:
 ```bash
-npm run data:manual
+npm run data:excel
+# atau: npm run data:manual
 ```
 
 Panduan lengkap: `data/README-DATA-MANUAL.md`

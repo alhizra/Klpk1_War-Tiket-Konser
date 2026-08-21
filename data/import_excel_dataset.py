@@ -355,14 +355,6 @@ def main():
     )
     print("SUMMARY", json.dumps(summary, ensure_ascii=False, indent=2))
 
-    # also export simple SQL seed snapshot for github
-    sql_path = ROOT / "dataset_seed.sql"
-    with sql_path.open("w", encoding="utf-8") as f:
-        f.write("-- Generated from DATA_WAR_TIKET_KONSER.xlsx\n")
-        f.write("-- Load via: python data/import_excel_dataset.py --load\n")
-        f.write(f"-- Events: {len(events_out)}, Seats: {len(all_seats)}\n")
-    print("WROTE", sql_path)
-
     # selalu regenerate db/init.sql agar Codespace/Docker fresh = dataset Excel
     print("==> Generating db/init.sql ...")
     subprocess.run(
