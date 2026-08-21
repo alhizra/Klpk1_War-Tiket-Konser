@@ -95,6 +95,22 @@ paths:
         "200": { description: Confirmed }
         "409": { description: Hold invalid }
 
+  /v1/tickets/release:
+    post:
+      tags: [ticket]
+      summary: Lepas hold (batal / kompensasi)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [holdId]
+              properties:
+                holdId: { type: string }
+      responses:
+        "200": { description: Released }
+        "409": { description: Hold invalid }
+
   /v1/login:
     post:
       tags: [payment]

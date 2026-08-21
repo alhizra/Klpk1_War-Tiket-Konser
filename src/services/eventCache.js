@@ -104,7 +104,7 @@ async function getEventView(eventId) {
       ? Math.max(0, catalog.quotaTotal - sisa)
       : snap.terjual;
 
-  const soldSeats = await redis.smembers(`seats:sold:${eventId}`);
+  const soldSeats = await redis.smembers(keys.seatsSold(eventId));
 
   return {
     ...catalog,

@@ -2,13 +2,22 @@ const { v4: uuidv4 } = require("uuid");
 const config = require("../config");
 const db = require("../db");
 const { redis, keys } = require("../redis");
-const { reserveSeats, ensureQuotaInitialized } = require("./quota");
+const {
+  reserveSeats,
+  releaseSeats,
+  claimSeatCodes,
+  releaseSeatCodes,
+  ensureQuotaInitialized,
+} = require("./quota");
 const { getEventView } = require("./eventCache");
 const {
   createPaymentSession,
   AUTO_CAPTURE,
   PROVIDER,
 } = require("./paymentGateway");
+
+/** Menit sebelum PENDING_PAYMENT expire & kuota dikembalikan */
+const PAYMENT_TTL_MIN = Number(process.env.PAYMENT_TTL_MIN || 15);
 
 function normalizeEmail(raw, orderId) {
   const e = String(raw || "").trim().toLowerCase();
@@ -19,10 +28,10 @@ function normalizeEmail(raw, orderId) {
 /**
  * POST /orders — jalur panas.
  * 1) Validasi qty
- * 2) Reserve kursi atomik Redis
- * 3) Persist order PENDING_PAYMENT
- * 4) Buat sesi payment gateway
- * 5) Jika AUTO_CAPTURE → settle + enqueue e-ticket
+ * 2) Reserve kuota atomik Redis
+ * 3) Claim seatCodes atomik (jika ada)
+ * 4) Persist order + sesi payment
+ * 5) AUTO_CAPTURE → settle + enqueue e-ticket
  */
 async function createOrder({
   eventId,
@@ -75,6 +84,19 @@ async function createOrder({
     throw err;
   }
 
+  if (seats.length) {
+    const claimed = await claimSeatCodes(eventId, seats);
+    if (!claimed.ok) {
+      await releaseSeats(eventId, q);
+      const err = new Error(
+        `kursi tidak tersedia: ${claimed.conflict || seats.join(",")}`
+      );
+      err.status = 409;
+      err.sisa = reserved.sisa + q;
+      throw err;
+    }
+  }
+
   const orderId = uuidv4();
   const amountIdr = event.priceIdr * q;
   const buyerEmail = normalizeEmail(email, orderId);
@@ -92,8 +114,8 @@ async function createOrder({
       title: event.title,
     });
   } catch (payErr) {
-    await redis.incrby(keys.quota(eventId), q);
-    await redis.decrby(keys.sold(eventId), q);
+    await releaseSeats(eventId, q);
+    if (seats.length) await releaseSeatCodes(eventId, seats);
     throw payErr;
   }
 
@@ -119,17 +141,15 @@ async function createOrder({
       paymentId: payment.paymentId,
       provider: payment.provider,
     });
-    if (seats.length) {
-      await redis.sadd(`seats:sold:${eventId}`, ...seats);
-    }
   } catch (dbErr) {
-    await redis.incrby(keys.quota(eventId), q);
-    await redis.decrby(keys.sold(eventId), q);
+    await releaseSeats(eventId, q);
+    if (seats.length) await releaseSeatCodes(eventId, seats);
     throw dbErr;
   }
 
   let status = "PENDING_PAYMENT";
   let mailNote = "menunggu pembayaran — e-ticket setelah PAID";
+  let sisaOut = reserved.sisa;
 
   if (AUTO_CAPTURE) {
     const paid = await confirmPayment(orderId, {
@@ -148,7 +168,7 @@ async function createOrder({
     qty: q,
     seatCodes: seats,
     amountIdr,
-    sisa: reserved.sisa,
+    sisa: sisaOut,
     status,
     buyerEmail,
     buyerName: name,
@@ -199,7 +219,6 @@ async function confirmPayment(orderId, { paymentId, source } = {}) {
     return { ok: false, error: "gagal update order", status: 500 };
   }
 
-  // Enqueue e-ticket hanya pada transisi pertama PENDING → CONFIRMED
   if (wasPending) {
     await db.audit(orderId, order.event_id, "PAYMENT_SETTLED", {
       paymentId: paymentId || order.payment_id,
@@ -247,6 +266,34 @@ async function confirmPayment(orderId, { paymentId, source } = {}) {
   };
 }
 
+/**
+ * Expire PENDING_PAYMENT yang lewat TTL — kembalikan kuota + seat.
+ * Dipanggil periodik dari worker.
+ */
+async function expireStalePendingOrders() {
+  const rows = await db.listExpiredPending(PAYMENT_TTL_MIN);
+  let n = 0;
+  for (const row of rows) {
+    const ok = await db.expirePendingOrder(row.order_id);
+    if (!ok) continue;
+    const seats = row.seat_codes
+      ? String(row.seat_codes)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
+    await releaseSeats(row.event_id, row.qty);
+    if (seats.length) await releaseSeatCodes(row.event_id, seats);
+    await db.audit(row.order_id, row.event_id, "ORDER_EXPIRED", {
+      qty: row.qty,
+      seatCodes: seats,
+      ttlMin: PAYMENT_TTL_MIN,
+    });
+    n += 1;
+  }
+  return n;
+}
+
 async function getOrderPublic(orderId) {
   const row = await db.getOrder(orderId);
   if (!row) return null;
@@ -271,4 +318,10 @@ async function getOrderPublic(orderId) {
   };
 }
 
-module.exports = { createOrder, confirmPayment, getOrderPublic };
+module.exports = {
+  createOrder,
+  confirmPayment,
+  getOrderPublic,
+  expireStalePendingOrders,
+  PAYMENT_TTL_MIN,
+};

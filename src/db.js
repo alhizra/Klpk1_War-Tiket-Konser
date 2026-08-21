@@ -162,6 +162,30 @@ async function markOrderFailed(orderId, status = "FAILED") {
   );
 }
 
+/** PENDING_PAYMENT lebih tua dari ttlMin menit */
+async function listExpiredPending(ttlMin = 15) {
+  const { rows } = await query(
+    `SELECT order_id, event_id, qty, seat_codes, status, created_at
+     FROM orders
+     WHERE status = 'PENDING_PAYMENT'
+       AND created_at < now() - ($1::text || ' minutes')::interval
+     ORDER BY created_at
+     LIMIT 100`,
+    [String(ttlMin)]
+  );
+  return rows;
+}
+
+/** Set EXPIRED hanya jika masih PENDING_PAYMENT. return true jika di-update. */
+async function expirePendingOrder(orderId) {
+  const { rowCount } = await query(
+    `UPDATE orders SET status = 'EXPIRED'
+     WHERE order_id = $1 AND status = 'PENDING_PAYMENT'`,
+    [orderId]
+  );
+  return rowCount > 0;
+}
+
 async function audit(orderId, eventId, action, detail) {
   await query(
     `INSERT INTO order_events_audit (order_id, event_id, action, detail)
@@ -193,6 +217,8 @@ module.exports = {
   getOrderByPaymentId,
   markOrderPaid,
   markOrderFailed,
+  listExpiredPending,
+  expirePendingOrder,
   audit,
   countSold,
 };

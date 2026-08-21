@@ -6,6 +6,7 @@ require("./config"); // load .env dulu
 const { redis, keys } = require("./redis");
 const db = require("./db");
 const { sendETicket } = require("./services/mail");
+const { expireStalePendingOrders } = require("./services/orders");
 
 async function kirimETicket(job) {
   const result = await sendETicket(job);
@@ -35,8 +36,15 @@ async function loop() {
     }
   }
 
+  let lastExpire = 0;
   while (true) {
     try {
+      const now = Date.now();
+      if (now - lastExpire > 30_000) {
+        lastExpire = now;
+        const n = await expireStalePendingOrders();
+        if (n > 0) console.log(`[worker] expired ${n} pending order(s)`);
+      }
       const result = await redis.brpop(keys.queueEticket, 5);
       if (!result) continue;
       const payload = result[1];

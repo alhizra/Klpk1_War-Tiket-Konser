@@ -8,6 +8,8 @@
     "dev": "node --watch src/server.js",
     "worker": "node src/worker.js",
     "seed": "node src/seed.js",
+    "test": "node --test src/**/*.test.js",
+    "test:ms": "npm test --prefix services/payment && npm test --prefix services/ticket",
     "data:generate": "node data/generate-real-seats.js",
     "data:manual": "node src/load-manual-data.js",
     "data:korea": "node data/generate-real-seats.js && node src/load-manual-data.js",

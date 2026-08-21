@@ -7,6 +7,9 @@
 - Worker e-ticket tidak memblokir path order (async Redis queue)
 - Payment lab: mock gateway + auto-capture; webhook/simulate untuk alur PAID
 - E-ticket modul: worker → outbox `data/outbox-mail/` + audit; `GET /api/mail/outbox` (SMTP opsional)
+- Seat codes atomik (Lua SADD); PENDING_PAYMENT expire → lepas kuota (`PAYMENT_TTL_MIN`)
+- Docker: volume shared `outbox-mail` api↔worker; healthcheck api sebelum gateway
+- Tes: `npm test` (quota Lua + payment mock)
 
 ## Alur POST /orders
 1. Validasi `eventId`, `qty` (1–4)

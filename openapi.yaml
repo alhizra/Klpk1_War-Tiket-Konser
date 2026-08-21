@@ -325,6 +325,42 @@ paths:
         "403":
           description: Token salah
 
+  /internal/reset-quota/{id}:
+    post:
+      tags: [internal]
+      summary: Alias reset tanpa prefix /api
+      operationId: resetQuotaBare
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+        - name: x-reset-token
+          in: header
+          schema: { type: string, example: dev-reset }
+      responses:
+        "200":
+          description: OK
+
+  /internal/quota/{id}:
+    get:
+      tags: [internal]
+      summary: Snapshot kuota Redis
+      operationId: getQuota
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+      responses:
+        "200":
+          description: OK
+
+  /api/internal/quota/{id}:
+    get:
+      tags: [internal]
+      summary: Alias snapshot kuota
+      operationId: getQuotaApi
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+      responses:
+        "200":
+          description: OK
+
 components:
   parameters:
     Page:

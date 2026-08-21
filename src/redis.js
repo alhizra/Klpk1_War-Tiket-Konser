@@ -15,6 +15,7 @@ redis.on("error", (err) => {
 const keys = {
   quota: (eventId) => `quota:event:${eventId}`,
   sold: (eventId) => `sold:event:${eventId}`,
+  seatsSold: (eventId) => `seats:sold:${eventId}`,
   eventCache: (eventId) => `cache:event:${eventId}`,
   lockCache: (eventId) => `lock:cache:event:${eventId}`,
   queueEticket: "queue:eticket",

@@ -58,7 +58,9 @@ function seedSeats() {
   // Full Excel 3850 seats = monolit; di sini max 40/kategori.
   const MAX_PER_CAT = Number(process.env.SEED_MAX_PER_CAT || 40);
   let total = 0;
-  const tx = db.transaction(() => {
+  // node:sqlite — pakai BEGIN/COMMIT (db.transaction belum stabil di semua versi)
+  db.exec("BEGIN");
+  try {
     for (const e of catalog) {
       for (const cat of e.categories || []) {
         const q = Math.min(Number(cat.quota) || 0, MAX_PER_CAT);
@@ -69,8 +71,11 @@ function seedSeats() {
         }
       }
     }
-  });
-  tx();
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
   log("info", "seed seats", { total, maxPerCat: MAX_PER_CAT });
 }
 seedSeats();

@@ -3,9 +3,9 @@ info:
   title: API Squad — War Tiket Konser (Klpk1)
   version: 2.0.0
   description: |
-    **DIBEKUKAN (draft siap P4)** — salinan v1 + penanda freeze.
-    Setelah instruktur verifikasi, hanya perubahan aditif yang diizinkan.
-    Data domain: Excel dataset — TREASURE … 4EVE (11 events / 3850 seats).
+    **DIBEKUKAN v2** — monolit Scalable: events, orders anti-oversell, mock payment,
+    mail outbox lab, internal reset. Paritas implementasi src/routes.js.
+    Data: Excel 11 events / 3850 seats.
   x-frozen: true
   x-frozen-date: "2026-08-21"
   x-baseurl-rules:
@@ -18,60 +18,493 @@ info:
 
 servers:
   - url: http://localhost:8080
-    description: Gateway Docker / Codespace public port
+    description: Gateway Docker monolit
   - url: http://localhost:3000
     description: API Node dev langsung
 
-# Implementasi path sama dengan openapi.yaml v1 — lihat file itu untuk schema penuh.
-# File ini menandai status beku untuk artefak openapi-final.
+tags:
+  - name: health
+  - name: events
+  - name: orders
+  - name: payments
+  - name: mail
+  - name: internal
 
 paths:
   /health:
     get:
-      summary: Health
+      tags: [health]
+      summary: Health + identitas instance (bukti multi-replika)
+      operationId: getHealth
       responses:
-        "200": { description: OK }
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, example: true }
+                  service: { type: string, example: war-tiket-konser }
+                  instance: { type: string }
+                  pid: { type: integer }
+                  ts: { type: string, format: date-time }
+
+  /api/health:
+    get:
+      tags: [health]
+      summary: Alias health di prefix /api
+      operationId: getHealthApi
+      responses:
+        "200":
+          description: OK
+
   /events:
     get:
-      summary: Daftar event (page/size)
+      tags: [events]
+      summary: Daftar konser berpaginasi (11 event Excel — TREASURE … 4EVE)
+      operationId: listEvents
       parameters:
-        - name: page
-          in: query
-          schema: { type: integer, default: 1 }
-        - name: size
-          in: query
-          schema: { type: integer, default: 20, maximum: 50 }
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Size"
       responses:
-        "200": { description: OK }
-        "429": { description: Rate limit }
+        "200":
+          description: Halaman event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventPage"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
   /events/{id}:
     get:
-      summary: Detail + seats + sisa live
+      tags: [events]
+      summary: Detail event + denah seats + sisa kursi live
+      operationId: getEvent
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: integer }
+        - $ref: "#/components/parameters/EventId"
       responses:
-        "200": { description: OK }
-        "404": { description: Not found }
+        "200":
+          description: Detail event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Tidak ditemukan
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /api/events:
+    get:
+      tags: [events]
+      summary: Alias list events
+      operationId: listEventsApi
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Size"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventPage"
+
+  /api/events/{id}:
+    get:
+      tags: [events]
+      summary: Alias detail event
+      operationId: getEventApi
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
   /orders:
     post:
-      summary: Order tiket anti-oversell
+      tags: [orders]
+      summary: Pesan tiket (endpoint panas — anti-oversell)
+      description: |
+        Memotong kuota atomik di Redis. 409 = kuota habis (sah).
+        Body boleh menyertakan seatCodes dari denah web.
+      operationId: createOrder
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [eventId, qty]
-              properties:
-                eventId: { type: integer }
-                qty: { type: integer, minimum: 1, maximum: 4 }
-                seatCodes:
-                  type: array
-                  items: { type: string }
+              $ref: "#/components/schemas/CreateOrderRequest"
+            examples:
+              simple:
+                value: { eventId: 1, qty: 1 }
+              withSeats:
+                value: { eventId: 1, qty: 2, seatCodes: ["O1-01", "O1-02"] }
       responses:
-        "201": { description: Created }
-        "409": { description: Quota exhausted (valid business reject) }
-        "429": { description: Rate limit }
+        "201":
+          description: Order sukses
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Body tidak valid
+        "409":
+          description: Kuota habis / bentrok (penolakan sah)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorQuota"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /api/orders:
+    post:
+      tags: [orders]
+      summary: Alias create order
+      operationId: createOrderApi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "409":
+          description: Kuota habis
+
+  /orders/{id}:
+    get:
+      tags: [orders]
+      summary: Status order
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Tidak ditemukan
+
+  /api/orders/{id}:
+    get:
+      tags: [orders]
+      summary: Alias status order
+      operationId: getOrderApi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /payments/webhook:
+    post:
+      tags: [payments]
+      summary: Webhook gateway (mock settlement / Midtrans)
+      operationId: paymentWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId: { type: string }
+                status: { type: string, example: settlement }
+                paymentId: { type: string }
+      responses:
+        "200":
+          description: handled
+
+  /api/payments/webhook:
+    post:
+      tags: [payments]
+      summary: Alias webhook
+      operationId: paymentWebhookApi
+      responses:
+        "200":
+          description: OK
+
+  /payments/simulate:
+    post:
+      tags: [payments]
+      summary: Lab settle manual
+      operationId: paymentSimulate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orderId]
+              properties:
+                orderId: { type: string }
+      responses:
+        "200":
+          description: PAID
+
+  /api/payments/simulate:
+    post:
+      tags: [payments]
+      summary: Alias simulate
+      operationId: paymentSimulateApi
+      responses:
+        "200":
+          description: OK
+
+  /mail/outbox:
+    get:
+      tags: [mail]
+      summary: Daftar e-ticket outbox lab (bukan Gmail tanpa SMTP)
+      operationId: listMailOutbox
+      responses:
+        "200":
+          description: items + hint SMTP
+
+  /api/mail/outbox:
+    get:
+      tags: [mail]
+      summary: Alias outbox
+      operationId: listMailOutboxApi
+      responses:
+        "200":
+          description: OK
+
+  /mail/outbox/{orderId}:
+    get:
+      tags: [mail]
+      summary: E-ticket per order
+      operationId: getMailOutbox
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Belum ada
+
+  /api/mail/outbox/{orderId}:
+    get:
+      tags: [mail]
+      summary: Alias e-ticket per order
+      operationId: getMailOutboxApi
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /api/internal/reset-quota/{id}:
+    post:
+      tags: [internal]
+      summary: Reset kuota Redis (lab/loadtest saja)
+      operationId: resetQuota
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+        - name: x-reset-token
+          in: header
+          required: true
+          schema: { type: string, example: dev-reset }
+      responses:
+        "200":
+          description: Kuota di-reset ke quota_total
+        "403":
+          description: Token salah
+
+  /internal/reset-quota/{id}:
+    post:
+      tags: [internal]
+      summary: Alias reset tanpa prefix /api
+      operationId: resetQuotaBare
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+        - name: x-reset-token
+          in: header
+          schema: { type: string, example: dev-reset }
+      responses:
+        "200":
+          description: OK
+
+  /internal/quota/{id}:
+    get:
+      tags: [internal]
+      summary: Snapshot kuota Redis
+      operationId: getQuota
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+      responses:
+        "200":
+          description: OK
+
+  /api/internal/quota/{id}:
+    get:
+      tags: [internal]
+      summary: Alias snapshot kuota
+      operationId: getQuotaApi
+      parameters:
+        - $ref: "#/components/parameters/EventId"
+      responses:
+        "200":
+          description: OK
+
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    Size:
+      name: size
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+    EventId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1, example: 1 }
+
+  schemas:
+    CreateOrderRequest:
+      type: object
+      required: [eventId, qty]
+      properties:
+        eventId: { type: integer, minimum: 1, example: 1 }
+        qty: { type: integer, minimum: 1, maximum: 4, example: 2 }
+        email: { type: string, format: email, description: Tujuan e-ticket }
+        buyerName: { type: string }
+        seatCodes:
+          type: array
+          items: { type: string }
+          maxItems: 4
+          example: ["SC1-01", "SC1-02"]
+
+    Order:
+      type: object
+      properties:
+        orderId: { type: string, format: uuid }
+        eventId: { type: integer }
+        qty: { type: integer }
+        seatCodes:
+          type: array
+          items: { type: string }
+        amountIdr: { type: integer, example: 5000000 }
+        sisa: { type: integer, example: 498 }
+        status: { type: string, enum: [PENDING_PAYMENT, CONFIRMED, FAILED] }
+        buyerEmail: { type: string }
+        buyerName: { type: string }
+        payment:
+          type: object
+          properties:
+            provider: { type: string }
+            paymentId: { type: string }
+            status: { type: string }
+            vaNumber: { type: string }
+            redirectUrl: { type: string }
+        note: { type: string }
+
+    EventCategory:
+      type: object
+      properties:
+        code: { type: string, example: FLOOR }
+        name: { type: string }
+        priceIdr: { type: integer }
+        quota: { type: integer }
+        color: { type: string }
+
+    Seat:
+      type: object
+      properties:
+        code: { type: string, example: O1-01 }
+        category: { type: string }
+        categoryName: { type: string }
+        row: { type: string }
+        number: { type: integer }
+        section: { type: string }
+        priceIdr: { type: integer }
+
+    Event:
+      type: object
+      properties:
+        eventId: { type: integer, example: 1 }
+        title: { type: string }
+        artist: { type: string, example: "TREASURE (트레저)" }
+        venue: { type: string }
+        city: { type: string, example: Seoul }
+        country: { type: string, example: "South Korea" }
+        startsAt: { type: string, format: date-time }
+        salesOpensAt: { type: string, format: date-time }
+        quotaTotal: { type: integer, example: 400 }
+        priceIdr: { type: integer }
+        status: { type: string }
+        description: { type: string }
+        gateOpen: { type: string }
+        ageRating: { type: string }
+        terms:
+          type: array
+          items: { type: string }
+        categories:
+          type: array
+          items: { $ref: "#/components/schemas/EventCategory" }
+        seats:
+          type: array
+          items: { $ref: "#/components/schemas/Seat" }
+        sisa: { type: integer, description: Live Redis — jangan di-cache klien sebagai truth }
+        terjual: { type: integer }
+        soldSeats:
+          type: array
+          items: { type: string }
+        from: { type: string, enum: [cache, db] }
+
+    EventPage:
+      type: object
+      properties:
+        page: { type: integer }
+        size: { type: integer }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Event" }
+
+    ErrorQuota:
+      type: object
+      properties:
+        error: { type: string }
+        sisa: { type: integer }
+
+  responses:
+    TooManyRequests:
+      description: Rate limit
+      headers:
+        X-RateLimit-Limit:
+          schema: { type: integer }
+        X-RateLimit-Remaining:
+          schema: { type: integer }
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }

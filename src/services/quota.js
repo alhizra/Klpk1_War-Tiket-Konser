@@ -18,6 +18,27 @@ redis.call('INCRBY', s, qty)
 return {1, sisa}
 `;
 
+/**
+ * Claim seat codes atomik (SADD return 1 = baru).
+ * KEYS[1]=seats:sold set  ARGV = seat codes
+ * Return: 1 ok | 0 conflict (sudah di-rollback partial adds)
+ */
+const CLAIM_SEATS_LUA = `
+local setkey = KEYS[1]
+local added = {}
+for i = 1, #ARGV do
+  local r = redis.call('SADD', setkey, ARGV[i])
+  if r == 0 then
+    for j = 1, #added do
+      redis.call('SREM', setkey, added[j])
+    end
+    return {0, ARGV[i]}
+  end
+  table.insert(added, ARGV[i])
+end
+return {1, ''}
+`;
+
 async function reserveSeats(eventId, qty) {
   const qKey = keys.quota(eventId);
   const sKey = keys.sold(eventId);
@@ -25,6 +46,33 @@ async function reserveSeats(eventId, qty) {
   const ok = Number(result[0]) === 1;
   const sisa = Number(result[1]);
   return { ok, sisa };
+}
+
+/** Lepas kuota (batal order / expire unpaid) */
+async function releaseSeats(eventId, qty) {
+  const q = Number(qty) || 0;
+  if (q < 1) return;
+  await redis.incrby(keys.quota(eventId), q);
+  await redis.decrby(keys.sold(eventId), q);
+}
+
+/**
+ * Claim label kursi spesifik. Gagal → { ok:false, conflict }.
+ * Harus dipanggil SETELAH reserveSeats qty berhasil.
+ */
+async function claimSeatCodes(eventId, seatCodes) {
+  const seats = (seatCodes || []).map((s) => String(s).trim().toUpperCase()).filter(Boolean);
+  if (!seats.length) return { ok: true };
+  const setKey = keys.seatsSold(eventId);
+  const result = await redis.eval(CLAIM_SEATS_LUA, 1, setKey, ...seats);
+  const ok = Number(result[0]) === 1;
+  return { ok, conflict: ok ? null : String(result[1] || "") };
+}
+
+async function releaseSeatCodes(eventId, seatCodes) {
+  const seats = (seatCodes || []).map((s) => String(s).trim().toUpperCase()).filter(Boolean);
+  if (!seats.length) return;
+  await redis.srem(keys.seatsSold(eventId), ...seats);
 }
 
 async function getQuotaSnapshot(eventId) {
@@ -50,12 +98,15 @@ async function resetQuotaCounters(eventId, quotaTotal) {
   await redis.set(keys.quota(eventId), String(quotaTotal));
   await redis.set(keys.sold(eventId), "0");
   await redis.del(keys.eventCache(eventId));
-  await redis.del(`seats:sold:${eventId}`);
+  await redis.del(keys.seatsSold(eventId));
   return getQuotaSnapshot(eventId);
 }
 
 module.exports = {
   reserveSeats,
+  releaseSeats,
+  claimSeatCodes,
+  releaseSeatCodes,
   getQuotaSnapshot,
   ensureQuotaInitialized,
   resetQuotaCounters,

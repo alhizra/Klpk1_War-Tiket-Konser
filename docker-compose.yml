@@ -6,7 +6,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wtk}
       POSTGRES_DB: ${POSTGRES_DB:-wtk}
     ports:
-      # Codespace / dev lokal: npm start bisa ke localhost:5432
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -39,13 +38,12 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-wtk}:${POSTGRES_PASSWORD:-wtk}@postgres:5432/${POSTGRES_DB:-wtk}
       REDIS_URL: redis://redis:6379
       DEFAULT_QUOTA: ${DEFAULT_QUOTA:-500}
-      # Lab/loadtest default tinggi agar 409 kuota tidak tertutup 429.
-      # Demo Mobile / aturan baseurl: set RATE_LIMIT=60
       RATE_LIMIT: ${RATE_LIMIT:-10000}
       RATE_WINDOW_SEC: ${RATE_WINDOW_SEC:-60}
       RESET_TOKEN: ${RESET_TOKEN:-dev-reset}
       PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
       PAYMENT_AUTO_CAPTURE: ${PAYMENT_AUTO_CAPTURE:-1}
+      PAYMENT_TTL_MIN: ${PAYMENT_TTL_MIN:-15}
       MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY:-}
       MIDTRANS_CLIENT_KEY: ${MIDTRANS_CLIENT_KEY:-}
       MIDTRANS_IS_PRODUCTION: ${MIDTRANS_IS_PRODUCTION:-0}
@@ -55,6 +53,8 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-WTK Ticket <noreply@wtk-ticket.local>}
+    volumes:
+      - outbox-mail:/app/data/outbox-mail
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,6 +62,18 @@ services:
         condition: service_healthy
     expose:
       - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
     restart: unless-stopped
 
   worker:
@@ -72,16 +84,21 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-wtk}:${POSTGRES_PASSWORD:-wtk}@postgres:5432/${POSTGRES_DB:-wtk}
       REDIS_URL: redis://redis:6379
+      PAYMENT_TTL_MIN: ${PAYMENT_TTL_MIN:-15}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-0}
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-WTK Ticket <noreply@wtk-ticket.local>}
+    volumes:
+      - outbox-mail:/app/data/outbox-mail
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      api:
         condition: service_healthy
     restart: unless-stopped
 
@@ -92,8 +109,10 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
   pgdata:
+  outbox-mail:
