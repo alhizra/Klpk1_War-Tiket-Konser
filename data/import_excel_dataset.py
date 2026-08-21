@@ -363,6 +363,14 @@ def main():
         f.write(f"-- Events: {len(events_out)}, Seats: {len(all_seats)}\n")
     print("WROTE", sql_path)
 
+    # selalu regenerate db/init.sql agar Codespace/Docker fresh = dataset Excel
+    print("==> Generating db/init.sql ...")
+    subprocess.run(
+        [sys.executable, str(ROOT / "generate_init_sql.py")],
+        cwd=str(REPO),
+        check=False,
+    )
+
     if args.load:
         print("==> Loading to database...")
         env = {
@@ -372,18 +380,12 @@ def main():
             ),
             "REDIS_URL": __import__("os").environ.get("REDIS_URL", "redis://localhost:6379"),
         }
-        # skip auto generate-real-seats inside load-manual (uses LAYOUT korea)
-        # call load-manual-data but it re-runs generate-real-seats.js which OVERWRITES seats!
-        # Fix: temporarily patch — run load without generate
-        load_js = REPO / "src" / "load-manual-data.js"
-        # run node script that only upserts from existing csv/json
         r = subprocess.run(
             [sys.executable, str(ROOT / "load_to_db.py")],
             cwd=str(REPO),
             env=env,
         )
         if r.returncode != 0:
-            # fallback: node load but disable generate by renaming
             gen = ROOT / "generate-real-seats.js"
             bak = ROOT / "generate-real-seats.js.bak_tmp"
             if gen.exists():
