@@ -198,16 +198,26 @@
   }
 
   function markSold() {
-    if (eventData?.soldSeats?.length) {
-      soldCodes = new Set(eventData.soldSeats.map((c) => String(c).toUpperCase()));
+    const codes = seatLayout.map((s) => s.code);
+    const fromApi = new Set(
+      (eventData?.soldSeats || []).map((c) => String(c).toUpperCase())
+    );
+    const sisa = Number(eventData?.sisa);
+    const quota = Number(eventData?.quotaTotal) || codes.length;
+    // Kuota habis → semua kursi di denah dianggap sold (tidak bisa diklik)
+    if (Number.isFinite(sisa) && sisa <= 0) {
+      soldCodes = new Set(codes);
       return;
     }
-    const codes = seatLayout.map((s) => s.code);
+    if (fromApi.size) {
+      soldCodes = fromApi;
+      return;
+    }
     const soldCount = Math.max(
       0,
-      Math.min(codes.length, (eventData.quotaTotal || 0) - (eventData.sisa ?? 0))
+      Math.min(codes.length, quota - (Number.isFinite(sisa) ? sisa : quota))
     );
-    soldCodes = new Set(codes.slice(codes.length - soldCount));
+    soldCodes = new Set(codes.slice(Math.max(0, codes.length - soldCount)));
   }
 
   function priceOf(code) {
@@ -221,14 +231,34 @@
 
   function updateCheckout() {
     const list = [...selected];
-    el("selectedList").textContent = list.length ? list.join(", ") : "Belum ada";
+    const sisa = Number(eventData?.sisa);
+    const habis = Number.isFinite(sisa) && sisa <= 0;
+    el("selectedList").textContent = list.length
+      ? list.join(", ")
+      : habis
+        ? "Kuota habis — tidak bisa booking"
+        : "Belum ada";
     el("selectedCount").textContent = String(list.length);
     const total = list.reduce((sum, c) => sum + priceOf(c), 0);
     el("totalPrice").textContent = fmtRp(total);
-    el("btnOrder").disabled = list.length === 0;
+    el("btnOrder").disabled = list.length === 0 || habis;
+    const go = el("btnGoSeat");
+    if (go) {
+      go.disabled = habis;
+      go.textContent = habis
+        ? "매진 · Sold out"
+        : "좌석 선택 · Pilih kursi";
+    }
 
     const bp = el("benefitPreview");
-    if (list.length) {
+    if (habis) {
+      bp.innerHTML =
+        "<strong style='color:#fca5a5'>Sold out.</strong> Reset kuota lab: " +
+        "<code style='font-size:.75rem'>POST /internal/reset-quota/" +
+        currentEventId +
+        "</code> lalu refresh.";
+      bp.classList.add("show");
+    } else if (list.length) {
       const cats = [...new Set(list.map(catOf))];
       const lines = cats.flatMap((c) => {
         const bens = benefitsOf(currentEventId, c).slice(0, 2);
@@ -319,7 +349,15 @@
   }
 
   function toggleSeat(code) {
-    if (soldCodes.has(code)) return;
+    if (soldCodes.has(code)) {
+      toast("Kursi sudah terjual", "err");
+      return;
+    }
+    const sisa = Number(eventData?.sisa);
+    if (Number.isFinite(sisa) && sisa <= 0) {
+      toast("Kuota event habis (sold out). Reset kuota lab lalu refresh.", "err");
+      return;
+    }
     if (selected.has(code)) selected.delete(code);
     else {
       if (selected.size >= MAX_SELECT) {
@@ -417,6 +455,9 @@
     buildLayoutFromEvent(eventData);
     markSold();
     renderDetail();
+    if (Number(eventData.sisa) <= 0) {
+      toast("Sold out — sisa 0. Kuota lab bisa di-reset, lalu refresh halaman.", "err");
+    }
   }
 
   async function placeOrder() {
