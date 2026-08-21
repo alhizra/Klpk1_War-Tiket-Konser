@@ -489,6 +489,47 @@
 
   let memesan = false;
 
+  /** Poll outbox e-ticket (lab). Tanpa SMTP, tiket tampil di sini — bukan Gmail. */
+  async function pollETicket(orderId, email, attempt = 0) {
+    const box = el("eticketBox");
+    if (!box) return;
+    try {
+      const res = await fetch(`/api/mail/outbox/${encodeURIComponent(orderId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        const item = (data.items || [])[0];
+        if (item) {
+          const modeNote =
+            item.mode === "smtp"
+              ? `Terkirim SMTP ke ${item.to}`
+              : item.mode === "ethereal"
+                ? `Ethereal saja (bukan Gmail). ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" rel="noopener">Buka preview</a>` : ""}`
+                : `Tersimpan outbox lokal → ${item.to}. Isi SMTP di .env agar masuk inbox Gmail.`;
+          box.innerHTML = `
+            <strong style="color:#86efac">✉ E-ticket siap</strong>
+            <div style="font-size:.85rem;margin-top:.35rem">${modeNote}</div>
+            <div style="margin-top:.5rem;padding:.6rem;background:#0f172a;border-radius:6px;font-size:.8rem;white-space:pre-wrap;max-height:180px;overflow:auto">${(item.text || "").replace(/</g, "&lt;")}</div>
+          `;
+          toast(
+            item.mode === "smtp"
+              ? `E-ticket dikirim ke ${email || item.to}`
+              : "E-ticket di outbox (bukan Gmail kecuali SMTP di-set)",
+            item.mode === "smtp" ? "ok" : ""
+          );
+          return;
+        }
+      }
+    } catch {
+      /* retry */
+    }
+    if (attempt < 12) {
+      box.innerHTML = `<em>Menunggu e-ticket… (${attempt + 1})</em>`;
+      setTimeout(() => pollETicket(orderId, email, attempt + 1), 800);
+    } else {
+      box.innerHTML = `<span style="color:#fca5a5">E-ticket belum muncul. Pastikan worker jalan: <code>npm run worker</code>. Cek <a href="/api/mail/outbox" target="_blank">/api/mail/outbox</a></span>`;
+    }
+  }
+
   async function placeOrder() {
     const qty = selected.size;
     if (!qty) return;
@@ -507,6 +548,8 @@
       eventId: currentEventId,
       qty,
       seatCodes: [...selected],
+      email: (el("buyerEmail") && el("buyerEmail").value) || undefined,
+      buyerName: (el("buyerName") && el("buyerName").value) || undefined,
     };
 
     try {
@@ -519,17 +562,61 @@
         const benLines = cats.flatMap((c) =>
           benefitsOf(currentEventId, c).map((b) => `• [${c}] ${b}`)
         );
-        toast(`Berhasil · sisa ${data.sisa}`, "ok");
+        const pay = data.payment || {};
+        const paid = data.status === "CONFIRMED";
+        toast(
+          paid
+            ? `Berhasil dibayar · sisa ${data.sisa}`
+            : `Order dibuat · selesaikan bayar · sisa ${data.sisa}`,
+          paid ? "ok" : ""
+        );
         el("orderResult").classList.remove("hidden");
+        const payBlock = paid
+          ? `<code>payment: ${pay.provider || "mock"} · PAID</code>
+             <code>e-ticket → ${data.buyerEmail || "antrean worker"}</code>
+             <div id="eticketBox" class="eticket-box"><em>Menunggu e-ticket dari worker…</em></div>`
+          : `<code>VA: ${pay.vaNumber || "—"} (${pay.bank || "Mock Bank"})</code>
+             <code>paymentId: ${pay.paymentId || "—"}</code>
+             <button type="button" class="btn primary" id="btnPayNow" style="margin-top:.5rem">Bayar sekarang (simulasi)</button>`;
         el("orderResult").innerHTML = `
-          <strong>예매 완료 · Pembayaran / pesanan berhasil</strong>
+          <strong>${paid ? "예매 완료 · Lunas" : "Menunggu pembayaran"}</strong>
           <code>orderId: ${data.orderId}</code>
           <code>kursi: ${seatsDone.join(", ")}</code>
           <code>total: ${fmtRp(data.amountIdr)}</code>
-          <code>status: ${data.status || "CONFIRMED"}</code>
+          <code>status: ${data.status || "—"}</code>
+          ${payBlock}
           <code style="margin-top:.5rem;color:#fde68a">Benefit yang didapat:</code>
           <code style="white-space:pre-wrap;color:#e2e8f0">${benLines.join("\n") || "• E-ticket QR"}</code>
         `;
+        if (paid) pollETicket(data.orderId, data.buyerEmail);
+        const btnPay = el("btnPayNow");
+        if (btnPay) {
+          btnPay.onclick = async () => {
+            btnPay.disabled = true;
+            btnPay.textContent = "Memproses…";
+            const pr = await fetch("/api/payments/simulate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId: data.orderId }),
+            });
+            const pd = await pr.json().catch(() => ({}));
+            if (pr.ok && pd.ok) {
+              toast("Pembayaran sukses — e-ticket dikirim async", "ok");
+              el("orderResult").innerHTML = `
+                <strong>예매 완료 · Lunas</strong>
+                <code>orderId: ${data.orderId}</code>
+                <code>status: CONFIRMED</code>
+                <code>e-ticket → ${data.buyerEmail || "worker"}</code>
+                <div id="eticketBox" class="eticket-box"><em>Menunggu e-ticket…</em></div>
+              `;
+              pollETicket(data.orderId, data.buyerEmail);
+            } else {
+              toast(pd.error || "Gagal bayar", "err");
+              btnPay.disabled = false;
+              btnPay.textContent = "Bayar sekarang (simulasi)";
+            }
+          };
+        }
         selected.clear();
         await loadEventDetail(currentEventId);
       } else if (res.status === 409) {

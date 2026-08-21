@@ -44,6 +44,17 @@ services:
       RATE_LIMIT: ${RATE_LIMIT:-10000}
       RATE_WINDOW_SEC: ${RATE_WINDOW_SEC:-60}
       RESET_TOKEN: ${RESET_TOKEN:-dev-reset}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
+      PAYMENT_AUTO_CAPTURE: ${PAYMENT_AUTO_CAPTURE:-1}
+      MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY:-}
+      MIDTRANS_CLIENT_KEY: ${MIDTRANS_CLIENT_KEY:-}
+      MIDTRANS_IS_PRODUCTION: ${MIDTRANS_IS_PRODUCTION:-0}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-0}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-WTK Ticket <noreply@wtk-ticket.local>}
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,6 +72,12 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-wtk}:${POSTGRES_PASSWORD:-wtk}@postgres:5432/${POSTGRES_DB:-wtk}
       REDIS_URL: redis://redis:6379
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-0}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-WTK Ticket <noreply@wtk-ticket.local>}
     depends_on:
       postgres:
         condition: service_healthy

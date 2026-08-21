@@ -72,17 +72,25 @@ CREATE TABLE IF NOT EXISTS seats (
 CREATE INDEX IF NOT EXISTS idx_seats_event_cat ON seats(event_id, category);
 
 -- ----- orders -----
+-- status: PENDING_PAYMENT → CONFIRMED (paid) | EXPIRED | FAILED
 CREATE TABLE IF NOT EXISTS orders (
-  order_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  event_id      INT NOT NULL REFERENCES events(event_id),
-  qty           INT NOT NULL CHECK (qty > 0 AND qty <= 4),
-  amount_idr    BIGINT NOT NULL,
-  status        VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED',
-  client_ip     VARCHAR(64),
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  order_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id          INT NOT NULL REFERENCES events(event_id),
+  qty               INT NOT NULL CHECK (qty > 0 AND qty <= 4),
+  amount_idr        BIGINT NOT NULL,
+  status            VARCHAR(20) NOT NULL DEFAULT 'PENDING_PAYMENT',
+  client_ip         VARCHAR(64),
+  buyer_email       VARCHAR(255),
+  buyer_name        VARCHAR(120),
+  payment_id        VARCHAR(80),
+  payment_provider  VARCHAR(40),
+  seat_codes        TEXT,
+  paid_at           TIMESTAMPTZ,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_orders_event ON orders(event_id);
 CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_orders_payment ON orders(payment_id);
 
 CREATE TABLE IF NOT EXISTS order_events_audit (
   audit_id      BIGSERIAL PRIMARY KEY,

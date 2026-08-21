@@ -55,10 +55,11 @@ async function waitReady(retries = 30) {
 
 async function start() {
   await waitReady();
+  await db.ensureOrderColumns();
   await seedQuota(config.defaultEventId);
   app.listen(config.port, "0.0.0.0", () => {
     console.log(
-      `[api] listening :${config.port} instance=${config.instanceId}`
+      `[api] listening :${config.port} instance=${config.instanceId} payment=${process.env.PAYMENT_PROVIDER || "mock"}`
     );
   });
 }

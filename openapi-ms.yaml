@@ -112,7 +112,7 @@ paths:
   /v1/payments:
     post:
       tags: [payment]
-      summary: Bayar + lock + confirm + publish ticket.issued
+      summary: Lock kursi + sesi gateway; default auto-settle + ticket.issued
       security:
         - bearerAuth: []
       requestBody:
@@ -128,11 +128,55 @@ paths:
                 seatCodes:
                   type: array
                   items: { type: string }
+                email: { type: string }
+                buyerName: { type: string }
       responses:
-        "201": { description: Paid + ticket confirmed }
+        "201": { description: PAID (auto) atau PENDING + instruksi bayar }
         "401": { description: No/invalid token }
         "409": { description: Kursi habis }
         "503": { description: Dependency down }
+
+  /v1/payments/{id}/settle:
+    post:
+      tags: [payment]
+      summary: Settle manual (lab) bila PAYMENT_AUTO_CAPTURE=0
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: PAID + ticket confirmed }
+
+  /v1/payments/webhook:
+    post:
+      tags: [payment]
+      summary: Webhook gateway (mock settlement / Midtrans)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paymentId: { type: string }
+                status: { type: string }
+      responses:
+        "200": { description: handled }
+
+  /v1/payments/{id}:
+    get:
+      tags: [payment]
+      summary: Status pembayaran
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
 
   /v1/catalog:
     get:

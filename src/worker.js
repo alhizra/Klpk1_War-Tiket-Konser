@@ -1,26 +1,33 @@
 /**
  * Worker e-ticket — konsumsi antrean Redis (bisa di-scale terpisah).
- * Jalur request POST /orders tidak menunggu pengiriman email.
+ * Kirim email nyata via nodemailer (SMTP / Ethereal / file outbox).
  */
 const { redis, keys } = require("./redis");
 const db = require("./db");
+const { sendETicket } = require("./services/mail");
 
 async function kirimETicket(job) {
-  // Simulasi kerja berat (email/SMS provider)
-  await new Promise((r) => setTimeout(r, 50));
+  const result = await sendETicket(job);
   await db.audit(job.orderId, job.eventId, "ETICKET_SENT", {
-    email: job.email,
+    email: result.to || job.email,
     qty: job.qty,
+    mode: result.mode,
+    messageId: result.messageId || null,
+    previewUrl: result.previewUrl || null,
+    path: result.path || null,
   });
-  console.log(`[worker] e-ticket sent order=${job.orderId} to ${job.email}`);
+  console.log(
+    `[worker] e-ticket sent order=${job.orderId} to=${result.to} mode=${result.mode}`
+  );
+  return result;
 }
 
 async function loop() {
   console.log("[worker] started, queue=", keys.queueEticket);
-  // pastikan DB hidup
   for (let i = 0; i < 30; i++) {
     try {
       await db.query("SELECT 1");
+      await db.ensureOrderColumns();
       break;
     } catch {
       await new Promise((r) => setTimeout(r, 1000));

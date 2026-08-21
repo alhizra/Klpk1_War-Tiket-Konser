@@ -305,6 +305,12 @@ button { font-family: inherit; }
 }
 .toast.ok { background: #e8fbeb; border-color: #86efac; }
 .toast.err { background: #fef2f2; border-color: #fecaca; }
+.eticket-box {
+  margin-top: .65rem; padding: .7rem .85rem; border-radius: 8px;
+  background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+  font-size: .88rem;
+}
+.eticket-box a { color: #86efac; }
 .order-result {
   margin-top: .75rem; padding: .85rem; border-radius: 8px;
   background: #111; color: #e2e8f0; font-size: .85rem;

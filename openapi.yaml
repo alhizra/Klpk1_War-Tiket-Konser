@@ -4,13 +4,13 @@ info:
   version: 1.0.0
   description: |
     Kontrak API praktikum Scalable Systems — tema War Tiket Konser (dataset Excel 11 event).
-    Revisi Jumat: backend monolit (event+ticket+web). Payment/notif eksternal ditunda.
+    Monolit: event+ticket+web + payment gateway (mock/Midtrans) + e-ticket email (SMTP/outbox).
     Development — boleh berubah sampai dibekukan di openapi-final.yaml v2.
   x-frozen: false
 
 servers:
   - url: http://localhost:8080
-    description: Gateway Nginx (docker compose)
+    description: Gateway Nginx (docker compose monolit)
   - url: http://localhost:3000
     description: API langsung (dev lokal)
 
@@ -18,6 +18,8 @@ tags:
   - name: health
   - name: events
   - name: orders
+  - name: payments
+  - name: mail
   - name: internal
 
 paths:
@@ -175,6 +177,137 @@ paths:
         "409":
           description: Kuota habis
 
+  /orders/{id}:
+    get:
+      tags: [orders]
+      summary: Status order
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Tidak ditemukan
+
+  /api/orders/{id}:
+    get:
+      tags: [orders]
+      summary: Alias status order
+      operationId: getOrderApi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
+  /payments/webhook:
+    post:
+      tags: [payments]
+      summary: Webhook gateway (mock settlement / Midtrans)
+      operationId: paymentWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId: { type: string }
+                status: { type: string, example: settlement }
+                paymentId: { type: string }
+      responses:
+        "200":
+          description: handled
+
+  /api/payments/webhook:
+    post:
+      tags: [payments]
+      summary: Alias webhook
+      operationId: paymentWebhookApi
+      responses:
+        "200":
+          description: OK
+
+  /payments/simulate:
+    post:
+      tags: [payments]
+      summary: Lab settle manual
+      operationId: paymentSimulate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orderId]
+              properties:
+                orderId: { type: string }
+      responses:
+        "200":
+          description: PAID
+
+  /api/payments/simulate:
+    post:
+      tags: [payments]
+      summary: Alias simulate
+      operationId: paymentSimulateApi
+      responses:
+        "200":
+          description: OK
+
+  /mail/outbox:
+    get:
+      tags: [mail]
+      summary: Daftar e-ticket outbox lab (bukan Gmail tanpa SMTP)
+      operationId: listMailOutbox
+      responses:
+        "200":
+          description: items + hint SMTP
+
+  /api/mail/outbox:
+    get:
+      tags: [mail]
+      summary: Alias outbox
+      operationId: listMailOutboxApi
+      responses:
+        "200":
+          description: OK
+
+  /mail/outbox/{orderId}:
+    get:
+      tags: [mail]
+      summary: E-ticket per order
+      operationId: getMailOutbox
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Belum ada
+
+  /api/mail/outbox/{orderId}:
+    get:
+      tags: [mail]
+      summary: Alias e-ticket per order
+      operationId: getMailOutboxApi
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+
   /api/internal/reset-quota/{id}:
     post:
       tags: [internal]
@@ -215,6 +348,8 @@ components:
       properties:
         eventId: { type: integer, minimum: 1, example: 1 }
         qty: { type: integer, minimum: 1, maximum: 4, example: 2 }
+        email: { type: string, format: email, description: Tujuan e-ticket }
+        buyerName: { type: string }
         seatCodes:
           type: array
           items: { type: string }
@@ -232,7 +367,17 @@ components:
           items: { type: string }
         amountIdr: { type: integer, example: 5000000 }
         sisa: { type: integer, example: 498 }
-        status: { type: string, enum: [CONFIRMED] }
+        status: { type: string, enum: [PENDING_PAYMENT, CONFIRMED, FAILED] }
+        buyerEmail: { type: string }
+        buyerName: { type: string }
+        payment:
+          type: object
+          properties:
+            provider: { type: string }
+            paymentId: { type: string }
+            status: { type: string }
+            vaNumber: { type: string }
+            redirectUrl: { type: string }
         note: { type: string }
 
     EventCategory:

@@ -33,16 +33,28 @@ TOKEN=$(curl -s -X POST http://localhost:8080/v1/login \
   -H "Content-Type: application/json" \
   -d "{\"username\":\"mhs-1\"}" | node -pe "JSON.parse(require('fs').readFileSync(0)).token")
 
-# 2) bayar = lock kursi + confirm + ticket.issued
+# 2) bayar = lock + gateway (default auto-capture PAID) + ticket.issued
 curl -s -X POST http://localhost:8080/v1/payments \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d "{\"eventId\":1,\"qty\":1}"
+  -d "{\"eventId\":1,\"qty\":1,\"email\":\"mhs@example.com\",\"buyerName\":\"Mhs 1\"}"
 
-# 3) notifikasi
+# 3) notifikasi (email SMTP/Ethereal/file outbox)
 curl -s http://localhost:8080/v1/notifications/recent
-docker compose -f docker-compose.ms.yml logs notification --tail 5
+docker compose -f docker-compose.ms.yml logs notification --tail 8
+
+# Opsional: PAYMENT_AUTO_CAPTURE=0 → settle manual
+# curl -s -X POST http://localhost:8080/v1/payments/{paymentId}/settle -H "Authorization: Bearer $TOKEN"
 ```
+
+## Payment & email env (MS)
+
+| Var | Default | Arti |
+|-----|---------|------|
+| `PAYMENT_PROVIDER` | `mock` | `mock` atau `midtrans` |
+| `PAYMENT_AUTO_CAPTURE` | `1` | `1` settle langsung; `0` tunggu webhook/settle |
+| `SMTP_*` / `MAIL_FROM` | kosong | Kosong → Ethereal atau file outbox di notification |
+
 
 ## Uji anti-oversell (ticket)
 

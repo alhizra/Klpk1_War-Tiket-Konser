@@ -17,13 +17,13 @@
     "codespace:api": "bash scripts/codespace-api.sh",
     "codespace:mobile": "bash scripts/codespace-mobile-web.sh"
   },
-
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "express": "^4.21.2",
     "ioredis": "^5.4.2",
+    "nodemailer": "^9.0.5",
     "pg": "^8.13.1",
     "uuid": "^11.0.5"
   }
