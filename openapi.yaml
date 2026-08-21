@@ -3,7 +3,7 @@ info:
   title: API Squad — War Tiket Konser (Klpk1)
   version: 1.0.0
   description: |
-    Kontrak API praktikum Scalable Systems — tema War Tiket Konser (K-pop Korea data).
+    Kontrak API praktikum Scalable Systems — tema War Tiket Konser (dataset Excel 7 event).
     Revisi Jumat: backend monolit (event+ticket+web). Payment/notif eksternal ditunda.
     Development — boleh berubah sampai dibekukan di openapi-final.yaml v2.
   x-frozen: false
@@ -52,7 +52,7 @@ paths:
   /events:
     get:
       tags: [events]
-      summary: Daftar konser berpaginasi (data Korea BTS/SVT/NewJeans/IU)
+      summary: Daftar konser berpaginasi (7 event Excel — TREASURE/LYKN/BLACKPINK/…)
       operationId: listEvents
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -260,13 +260,13 @@ components:
       properties:
         eventId: { type: integer, example: 1 }
         title: { type: string }
-        artist: { type: string, example: "BTS (방탄소년단)" }
+        artist: { type: string, example: "TREASURE (트레저)" }
         venue: { type: string }
-        city: { type: string, example: Busan }
+        city: { type: string, example: Seoul }
         country: { type: string, example: "South Korea" }
         startsAt: { type: string, format: date-time }
         salesOpensAt: { type: string, format: date-time }
-        quotaTotal: { type: integer, example: 500 }
+        quotaTotal: { type: integer, example: 400 }
         priceIdr: { type: integer }
         status: { type: string }
         description: { type: string }
