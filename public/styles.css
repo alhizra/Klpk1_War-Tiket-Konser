@@ -282,12 +282,22 @@ button { font-family: inherit; }
 .btn {
   border: 0; border-radius: 8px; padding: .7rem 1.1rem;
   font-weight: 800; cursor: pointer; font-size: .9rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
 }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn.primary { background: var(--green); color: #fff; }
 .btn.primary:hover:not(:disabled) { background: var(--green-d); }
+.btn.primary.loading { opacity: .75; cursor: wait; }
 .btn.ghost { background: #fff; border: 1px solid var(--line); color: #444; }
 .btn.block { width: 100%; }
+.btn-spinner {
+  width: 1rem; height: 1rem; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  animation: btnspin .7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes btnspin { to { transform: rotate(360deg); } }
 
 .toast {
   margin-top: .75rem; padding: .7rem .9rem; border-radius: 8px;

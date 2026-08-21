@@ -460,49 +460,108 @@
     }
   }
 
+  /** Materi P3: 429 mundur teratur (1s → 2s → 4s), hormati Retry-After, max 3x */
+  function tidur(ms) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  async function fetchOrderDenganBatasLaju(body, percobaan = 0) {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.status === 429 && percobaan < 3) {
+      const saran = Number(res.headers.get("Retry-After"));
+      const jeda =
+        Number.isFinite(saran) && saran > 0
+          ? saran * 1000
+          : 1000 * 2 ** percobaan;
+      toast(
+        `Batas laju (429). Menunggu ${Math.ceil(jeda / 1000)}s lalu coba lagi…`,
+        ""
+      );
+      await tidur(jeda);
+      return fetchOrderDenganBatasLaju(body, percobaan + 1);
+    }
+    return res;
+  }
+
+  let memesan = false;
+
   async function placeOrder() {
     const qty = selected.size;
     if (!qty) return;
-    el("btnOrder").disabled = true;
-    el("btnOrder").textContent = "Memesan…";
+    // Cegah kirim ganda (materi P3)
+    if (memesan) return;
+    memesan = true;
+
+    const btn = el("btnOrder");
+    btn.disabled = true;
+    btn.classList.add("loading");
+    btn.innerHTML =
+      '<span class="btn-spinner" aria-hidden="true"></span> Memesan…';
+    toast("");
+
+    const body = {
+      eventId: currentEventId,
+      qty,
+      seatCodes: [...selected],
+    };
+
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          eventId: currentEventId,
-          qty,
-          seatCodes: [...selected],
-        }),
-      });
+      const res = await fetchOrderDenganBatasLaju(body);
       const data = await res.json().catch(() => ({}));
+
       if (res.status === 201) {
-        const cats = [...new Set([...selected].map(catOf))];
+        const seatsDone = data.seatCodes || [...selected];
+        const cats = [...new Set(seatsDone.map(catOf))];
         const benLines = cats.flatMap((c) =>
           benefitsOf(currentEventId, c).map((b) => `• [${c}] ${b}`)
         );
         toast(`Berhasil · sisa ${data.sisa}`, "ok");
         el("orderResult").classList.remove("hidden");
         el("orderResult").innerHTML = `
-          <strong>예매 완료 · Pesanan berhasil</strong>
+          <strong>예매 완료 · Pembayaran / pesanan berhasil</strong>
           <code>orderId: ${data.orderId}</code>
-          <code>kursi: ${(data.seatCodes || [...selected]).join(", ")}</code>
+          <code>kursi: ${seatsDone.join(", ")}</code>
           <code>total: ${fmtRp(data.amountIdr)}</code>
+          <code>status: ${data.status || "CONFIRMED"}</code>
           <code style="margin-top:.5rem;color:#fde68a">Benefit yang didapat:</code>
-          <code style="white-space:pre-wrap;color:#e2e8f0">${benLines.join("\n")}</code>
+          <code style="white-space:pre-wrap;color:#e2e8f0">${benLines.join("\n") || "• E-ticket QR"}</code>
         `;
         selected.clear();
         await loadEventDetail(currentEventId);
       } else if (res.status === 409) {
-        toast(data.error || "Kuota habis", "err");
+        // Kursi/kuota habis — penolakan sah, pesan ramah
+        toast(
+          data.error ||
+            "Kursi ini baru saja diambil orang lain / kuota habis. Pilih kursi lain.",
+          "err"
+        );
+        selected.clear();
         await loadEventDetail(currentEventId);
+      } else if (res.status === 429) {
+        toast(
+          "Server sedang sibuk (batas laju). Coba lagi beberapa detik.",
+          "err"
+        );
+      } else if (res.status === 400) {
+        toast(data.error || "Data pesanan tidak valid.", "err");
       } else {
-        toast(data.error || `Gagal (${res.status})`, "err");
+        toast(data.error || `Gagal memesan (${res.status}). Coba lagi.`, "err");
       }
     } catch (e) {
-      toast(e.message || "Jaringan error", "err");
+      // Jaringan putus — app tetap hidup, pesan jelas
+      toast(
+        e.message ||
+          "Jaringan bermasalah. Periksa koneksi lalu ulangi.",
+        "err"
+      );
     } finally {
-      el("btnOrder").textContent = "예매하기 · Pesan";
+      memesan = false;
+      btn.classList.remove("loading");
+      btn.innerHTML = "예매하기 · Pesan";
       updateCheckout();
     }
   }
