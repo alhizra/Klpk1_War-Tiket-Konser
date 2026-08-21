@@ -11,6 +11,7 @@
     "data:generate": "node data/generate-real-seats.js",
     "data:manual": "node src/load-manual-data.js",
     "data:korea": "node data/generate-real-seats.js && node src/load-manual-data.js",
+    "data:reload": "node data/generate-real-seats.js && node src/load-manual-data.js",
     "data:excel": "python data/import_excel_dataset.py --load",
     "data:init-sql": "python data/generate_init_sql.py"
   },

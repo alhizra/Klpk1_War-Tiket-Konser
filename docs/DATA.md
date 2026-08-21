@@ -40,7 +40,7 @@ Panduan lengkap: `data/README-DATA-MANUAL.md`
 
 ## 2. Skema Postgres (`db/init.sql`)
 
-- `events` — catalog + `quota_total` (seed event_id=1, quota=500)
+- `events` — catalog + `quota_total` (seed Excel: 7 event, event_id=1 TREASURE quota=400)
 - `orders` — setiap pemesanan sukses (`CONFIRMED`)
 - `order_events_audit` — jejak ORDER_CONFIRMED / ETICKET_SENT
 - Index: `idx_orders_event`, `idx_orders_created`
@@ -79,7 +79,7 @@ else:
 
 - Atomik di Redis → aman multi-replika di belakang Nginx.
 - Jika insert Postgres gagal → kompensasi `INCRBY` kuota kembali.
-- Setelah serbuan: `terjual + sisa == 500` dan `terjual <= 500`.
+- Setelah serbuan: `terjual + sisa == quota_total` dan `terjual <= quota_total`.
 
 ---
 
@@ -112,15 +112,22 @@ Invalidasi: hapus `cache:event:{id}` saat admin ubah catalog (belum ada admin AP
 
 ## 8. Checklist verifikasi Data
 
-- [ ] `docker compose up -d --build` → Postgres init seed event 1 quota 500  
-- [ ] `curl /events/1` → `sisa: 500`, panggilan ke-2 `from: cache`  
-- [ ] 5000× `POST /orders` qty=1 → `terjual <= 500`, sisa >= 0  
+- [ ] `docker compose up -d --build` → Postgres init seed 7 event (Excel), total 2480 seats  
+- [ ] `curl /events/1` → TREASURE, `sisa` ≈ quota, panggilan ke-2 `from: cache`  
+- [ ] Load test `POST /orders` qty=1 → `terjual <= quota_total`, sisa >= 0  
 - [ ] Banyak 409 setelah kuota habis = **benar**, bukan bug  
 - [ ] Panjang `LLEN queue:eticket` naik lalu turun saat worker hidup  
 
 ---
 
-## 9. Hubungan dengan Excel data bantu
+## 9. Hubungan dengan Excel dataset
 
-File `War_Tiket_Konser_Data_Bantu.xlsx` (lokal) memuat denah lengkap multi-kategori.  
-Starter ini menyederhanakan menjadi **kuota numerik 500** agar selaras skenario modul P1 (`5000 request, 500 kursi`). Denah per-kursi (seat lock) bisa ditambah di iterasi berikutnya tanpa mengubah kontrak `POST /orders`.
+Sumber kebenaran: **`data/DATA_WAR_TIKET_KONSER.xlsx`** (7 event / 2480 seats).
+
+```bash
+npm run data:excel       # import + load DB/Redis
+npm run data:init-sql    # regenerate db/init.sql untuk Docker/Codespace
+```
+
+Artefak turunan: `events.manual.json`, `seats.manual.csv`, `categories.manual.json`, `db/init.sql`.  
+Kuota runtime tetap di Redis (anti-oversell); Excel/CSV hanya catalog + denah.

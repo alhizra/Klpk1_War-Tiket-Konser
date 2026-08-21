@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Export data Korea → Excel multi-sheet."""
+"""Export dataset Excel (7 event) → workbook multi-sheet."""
 import csv
 import json
 from pathlib import Path
@@ -23,10 +23,13 @@ thin = Border(
     bottom=Side(style="thin", color="CBD5E1"),
 )
 fills = {
-    1: PatternFill("solid", fgColor="EDE9FE"),  # BTS purple-ish
-    2: PatternFill("solid", fgColor="DBEAFE"),  # SVT blue
-    3: PatternFill("solid", fgColor="FCE7F3"),  # NJ pink
-    4: PatternFill("solid", fgColor="FEF3C7"),  # IU gold
+    1: PatternFill("solid", fgColor="EDE9FE"),  # TREASURE
+    2: PatternFill("solid", fgColor="DBEAFE"),  # LYKN
+    3: PatternFill("solid", fgColor="FCE7F3"),  # BLACKPINK
+    4: PatternFill("solid", fgColor="FEF3C7"),  # NCT DREAM
+    5: PatternFill("solid", fgColor="DCFCE7"),  # EXO
+    6: PatternFill("solid", fgColor="FFEDD5"),  # ATEEZ
+    7: PatternFill("solid", fgColor="E0E7FF"),  # BUS
 }
 wrap = Alignment(wrap_text=True, vertical="center")
 
@@ -78,21 +81,21 @@ def main():
     # ---- 00 Panduan ----
     ws = wb.active
     ws.title = "00_Panduan"
-    ws["A1"] = "DATA REAL — War Tiket Konser (K-pop Korea)"
+    ws["A1"] = "DATA REAL — War Tiket Konser (Excel dataset)"
     ws["A1"].font = title_font
-    ws["A2"] = "Squad Klpk1 · Sumber: data/events.manual.json + seats.manual.csv · Total 1.480 kursi"
+    ws["A2"] = "Squad Klpk1 · Sumber: DATA_WAR_TIKET_KONSER.xlsx · Total 2.480 kursi · 7 event"
     ws["A2"].font = Font(italic=True, color="475569")
     lines = [
         "",
         "Isi workbook:",
-        "01_Events — 4 konser (BTS, SEVENTEEN, NewJeans, IU)",
+        "01_Events — 7 konser (TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS)",
         "02_Categories — zona/harga/kuota per event",
         "03_Seats — denah lengkap semua seat_code",
         "04_Summary — cek seats = quota_total",
         "05_Terms — syarat tiket per event",
         "",
         "Cara load ke sistem:",
-        "  npm run data:korea",
+        "  npm run data:excel",
         "  npm start  → http://localhost:3000/?event=1",
         "",
         "Catatan harga: IDR untuk demo praktikum (asli biasanya KRW).",
@@ -104,7 +107,7 @@ def main():
 
     # ---- 01 Events ----
     ws = wb.create_sheet("01_Events")
-    ws["A1"] = "01 — Events (katalog konser Korea)"
+    ws["A1"] = "01 — Events (katalog konser Excel)"
     ws["A1"].font = title_font
     eheaders = [
         "event_id",
@@ -304,8 +307,8 @@ def main():
         "1. Sheet 01–03 = sumber data master (boleh diedit di Excel).",
         "2. Setelah edit Events/Categories: sesuaikan data/events.manual.json (atau minta Data Engineer sync).",
         "3. Setelah edit denah besar: lebih aman edit generator data/generate-real-seats.js lalu npm run data:generate.",
-        "4. Load ke DB: npm run data:manual  (atau npm run data:korea).",
-        "5. Web: http://localhost:3000/?event=1 (BTS), ?event=2 (SVT), ?event=3 (NewJeans), ?event=4 (IU).",
+        "4. Load ke DB: npm run data:excel  (atau npm run data:reload).",
+        "5. Web: http://localhost:3000/ — event 1–7 (TREASURE … BUS).",
         "6. Filter sheet 03_Seats pakai AutoFilter (baris header) → filter event_id atau category.",
         "7. Jangan mengandalkan Excel untuk cegah oversell — itu tugas Redis DECR di backend.",
     ]
