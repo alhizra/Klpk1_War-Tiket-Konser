@@ -532,7 +532,27 @@
 
   async function placeOrder() {
     const qty = selected.size;
-    if (!qty) return;
+    if (!qty) {
+      toast("Pilih minimal 1 kursi dulu.", "err");
+      return;
+    }
+    const emailRaw = (el("buyerEmail") && el("buyerEmail").value || "").trim();
+    const nameRaw = (el("buyerName") && el("buyerName").value || "").trim();
+    if (!nameRaw || nameRaw.length < 2) {
+      toast("Isi nama pembeli dulu (min. 2 huruf).", "err");
+      if (el("buyerName")) el("buyerName").focus();
+      return;
+    }
+    if (!emailRaw) {
+      toast("Isi email e-ticket dulu.", "err");
+      if (el("buyerEmail")) el("buyerEmail").focus();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailRaw)) {
+      toast("Format email tidak valid.", "err");
+      if (el("buyerEmail")) el("buyerEmail").focus();
+      return;
+    }
     // Cegah kirim ganda (materi P3)
     if (memesan) return;
     memesan = true;
@@ -548,8 +568,8 @@
       eventId: currentEventId,
       qty,
       seatCodes: [...selected],
-      email: (el("buyerEmail") && el("buyerEmail").value) || undefined,
-      buyerName: (el("buyerName") && el("buyerName").value) || undefined,
+      email: emailRaw,
+      buyerName: nameRaw,
     };
 
     try {

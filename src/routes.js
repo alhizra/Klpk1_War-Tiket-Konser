@@ -66,7 +66,8 @@ router.get("/events", async (req, res) => {
 
 /**
  * POST /orders — reserve + buat sesi bayar
- * Body: { eventId, qty, seatCodes?, email?, buyerName? }
+ * Body: { eventId, qty, email, buyerName, seatCodes? }
+ * email + buyerName wajib (400 jika kosong).
  */
 router.post("/orders", rateLimit(), async (req, res) => {
   try {

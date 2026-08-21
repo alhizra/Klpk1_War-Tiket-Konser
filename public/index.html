@@ -117,14 +117,17 @@
               </div>
               <div id="benefitPreview" class="benefit-preview"></div>
               <div class="buyer-fields" style="margin-top:.65rem;display:grid;gap:.4rem;max-width:320px">
-                <label class="muted" style="font-size:.8rem">Email e-ticket
-                  <input id="buyerEmail" type="email" placeholder="nama@email.com"
+                <label class="muted" style="font-size:.8rem">Email e-ticket <span style="color:#ef4444">*</span>
+                  <input id="buyerEmail" type="email" required autocomplete="email"
+                    placeholder="nama@email.com"
                     style="display:block;width:100%;margin-top:.2rem;padding:.45rem .55rem;border:1px solid var(--line);border-radius:6px" />
                 </label>
-                <label class="muted" style="font-size:.8rem">Nama pembeli
-                  <input id="buyerName" type="text" placeholder="Nama di e-ticket"
+                <label class="muted" style="font-size:.8rem">Nama pembeli <span style="color:#ef4444">*</span>
+                  <input id="buyerName" type="text" required minlength="2" maxlength="120"
+                    autocomplete="name" placeholder="Nama di e-ticket"
                     style="display:block;width:100%;margin-top:.2rem;padding:.45rem .55rem;border:1px solid var(--line);border-radius:6px" />
                 </label>
+                <p class="muted" style="font-size:.75rem;margin:0">* Wajib diisi sebelum pesan</p>
               </div>
             </div>
             <div class="co-actions">

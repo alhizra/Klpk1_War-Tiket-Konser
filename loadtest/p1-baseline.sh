@@ -16,7 +16,7 @@ docker compose exec -T api node src/seed.js || true
 echo "=== Panas 5000 POST /orders ==="
 npx --yes autocannon -c 200 -a 5000 \
   -m POST -H 'Content-Type: application/json' \
-  -b '{"eventId":1,"qty":1}' \
+  -b '{"eventId":1,"qty":1,"email":"loadtest@wtk.local","buyerName":"Load Test"}' \
   "$BASE/orders"
 
 echo "=== Konsistensi ==="
@@ -28,7 +28,7 @@ for C in 10 100 500; do
   docker compose exec -T api node src/seed.js || true
   npx --yes autocannon -c "$C" -d 10 \
     -m POST -H 'Content-Type: application/json' \
-    -b '{"eventId":1,"qty":1}' \
+    -b '{"eventId":1,"qty":1,"email":"loadtest@wtk.local","buyerName":"Load Test"}' \
     "$BASE/orders"
 done
 

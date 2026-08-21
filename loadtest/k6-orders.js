@@ -34,7 +34,12 @@ export const options = {
 export default function () {
   const res = http.post(
     `${BASE}/orders`,
-    JSON.stringify({ eventId: EVENT_ID, qty: 1 }),
+    JSON.stringify({
+      eventId: EVENT_ID,
+      qty: 1,
+      email: "loadtest@wtk.local",
+      buyerName: "Load Test",
+    }),
     { headers: { "Content-Type": "application/json" } }
   );
 

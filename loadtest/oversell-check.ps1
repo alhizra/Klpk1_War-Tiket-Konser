@@ -31,7 +31,7 @@ Write-Host "before quotaTotal=$quota sisa=$sisaBefore"
 # Body lewat file agar aman di PowerShell (hindari escape JSON)
 $ok = 0; $rej409 = 0; $rej429 = 0; $other = 0; $err5 = 0
 $bodyFile = Join-Path $env:TEMP ("wtk-order-" + [guid]::NewGuid().ToString() + ".json")
-Set-Content -Path $bodyFile -Value (@{ eventId = $EVENT_ID; qty = 1 } | ConvertTo-Json -Compress) -Encoding ascii -NoNewline
+Set-Content -Path $bodyFile -Value (@{ eventId = $EVENT_ID; qty = 1; email = "loadtest@wtk.local"; buyerName = "Load Test" } | ConvertTo-Json -Compress) -Encoding ascii -NoNewline
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 for ($i = 1; $i -le $SHOTS; $i++) {
   $code = curl.exe -s -o NUL -w "%{http_code}" -m 15 -X POST "$BASE/orders" `

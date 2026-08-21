@@ -19,10 +19,38 @@ const {
 /** Menit sebelum PENDING_PAYMENT expire & kuota dikembalikan */
 const PAYMENT_TTL_MIN = Number(process.env.PAYMENT_TTL_MIN || 15);
 
-function normalizeEmail(raw, orderId) {
-  const e = String(raw || "").trim().toLowerCase();
-  if (e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return e;
-  return `buyer-${String(orderId).slice(0, 8)}@example.com`;
+function normalizeEmail(raw) {
+  return String(raw || "").trim().toLowerCase();
+}
+
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+function requireBuyer(email, buyerName) {
+  const name = String(buyerName || "").trim();
+  const mail = normalizeEmail(email);
+  if (!name || name.length < 2) {
+    const err = new Error("nama pembeli wajib diisi (min. 2 karakter)");
+    err.status = 400;
+    throw err;
+  }
+  if (!mail) {
+    const err = new Error("email e-ticket wajib diisi");
+    err.status = 400;
+    throw err;
+  }
+  if (!isValidEmail(mail)) {
+    const err = new Error("format email tidak valid");
+    err.status = 400;
+    throw err;
+  }
+  if (name.length > 120) {
+    const err = new Error("nama pembeli maksimal 120 karakter");
+    err.status = 400;
+    throw err;
+  }
+  return { email: mail, buyerName: name.slice(0, 120) };
 }
 
 /**
@@ -74,6 +102,8 @@ async function createOrder({
     throw err;
   }
 
+  const buyer = requireBuyer(email, buyerName);
+
   await ensureQuotaInitialized(eventId, event.quotaTotal);
 
   const reserved = await reserveSeats(eventId, q);
@@ -99,8 +129,8 @@ async function createOrder({
 
   const orderId = uuidv4();
   const amountIdr = event.priceIdr * q;
-  const buyerEmail = normalizeEmail(email, orderId);
-  const name = String(buyerName || "").trim().slice(0, 120) || "WTK Buyer";
+  const buyerEmail = buyer.email;
+  const name = buyer.buyerName;
 
   let payment;
   try {
