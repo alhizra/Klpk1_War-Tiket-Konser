@@ -1,12 +1,10 @@
-// Satu-satunya tempat alamat API squad (materi Mobile).
-// JANGAN localhost di HP.
-// JANGAN IP vEthernet/WSL (172.x) — HP tidak bisa ke situ.
+// Materi P1 Langkah 6 — satu-satunya tempat alamat API squad.
+// Ganti nilai ini dengan base URL dari lapisan Scalable (artefak baseurl).
 //
-// Pakai IPv4 adapter Wi‑Fi laptop (ipconfig → "Wi-Fi" / "Wireless LAN").
-// Saat ini Wi‑Fi laptop: 10.87.96.26
+// JANGAN localhost / 127.0.0.1 di HP (materi: localhost = HP itu sendiri).
+// Windows: ipconfig → IPv4 adapter Wi-Fi (bukan 172.x vEthernet/WSL).
 //
-// Hotspot Windows: nyalakan Mobile hotspot dulu, lalu ipconfig lagi
-//   → sering 192.168.137.1 (bukan 172.28.128.1)
+// Aturan baseurl: 20 data per halaman, batas 60 permintaan/menit.
 
 export const BASE_URL = "http://10.87.96.26:3000";
 

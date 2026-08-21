@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { ambilDaftarKonser, posterUrl } from "../api/endpoints";
-import { PAGE_SIZE } from "../config";
+import { BASE_URL, PAGE_SIZE } from "../config";
 import { useJaringan } from "../hooks/useJaringan";
 import { useSinkronOtomatis } from "../hooks/useSinkronOtomatis";
 import { colors } from "../theme";
@@ -97,9 +97,12 @@ export default function DaftarScreen({ navigation }) {
     return (
       <View style={styles.center}>
         <Text style={styles.err}>Gagal memuat: {galat}</Text>
+        <Text style={styles.debug}>API: {BASE_URL}</Text>
         <Text style={styles.info}>
-          Cek BASE_URL di mobile/config.js (IPv4 Wi‑Fi laptop, bukan 172.x WSL)
-          dan pastikan HP satu jaringan + API hidup.
+          1) API laptop hidup? buka /health di browser laptop{"\n"}
+          2) config.js = IPv4 Wi‑Fi laptop (bukan 172.x, bukan localhost){"\n"}
+          3) HP Wi‑Fi sama / hotspot laptop{"\n"}
+          4) Firewall izinkan port 3000
         </Text>
         <Pressable
           style={styles.btn}
@@ -116,6 +119,11 @@ export default function DaftarScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={styles.debugBar}>
+        <Text style={styles.debugBarText} numberOfLines={1}>
+          {online ? "Online" : "Offline"} · {BASE_URL}
+        </Text>
+      </View>
       {!online && (
         <View style={styles.banner}>
           <Text style={styles.bannerText}>
@@ -215,6 +223,21 @@ const styles = StyleSheet.create({
     color: "#fecaca",
     textAlign: "center",
     fontSize: 12,
+    fontWeight: "600",
+  },
+  debugBar: {
+    backgroundColor: "#1e293b",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  debugBarText: { color: "#94a3b8", fontSize: 11, textAlign: "center" },
+  debug: {
+    color: colors.accent2,
+    marginTop: 12,
+    fontSize: 12,
+    textAlign: "center",
     fontWeight: "600",
   },
   heading: {

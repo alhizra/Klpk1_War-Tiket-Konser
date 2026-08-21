@@ -1,66 +1,23 @@
-# WTK Mobile (Expo) — Lapisan Mobile
+# WTK Mobile (Expo) — mengikuti Modul 3
 
-Aplikasi wajah untuk API squad **War Tiket Konser**.
+Panduan langkah demi langkah sesuai materi lab: **[`JALANKAN.md`](./JALANKAN.md)**
 
-## Lima layar (materi)
+## Lima layar (materi tema War Tiket)
 
-1. Daftar konser  
-2. Denah & pilih kursi  
-3. Antrean virtual  
-4. Pembayaran (`POST /orders`)  
-5. E-ticket (kode order; QR penuh di P4)
+1. Daftar konser · 2. Denah & pilih kursi · 3. Antrean · 4. Pembayaran · 5. E-ticket QR  
 
-## Syarat
+## Setup singkat (materi P1)
 
-- API squad hidup (`npm start` di root repo) + Postgres/Redis  
-- Node 18+  
-- Expo Go di HP (opsional)
-
-## Setup
-
-```bash
+```bat
 cd mobile
 npm install
-```
-
-Edit **`config.js`**:
-
-| Di mana jalan | BASE_URL |
-|---------------|----------|
-| Expo web / mesin sama | `http://localhost:3000` |
-| Emulator Android | `http://10.0.2.2:3000` |
-| HP fisik (satu Wi‑Fi) | `http://<IPv4-laptop>:3000` |
-
-IPv4 laptop: `ipconfig` → contoh `10.87.96.26`.
-
-```bash
-# install sekali (termasuk @expo/ngrok untuk tunnel)
-npm install
-
+REM edit config.js → BASE_URL = http://<IPv4-Wi-Fi-laptop>:3000
 npx expo start
-# HP beda jaringan / Codespaces → tunnel (butuh akun Expo: npx expo login)
-npx expo start --tunnel
-# cache rusak:
-npx expo start -c
 ```
 
-### Codespaces
-```bash
-cd mobile
-npm install
-# tunnel butuh ngrok LOKAL (bukan global) — sudah di devDependencies
-npx expo login          # sekali, akun expo.dev gratis
-npx expo start --tunnel
-```
-Jangan `npx start` (salah). Yang benar: `npx expo start`.
-
-Scan QR dengan **Expo Go** (versi SDK **52** — update Expo Go di Play Store bila diminta).
-
-### HP error biru "Something went wrong"
-1. Status bar HP harus **Wi‑Fi** (bukan hanya LTE) **satu SSID** dengan laptop — ATAU pakai `--tunnel`.  
-2. Di terminal Expo tekan `s` lalu pilih tunnel, atau `npm run start:tunnel`.  
-3. Pastikan Expo Go tidak terlalu lama/terlalu baru vs SDK 52.  
-4. API tetap harus reachable dari HP: `BASE_URL` = `http://IP-laptop:3000` (bukan localhost).
+- HP + laptop **satu Wi‑Fi** (materi) → scan QR di **Expo Go**  
+- Gagal jaringan (materi): `npx expo start --tunnel`  
+- Jangan `npx start` — yang benar `npx expo start`  
 ## Alur uji
 
 1. Daftar 11 event muncul (poster dari `/posters/...` di API)  
