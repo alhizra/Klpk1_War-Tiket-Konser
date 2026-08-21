@@ -35,10 +35,19 @@ IPv4 laptop: `ipconfig` → contoh `10.87.96.26`.
 
 ```bash
 npx expo start
+# HP beda jaringan / cuma LTE → wajib tunnel:
+npx expo start --tunnel
+# cache rusak:
+npx expo start -c
 ```
 
-Scan QR dengan Expo Go. Android cleartext HTTP diizinkan di `app.json`.
+Scan QR dengan **Expo Go** (versi SDK **52** — update Expo Go di Play Store bila diminta).
 
+### HP error biru "Something went wrong"
+1. Status bar HP harus **Wi‑Fi** (bukan hanya LTE) **satu SSID** dengan laptop — ATAU pakai `--tunnel`.  
+2. Di terminal Expo tekan `s` lalu pilih tunnel, atau `npm run start:tunnel`.  
+3. Pastikan Expo Go tidak terlalu lama/terlalu baru vs SDK 52.  
+4. API tetap harus reachable dari HP: `BASE_URL` = `http://IP-laptop:3000` (bukan localhost).
 ## Alur uji
 
 1. Daftar 11 event muncul (poster dari `/posters/...` di API)  
