@@ -34,12 +34,25 @@ Edit **`config.js`**:
 IPv4 laptop: `ipconfig` → contoh `10.87.96.26`.
 
 ```bash
+# install sekali (termasuk @expo/ngrok untuk tunnel)
+npm install
+
 npx expo start
-# HP beda jaringan / cuma LTE → wajib tunnel:
+# HP beda jaringan / Codespaces → tunnel (butuh akun Expo: npx expo login)
 npx expo start --tunnel
 # cache rusak:
 npx expo start -c
 ```
+
+### Codespaces
+```bash
+cd mobile
+npm install
+# tunnel butuh ngrok LOKAL (bukan global) — sudah di devDependencies
+npx expo login          # sekali, akun expo.dev gratis
+npx expo start --tunnel
+```
+Jangan `npx start` (salah). Yang benar: `npx expo start`.
 
 Scan QR dengan **Expo Go** (versi SDK **52** — update Expo Go di Play Store bila diminta).
 
