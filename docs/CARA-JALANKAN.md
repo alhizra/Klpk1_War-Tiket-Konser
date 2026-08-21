@@ -12,7 +12,7 @@ Ada **2 cara**: laptop lokal, atau **GitHub Codespaces**.
 1. Buka https://github.com/alhizra/Klpk1_War-Tiket-Konser  
 2. Klik hijau **Code** → tab **Codespaces**  
 3. **Create codespace on main** (atau buka yang sudah ada)  
-4. Tunggu setup otomatis (Docker + data Korea) — bisa 3–8 menit pertama kali  
+4. Tunggu setup otomatis (Docker + dataset Excel 7 event) — bisa 3–8 menit pertama kali  
 
 ### Buka web
 1. Di Codespace, buka tab **PORTS** (bawah / panel)  
@@ -25,10 +25,13 @@ URL mirip:
 `https://<nama-codespace>-8080.app.github.dev/`
 
 Event:
-- `/?event=1` BTS  
-- `/?event=2` SEVENTEEN  
-- `/?event=3` NewJeans  
-- `/?event=4` IU  
+- `/?event=1` TREASURE  
+- `/?event=2` LYKN  
+- `/?event=3` BLACKPINK  
+- `/?event=4` NCT DREAM  
+- `/?event=5` EXO  
+- `/?event=6` ATEEZ  
+- `/?event=7` BUS  
 
 ### Kalau web kosong / error
 Di terminal Codespace:
@@ -89,7 +92,7 @@ docker run -d --name wtk-redis -p 6379:6379 redis:7-alpine
 set DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
 set REDIS_URL=redis://localhost:6379
 set PORT=3000
-npm run data:korea
+npm run data:excel
 npm start
 ```
 Buka: **http://localhost:3000/**
@@ -131,7 +134,7 @@ Kalau **kamu** yang mau host:
 2. Code → Codespaces → Create / Open
 3. Tunggu setup selesai
 4. Tab PORTS → 8080 → Visibility: Public → Open in Browser
-5. Web war tiket Korea (BTS/SVT/NewJeans/IU) siap
+5. Web war tiket (TREASURE/LYKN/BLACKPINK/NCT/EXO/ATEEZ/BUS) siap
 Kalau error, di terminal:
 docker compose up -d --build
 docker compose exec api node src/load-manual-data.js

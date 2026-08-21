@@ -36,19 +36,22 @@ Ditunda (sesuai revisi Jumat): `payment-service`, `notification-service` ekstern
 
 ---
 
-## Data domain (Korea — milik squad ini)
+## Data domain (Excel — milik squad ini)
 
 | ID | Artis | Venue | Kursi |
 |----|--------|--------|------:|
-| 1 | BTS | Busan Asiad Main Stadium | 500 |
-| 2 | SEVENTEEN | KSPO DOME, Seoul | 400 |
-| 3 | NewJeans | Inspire Arena, Incheon | 300 |
-| 4 | IU | Jamsil Indoor Stadium | 280 |
+| 1 | TREASURE | KSPO DOME, Seoul | 400 |
+| 2 | LYKN | Impact Arena, Bangkok | 280 |
+| 3 | BLACKPINK | Seoul World Cup Stadium | 500 |
+| 4 | NCT DREAM | Gocheok Sky Dome, Seoul | 350 |
+| 5 | EXO | Jamsil Indoor Stadium | 320 |
+| 6 | ATEEZ | BEXCO Auditorium, Busan | 380 |
+| 7 | BUS | Thunder Dome, Bangkok | 250 |
 
-Total denah: **1480** seat codes · folder `data/`.
+Total denah: **2480** seat codes · sumber `data/DATA_WAR_TIKET_KONSER.xlsx`.
 
 ```bash
-npm run data:korea   # generate CSV + load Postgres/Redis
+npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
 ```
 
 ---
@@ -89,7 +92,7 @@ Panduan lengkap (laptop + **GitHub Codespaces**): [`docs/CARA-JALANKAN.md`](./do
 
 ### GitHub Codespaces (teman / demo online)
 1. Repo → **Code** → **Codespaces** → Create / Open  
-2. Tunggu `postCreate` (compose + data Korea)  
+2. Tunggu `postCreate` (compose + dataset Excel 7 event)  
 3. Tab **PORTS** → **8080** → Visibility **Public** → Open in Browser  
 
 ### Laptop (Docker)
@@ -112,7 +115,7 @@ docker compose up -d postgres redis
 npm install
 set DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
 set REDIS_URL=redis://localhost:6379
-npm run data:korea
+npm run data:excel
 npm start
 # http://localhost:3000/
 ```
@@ -129,7 +132,7 @@ npm start
 ├── services/api/Dockerfile     # build context = root
 ├── src/                        # kode backend
 ├── public/                     # web Jumat
-├── data/                       # events + seats Korea
+├── data/                       # Excel dataset + events/seats (7 event)
 ├── db/init.sql
 ├── docs/adr/
 ├── loadtest/

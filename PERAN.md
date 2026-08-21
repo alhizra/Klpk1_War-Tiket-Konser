@@ -9,7 +9,8 @@
 | QA, Load-Test & Dokumentasi | TRI WAHYUNI | `loadtest/`, `docs/BASELINE.md`, `README.md` uji |
 
 ## Tema data
-K-pop Korea — BTS Busan, SEVENTEEN KSPO, NewJeans Incheon, IU Jamsil (`data/events.manual.json`).
+War tiket Asia — TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS  
+Sumber: `data/DATA_WAR_TIKET_KONSER.xlsx` → `data/events.manual.json` (7 event, 2480 seats).
 
 ## Endpoint kritis
 | Method | Path | PIC |
