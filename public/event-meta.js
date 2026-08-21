@@ -95,7 +95,7 @@ window.EVENT_META = {
   },
   4: {
     poster:
-      "https://images.unsplash.com/photo-1459749411177-041415906749?w=800&q=80",
+      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80",
     genre: "Concert · K-POP",
     tag: "DOME",
     benefits: {
