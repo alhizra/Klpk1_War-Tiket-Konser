@@ -28,12 +28,14 @@ if ($before -match '"sisa"\s*:\s*(\d+)') { $sisaBefore = [int]$Matches[1] }
 Write-Host "before quotaTotal=$quota sisa=$sisaBefore"
 
 # Tembak berurutan (ceiling jujur; race berat = k6/autocannon)
+# Body lewat file agar aman di PowerShell (hindari escape JSON)
 $ok = 0; $rej409 = 0; $rej429 = 0; $other = 0; $err5 = 0
-$body = "{`"eventId`":$EVENT_ID,`"qty`":1}"
+$bodyFile = Join-Path $env:TEMP ("wtk-order-" + [guid]::NewGuid().ToString() + ".json")
+Set-Content -Path $bodyFile -Value (@{ eventId = $EVENT_ID; qty = 1 } | ConvertTo-Json -Compress) -Encoding ascii -NoNewline
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 for ($i = 1; $i -le $SHOTS; $i++) {
   $code = curl.exe -s -o NUL -w "%{http_code}" -m 15 -X POST "$BASE/orders" `
-    -H "Content-Type: application/json" -d $body
+    -H "Content-Type: application/json" --data-binary "@$bodyFile"
   switch ($code) {
     "201" { $ok++ }
     "409" { $rej409++ }
@@ -44,6 +46,7 @@ for ($i = 1; $i -le $SHOTS; $i++) {
   }
 }
 $sw.Stop()
+Remove-Item $bodyFile -Force -ErrorAction SilentlyContinue
 
 $after = curl.exe -s -m 10 "$BASE/events/$EVENT_ID"
 $sisaAfter = 0; $terjual = 0

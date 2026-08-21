@@ -80,13 +80,15 @@ Kuota saat itu: **500** (seed lama). Pola sama untuk dataset 11 event (ganti `ev
 | Skrip cepat | `loadtest/oversell-check.ps1` |
 | Hasil run mesin ini | *Isi setelah API+Redis hidup — lihat tabel di bawah* |
 
-### Hasil oversell-check (isi saat dijalankan)
+### Hasil oversell-check (mesin lokal, 2026-08-21)
 
-| Tanggal | BASE | eventId | shots | 201 | 409 | 429 | 5xx | terjual | sisa | Oversell |
-|---------|------|--------:|------:|----:|----:|----:|----:|--------:|-----:|----------|
-| _(pending Docker/API)_ | | | | | | | | | | |
+| Tanggal | BASE | eventId | shots | 201 | 409 | 429 | 5xx | terjual | sisa | Oversell | durasi |
+|---------|------|--------:|------:|----:|----:|----:|----:|--------:|-----:|----------|-------:|
+| 2026-08-21 | http://127.0.0.1:3000 | 1 (TREASURE q=400) | 500 | **400** | 100 | 0 | 0 | 400 | 0 | **TIDAK** | ~12.5s |
 
-Jalankan lalu tempel baris hasil:
+**Kesimpulan:** tepat 400× `201` (= kuota), 100× `409` (sah), 0× `5xx`. Anti-oversell OK pada dataset Excel 11 event.
+
+Ulangi:
 
 ```powershell
 $env:BASE="http://127.0.0.1:3000"
@@ -137,5 +139,5 @@ Failover: stop 1 container di tengah beban → catat error rate.
 - [x] `openapi.yaml` + `openapi-final.yaml` (page/size, orders, 409/429)
 - [x] Loadtest scripts: `run-p1-local.ps1`, `k6-orders.js`, `oversell-check.ps1`
 - [x] Baseline angka P1 historis tersimpan
-- [ ] Ulangi oversell-check + autocannon di mesin dengan Docker/API hidup (isi tabel P1-b)
-- [ ] Opsional: ukur scale api=3 di gateway :8080
+- [x] Oversell-check P1-b lulus (201=400, 409=100, 5xx=0 pada TREASURE)
+- [ ] Opsional: autocannon penuh `run-p1-local.ps1` + scale api=3 di gateway :8080
