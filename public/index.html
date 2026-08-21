@@ -13,10 +13,10 @@
   <header class="gnb">
     <div class="gnb-inner">
       <a class="logo" href="/">WTK<span>TICKET</span></a>
-      <nav class="gnb-nav">
-        <a href="/" class="active">Concert</a>
-        <a href="#list">Open Sale</a>
-        <a href="#detail">Booking</a>
+      <nav class="gnb-nav" id="mainNav">
+        <a href="/" data-nav="concert" class="active">Concert</a>
+        <a href="#list" data-nav="opensale">Open Sale</a>
+        <a href="#booking" data-nav="booking">Booking</a>
       </nav>
       <div class="gnb-right">
         <span id="apiStatus" class="chip">API …</span>
@@ -26,7 +26,7 @@
 
   <!-- ========== LIST VIEW ========== -->
   <section id="view-list" class="view">
-    <div class="hero-banner">
+    <div class="hero-banner" id="list">
       <div class="hero-text">
         <p class="eyebrow">WAR TICKET · OPEN SALE</p>
         <h1>Pilih konser favoritmu</h1>

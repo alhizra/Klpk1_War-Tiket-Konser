@@ -71,20 +71,62 @@
     else t.classList.remove("hidden");
   }
 
-  function showList() {
+  function setNavActive(name) {
+    document.querySelectorAll("#mainNav a").forEach((a) => {
+      a.classList.toggle("active", a.dataset.nav === name);
+    });
+  }
+
+  function showList(opts = {}) {
     el("view-list").classList.remove("hidden");
     el("view-detail").classList.add("hidden");
     currentEventId = 0;
-    history.replaceState({}, "", "/");
+    setNavActive(opts.nav || "concert");
+    const hash = opts.hash ? `#${opts.hash}` : "";
+    history.replaceState({}, "", `/${hash}`);
+    if (opts.scrollList) {
+      requestAnimationFrame(() => {
+        el("list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
-  function showDetail(id) {
+  function showDetail(id, opts = {}) {
     currentEventId = Number(id);
     el("view-list").classList.add("hidden");
     el("view-detail").classList.remove("hidden");
+    setNavActive(opts.nav || "booking");
     history.replaceState({}, "", `/?event=${currentEventId}`);
     selected.clear();
-    loadEventDetail(currentEventId);
+    loadEventDetail(currentEventId).then(() => {
+      if (opts.openSeat) {
+        const tab = document.querySelector('.tab[data-tab="tab-seat"]');
+        if (tab) tab.click();
+        setTimeout(() => {
+          el("seatMap")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 80);
+      }
+    });
+  }
+
+  /** Open Sale = daftar event open; Booking = denah kursi event aktif / pilih dulu */
+  function goOpenSale() {
+    showList({ nav: "opensale", hash: "list", scrollList: true });
+    loadEventList().catch(() => {});
+  }
+
+  function goBooking() {
+    if (currentEventId > 0) {
+      showDetail(currentEventId, { nav: "booking", openSeat: true });
+      return;
+    }
+    // belum pilih event → ke open sale + petunjuk
+    showList({ nav: "opensale", hash: "list", scrollList: true });
+    loadEventList()
+      .then(() => {
+        toast("Pilih konser dulu, lalu Booking / Pilih kursi", "");
+      })
+      .catch(() => {});
   }
 
   async function loadHealth() {
@@ -435,10 +477,11 @@
   });
 
   el("btnBack").addEventListener("click", () => {
-    showList();
+    showList({ nav: "concert" });
     loadEventList().catch(() => {});
   });
   el("btnGoSeat").addEventListener("click", () => {
+    setNavActive("booking");
     document.querySelector('.tab[data-tab="tab-seat"]').click();
     el("seatMap").scrollIntoView({ behavior: "smooth", block: "start" });
   });
@@ -449,12 +492,39 @@
   });
   el("btnOrder").addEventListener("click", placeOrder);
 
+  // Nav: Concert / Open Sale / Booking
+  document.querySelectorAll("#mainNav a").forEach((a) => {
+    a.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      const nav = a.dataset.nav;
+      if (nav === "concert") {
+        showList({ nav: "concert" });
+        loadEventList().catch(() => {});
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (nav === "opensale") {
+        goOpenSale();
+      } else if (nav === "booking") {
+        goBooking();
+      }
+    });
+  });
+
   async function boot() {
     await loadHealth();
     try {
       await loadEventList();
-      if (currentEventId > 0) showDetail(currentEventId);
-      else showList();
+      const hash = (location.hash || "").replace(/^#/, "");
+      if (currentEventId > 0) {
+        showDetail(currentEventId, {
+          openSeat: hash === "booking" || hash === "detail",
+        });
+      } else if (hash === "list" || hash === "opensale") {
+        goOpenSale();
+      } else if (hash === "booking" || hash === "detail") {
+        goBooking();
+      } else {
+        showList({ nav: "concert" });
+      }
     } catch (e) {
       el("eventGrid").innerHTML = `<p class="muted">${e.message || "Gagal load. Pastikan API & dataset jalan."}</p>`;
     }
