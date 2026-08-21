@@ -24,6 +24,10 @@
       "eas": {
         "projectId": "replace-when-eas-init"
       }
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font"
+    ]
   }
 }
