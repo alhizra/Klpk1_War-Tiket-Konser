@@ -503,8 +503,8 @@
             item.mode === "smtp"
               ? `Terkirim SMTP ke ${item.to}`
               : item.mode === "ethereal"
-                ? `Ethereal saja (bukan Gmail). ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" rel="noopener">Buka preview</a>` : ""}`
-                : `Tersimpan outbox lokal → ${item.to}. Isi SMTP di .env agar masuk inbox Gmail.`;
+                ? `Mode Ethereal (uji). ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" rel="noopener">Buka preview</a>` : ""}`
+                : `Outbox lab → ${item.to}. Bukti modul: GET /api/mail/outbox (SMTP opsional).`;
           box.innerHTML = `
             <strong style="color:#86efac">✉ E-ticket siap</strong>
             <div style="font-size:.85rem;margin-top:.35rem">${modeNote}</div>
@@ -513,8 +513,8 @@
           toast(
             item.mode === "smtp"
               ? `E-ticket dikirim ke ${email || item.to}`
-              : "E-ticket di outbox (bukan Gmail kecuali SMTP di-set)",
-            item.mode === "smtp" ? "ok" : ""
+              : "E-ticket siap (outbox lab — sesuai modul)",
+            "ok"
           );
           return;
         }

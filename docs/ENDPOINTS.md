@@ -23,14 +23,14 @@
 
 Semua path di atas juga tersedia di prefix `/api` (contoh: `/api/events`, `/api/orders`) untuk static web. Halaman mock bayar: `/pay/mock.html`.
 
-## Payment & email
+## Payment & email (modul lab)
 
 | Env | Default | Arti |
 |-----|---------|------|
-| `PAYMENT_PROVIDER` | `mock` | `mock` \| `midtrans` |
-| `PAYMENT_AUTO_CAPTURE` | `1` | `1` settle langsung setelah order; `0` tunggu webhook/simulate |
-| `SMTP_HOST` + `SMTP_USER`/`PASS` | kosong | **Wajib** agar masuk Gmail/inbox nyata |
-| (tanpa SMTP) | — | E-ticket di `data/outbox-mail/` + `GET /api/mail/outbox` |
+| `PAYMENT_PROVIDER` | `mock` | Gateway lab (mock). `midtrans` opsional |
+| `PAYMENT_AUTO_CAPTURE` | `1` | Settle langsung — cocok loadtest & demo |
+| (tanpa SMTP) | default | **Sesuai modul:** e-ticket di outbox + `GET /api/mail/outbox` |
+| `SMTP_*` | kosong | Opsional di luar modul (inbox nyata) |
 
 ## Kenapa kritis
 

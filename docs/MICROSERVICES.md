@@ -39,21 +39,18 @@ curl -s -X POST http://localhost:8080/v1/payments \
   -H "Content-Type: application/json" \
   -d "{\"eventId\":1,\"qty\":1,\"email\":\"mhs@example.com\",\"buyerName\":\"Mhs 1\"}"
 
-# 3) notifikasi (email SMTP/Ethereal/file outbox)
+# 3) notifikasi modul (deliveries + log — tanpa Gmail)
 curl -s http://localhost:8080/v1/notifications/recent
 docker compose -f docker-compose.ms.yml logs notification --tail 8
-
-# Opsional: PAYMENT_AUTO_CAPTURE=0 → settle manual
-# curl -s -X POST http://localhost:8080/v1/payments/{paymentId}/settle -H "Authorization: Bearer $TOKEN"
 ```
 
-## Payment & email env (MS)
+## Payment & notif env (MS lab)
 
 | Var | Default | Arti |
 |-----|---------|------|
-| `PAYMENT_PROVIDER` | `mock` | `mock` atau `midtrans` |
-| `PAYMENT_AUTO_CAPTURE` | `1` | `1` settle langsung; `0` tunggu webhook/settle |
-| `SMTP_*` / `MAIL_FROM` | kosong | Kosong → Ethereal atau file outbox di notification |
+| `PAYMENT_PROVIDER` | `mock` | Gateway lab |
+| `PAYMENT_AUTO_CAPTURE` | `1` | Settle langsung (E2E materi) |
+| `SMTP_*` | kosong | Opsional; default = file outbox + log |
 
 
 ## Uji anti-oversell (ticket)

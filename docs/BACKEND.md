@@ -4,9 +4,9 @@
 - Endpoint panas `POST /orders` anti-oversell
 - Endpoint baca `GET /events/:id` + list pagination
 - Rate limiting header standar
-- Worker e-ticket tidak memblokir path order
-- Payment gateway: `PAYMENT_PROVIDER=mock|midtrans`, default auto-capture; webhook `POST /api/payments/webhook`, lab `POST /api/payments/simulate`
-- Email e-ticket: nodemailer (`SMTP_*` atau Ethereal / `data/outbox-mail/`) via worker
+- Worker e-ticket tidak memblokir path order (async Redis queue)
+- Payment lab: mock gateway + auto-capture; webhook/simulate untuk alur PAID
+- E-ticket modul: worker → outbox `data/outbox-mail/` + audit; `GET /api/mail/outbox` (SMTP opsional)
 
 ## Alur POST /orders
 1. Validasi `eventId`, `qty` (1–4)

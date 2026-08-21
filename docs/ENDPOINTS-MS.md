@@ -18,6 +18,7 @@
 
 Kontrak: `openapi-ms.yaml` · Gateway: `:8080`
 
-## Email (notification)
+## Notifikasi (modul)
 
-Tanpa `SMTP_*`: outbox file di container + log. Set `SMTP_HOST`/`USER`/`PASS` agar masuk inbox nyata. `MAIL_USE_ETHEREAL=1` hanya untuk preview Ethereal (bukan Gmail).
+Default **tanpa SMTP**: simpan `deliveries` + log + file outbox di notification.  
+Cek: `GET /v1/notifications/recent`. SMTP opsional di luar modul.

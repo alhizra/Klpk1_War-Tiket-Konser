@@ -197,7 +197,7 @@ router.get("/mail/outbox", (_req, res) => {
     hint:
       process.env.SMTP_HOST
         ? "SMTP aktif — cek juga inbox email pembeli"
-        : "SMTP belum di-set. Email hanya di outbox ini (bukan Gmail). Isi SMTP_HOST/USER/PASS di .env lalu restart worker.",
+        : "Mode modul lab: e-ticket di outbox + worker audit (SMTP opsional, bukan syarat demo).",
   });
 });
 

@@ -2,6 +2,7 @@
  * Worker e-ticket — konsumsi antrean Redis (bisa di-scale terpisah).
  * Kirim email nyata via nodemailer (SMTP / Ethereal / file outbox).
  */
+require("./config"); // load .env dulu
 const { redis, keys } = require("./redis");
 const db = require("./db");
 const { sendETicket } = require("./services/mail");

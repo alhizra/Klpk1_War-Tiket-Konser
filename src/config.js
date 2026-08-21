@@ -1,3 +1,10 @@
+const path = require("path");
+try {
+  require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+} catch {
+  /* dotenv opsional */
+}
+
 module.exports = {
   port: Number(process.env.PORT || 3000),
   instanceId: process.env.HOSTNAME || require("os").hostname(),
