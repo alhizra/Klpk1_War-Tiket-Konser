@@ -7,10 +7,13 @@ import {
   View,
 } from "react-native";
 import { buatPesanan } from "../api/endpoints";
+import { antre } from "../api/outbox";
+import { useJaringan } from "../hooks/useJaringan";
 import { colors } from "../theme";
 
 export default function PembayaranScreen({ route, navigation }) {
   const { eventId, title, seatCodes, qty } = route.params;
+  const online = useJaringan();
   const [memuat, setMemuat] = useState(false);
   const [galat, setGalat] = useState(null);
 
@@ -18,12 +21,34 @@ export default function PembayaranScreen({ route, navigation }) {
     if (memuat) return;
     setMemuat(true);
     setGalat(null);
+
+    const body = {
+      eventId,
+      qty: qty || seatCodes?.length || 1,
+      seatCodes,
+    };
+
     try {
-      const pesanan = await buatPesanan({
-        eventId,
-        qty: qty || seatCodes?.length || 1,
-        seatCodes,
-      });
+      if (!online) {
+        await antre({
+          path: "/orders",
+          body,
+          meta: { title, seatCodes },
+        });
+        navigation.replace("ETicket", {
+          pesanan: {
+            orderId: `PENDING-${Date.now()}`,
+            status: "PENDING_SYNC",
+            sisa: "—",
+          },
+          title,
+          seatCodes,
+          pendingSync: true,
+        });
+        return;
+      }
+
+      const pesanan = await buatPesanan(body);
       navigation.replace("ETicket", {
         pesanan,
         title,
@@ -35,7 +60,22 @@ export default function PembayaranScreen({ route, navigation }) {
       } else if (e.status === 429) {
         setGalat("Server sibuk (batas laju). Coba lagi sebentar.");
       } else if (!e.status) {
-        setGalat("Jaringan bermasalah. Periksa koneksi lalu ulangi.");
+        // jaringan putus di tengah — antre
+        try {
+          await antre({ path: "/orders", body, meta: { title, seatCodes } });
+          navigation.replace("ETicket", {
+            pesanan: {
+              orderId: `PENDING-${Date.now()}`,
+              status: "PENDING_SYNC",
+            },
+            title,
+            seatCodes,
+            pendingSync: true,
+          });
+          return;
+        } catch {
+          setGalat("Jaringan bermasalah. Periksa koneksi lalu ulangi.");
+        }
       } else {
         setGalat(`Gagal (${e.status}). ${e.message || ""}`.trim());
       }
@@ -51,8 +91,14 @@ export default function PembayaranScreen({ route, navigation }) {
       <Text style={styles.meta}>
         {qty} tiket · {(seatCodes || []).join(", ") || "tanpa seat code"}
       </Text>
+      {!online && (
+        <Text style={styles.warn}>
+          Offline: pesanan masuk antrean dan dikirim otomatis saat online.
+        </Text>
+      )}
       <Text style={styles.note}>
-        Demo lab: bayar langsung memotong kuota atomik di server (POST /orders).
+        POST /orders memotong kuota atomik di server. Tombol terkunci saat
+        memuat (cegah kirim ganda).
       </Text>
 
       {galat ? <Text style={styles.err}>{galat}</Text> : null}
@@ -65,7 +111,9 @@ export default function PembayaranScreen({ route, navigation }) {
         {memuat ? (
           <ActivityIndicator color={colors.bg} />
         ) : (
-          <Text style={styles.btnText}>Bayar sekarang</Text>
+          <Text style={styles.btnText}>
+            {online ? "Bayar sekarang" : "Simpan & antre (offline)"}
+          </Text>
         )}
       </Pressable>
     </View>
@@ -82,6 +130,7 @@ const styles = StyleSheet.create({
   kicker: { color: colors.accent2, fontWeight: "700" },
   title: { color: colors.text, fontSize: 22, fontWeight: "800", marginTop: 8 },
   meta: { color: colors.muted, marginTop: 8 },
+  warn: { color: "#fbbf24", marginTop: 12, fontWeight: "600" },
   note: { color: colors.muted, marginTop: 16, lineHeight: 20 },
   err: { color: colors.danger, marginTop: 16, textAlign: "center" },
   btn: {

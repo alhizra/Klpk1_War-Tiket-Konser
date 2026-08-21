@@ -62,8 +62,15 @@ Lihat `../docs/BASEURL.md` dan `../openapi-final.yaml`:
 - `GET /events/{id}`  
 - `POST /orders`  
 
-## Berikutnya (P3–P5)
+## Fitur P3–P4 (sudah)
 
-- P3: harden 429/409 (sudah sebagian di `api/client.js`)  
-- P4: AsyncStorage + QR (`react-native-qrcode-svg`) offline  
-- P5: EAS APK + demo + `LAPORAN.md`
+- 429 exponential backoff + mapping 409/429 di pembayaran  
+- Cache list/detail (AsyncStorage) + banner mode luring  
+- Outbox `POST /orders` offline → sinkron saat online  
+- E-ticket **QR** lokal (`react-native-qrcode-svg`)  
+
+## P5 (serah CozyLab)
+
+- EAS APK — lihat `docs/mobile/BUILD.md`  
+- Demo video ujung-ke-ujung  
+- `docs/mobile/LAPORAN.md` (6 bagian)

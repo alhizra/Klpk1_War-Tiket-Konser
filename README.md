@@ -79,7 +79,8 @@ npm install
 npx expo start
 ```
 
-Detail: [`mobile/README.md`](./mobile/README.md) · laporan: [`docs/mobile/LAPORAN.md`](./docs/mobile/LAPORAN.md)
+Detail: [`mobile/README.md`](./mobile/README.md) · laporan: [`docs/mobile/LAPORAN.md`](./docs/mobile/LAPORAN.md)  
+Arsitektur: [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) · build: [`docs/mobile/BUILD.md`](./docs/mobile/BUILD.md)
 
 ## Kontrak API
 

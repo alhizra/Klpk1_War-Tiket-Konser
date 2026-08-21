@@ -17,13 +17,16 @@ export default function DenahScreen({ route, navigation }) {
   const { id } = route.params;
   const [item, setItem] = useState(null);
   const [galat, setGalat] = useState(null);
+  const [dariCache, setDariCache] = useState(false);
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     let hidup = true;
     ambilDetailKonser(id)
-      .then((d) => {
-        if (hidup) setItem(d);
+      .then(({ data, dariCache: c }) => {
+        if (!hidup) return;
+        setItem(data);
+        setDariCache(!!c);
       })
       .catch((e) => {
         if (hidup) setGalat(e.message);
@@ -35,7 +38,6 @@ export default function DenahScreen({ route, navigation }) {
 
   const seats = useMemo(() => {
     const list = item?.seats || [];
-    // tampilkan sample agar UI ringan (max 80 kursi pertama)
     return list.slice(0, 80);
   }, [item]);
 
@@ -77,6 +79,9 @@ export default function DenahScreen({ route, navigation }) {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {uri ? <Image source={{ uri }} style={styles.poster} /> : null}
         <View style={styles.pad}>
+          {dariCache ? (
+            <Text style={styles.cacheTag}>Data tersimpan (offline/cache)</Text>
+          ) : null}
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.meta}>
             {item.venue} · {item.city}
@@ -156,10 +161,16 @@ const styles = StyleSheet.create({
   },
   poster: { width: "100%", height: 200 },
   pad: { padding: 16 },
+  cacheTag: { color: "#fbbf24", marginBottom: 8, fontWeight: "600" },
   title: { color: colors.text, fontSize: 20, fontWeight: "700" },
   meta: { color: colors.muted, marginTop: 4 },
   stock: { color: colors.accent, marginTop: 8, fontWeight: "600" },
-  section: { color: colors.text, marginTop: 18, fontWeight: "700", fontSize: 16 },
+  section: {
+    color: colors.text,
+    marginTop: 18,
+    fontWeight: "700",
+    fontSize: 16,
+  },
   hint: { color: colors.muted, fontSize: 12, marginTop: 4, marginBottom: 10 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   seat: {

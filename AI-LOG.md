@@ -64,3 +64,28 @@ Minimal 5 entri bermakna per anggota.
 - **Diterima:** `loadtest/oversell-check.ps1` berurutan + hitung 201/409 + cek `terjual <= quota`.
 - **Ditolak:** mengklaim loop paralel PowerShell sebagai pengganti load test profesional. Ditolak — ceiling jujur berurutan; race/peak tetap autocannon/k6 di `run-p1-local.ps1` / `k6-orders.js`.
 - **Verifikasi:** skrip exit 2 jika oversell; baseline historis P1 tetap di `docs/BASELINE.md`.
+
+---
+
+## Backend/API + Data — Mobile offline (2026-08-21)
+
+### Entri 8 — BASE_URL WSL ditolak
+- **Konteks:** HP tidak memuat data meski IPv4 diisi.
+- **Prompt:** "Pakai IP dari ipconfig apa saja."
+- **Diterima:** dokumentasi pilih adapter **Wi‑Fi** / hotspot.
+- **Ditolak:** `172.28.128.1` (vEthernet WSL). Ditolak karena bukan interface yang di-route ke HP di LAN/hotspot.
+- **Verifikasi:** `config.js` → `10.87.96.26` (Wi‑Fi); API listen `0.0.0.0:3000`.
+
+### Entri 9 — Outbox tidak menghapus semua saat gagal
+- **Konteks:** sinkron order offline (materi P4).
+- **Prompt:** "Kosongkan outbox setelah loop kirim."
+- **Diterima:** hapus hanya item yang POST sukses; 409 di-drop; error jaringan ditahan.
+- **Ditolak:** clear seluruh array setelah satu putaran. Ditolak — aksi gagal hilang permanen.
+- **Verifikasi:** logika di `mobile/api/outbox.js`.
+
+### Entri 10 — QR lokal bukan fetch ulang
+- **Konteks:** e-ticket tanpa internet.
+- **Prompt:** "Generate QR dari GET /orders/:id saat buka layar."
+- **Diterima:** QR dari `orderId` + metadata yang sudah di hand; simpan AsyncStorage.
+- **Ditolak:** wajib online untuk menggambar QR. Ditolak — melanggar kemampuan wajib tema (QR luring).
+- **Verifikasi:** `ETicketScreen` + `tickets.js`.

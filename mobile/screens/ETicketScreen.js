@@ -1,35 +1,64 @@
+import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import QRCode from "react-native-qrcode-svg";
+import { simpanTiket } from "../api/tickets";
 import { colors } from "../theme";
 
-/** E-ticket sederhana (QR library ditambah di P4). Kode tetap bisa dibuka offline dari params navigasi. */
+/** E-ticket QR tersimpan lokal — tetap tampil tanpa sinyal (materi P4). */
 export default function ETicketScreen({ route, navigation }) {
-  const { pesanan, title, seatCodes } = route.params || {};
+  const { pesanan, title, seatCodes, pendingSync } = route.params || {};
   const kode =
     pesanan?.orderId ||
     `WTK-${Date.now().toString(36).toUpperCase()}`;
+  const seats =
+    (seatCodes || pesanan?.seatCodes || []).join(" · ") || "GA / standing";
+
+  useEffect(() => {
+    simpanTiket({
+      orderId: kode,
+      title: title || "Konser",
+      seatCodes: seatCodes || pesanan?.seatCodes || [],
+      status: pesanan?.status || "CONFIRMED",
+      amountIdr: pesanan?.amountIdr,
+      pendingSync: !!pendingSync,
+    }).catch(() => {});
+  }, [kode]);
+
+  const qrValue = JSON.stringify({
+    orderId: kode,
+    title: title || "Konser",
+    seats: seatCodes || pesanan?.seatCodes || [],
+    status: pesanan?.status || "CONFIRMED",
+  });
 
   return (
     <View style={styles.wrap}>
       <Text style={styles.kicker}>E-Ticket</Text>
       <Text style={styles.title}>{title || "Konser"}</Text>
+
+      {pendingSync ? (
+        <Text style={styles.pending}>
+          Menunggu sinkron — akan dikirim saat online
+        </Text>
+      ) : null}
+
       <View style={styles.box}>
+        <QRCode value={qrValue} size={200} backgroundColor="#fff" />
         <Text style={styles.code}>{kode}</Text>
         <Text style={styles.sub}>Tunjukkan di pintu masuk</Text>
-        <Text style={styles.seats}>
-          {(seatCodes || pesanan?.seatCodes || []).join(" · ") || "GA / standing"}
-        </Text>
+        <Text style={styles.seats}>{seats}</Text>
         <Text style={styles.hint}>
-          P4: ganti blok ini dengan QR lokal (tetap tampil tanpa sinyal).
+          QR tersimpan di HP. Tetap tampil walau Mode Pesawat (setelah dibuka
+          sekali online).
         </Text>
       </View>
+
       <Text style={styles.meta}>
-        Status: {pesanan?.status || "CONFIRMED"} · Sisa kuota event:{" "}
-        {pesanan?.sisa ?? "—"}
+        Status: {pesanan?.status || "CONFIRMED"}
+        {pesanan?.sisa != null ? ` · Sisa kuota: ${pesanan.sisa}` : ""}
       </Text>
-      <Pressable
-        style={styles.btn}
-        onPress={() => navigation.popToTop()}
-      >
+
+      <Pressable style={styles.btn} onPress={() => navigation.popToTop()}>
         <Text style={styles.btnText}>Kembali ke daftar</Text>
       </Pressable>
     </View>
@@ -45,6 +74,11 @@ const styles = StyleSheet.create({
   },
   kicker: { color: colors.accent, fontWeight: "700" },
   title: { color: colors.text, fontSize: 20, fontWeight: "800", marginTop: 8 },
+  pending: {
+    color: "#fbbf24",
+    marginTop: 10,
+    fontWeight: "600",
+  },
   box: {
     marginTop: 24,
     backgroundColor: "#fff",
@@ -54,18 +88,24 @@ const styles = StyleSheet.create({
   },
   code: {
     color: "#0f172a",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "800",
     textAlign: "center",
+    marginTop: 16,
   },
   sub: { color: "#475569", marginTop: 8 },
   seats: {
     color: "#0f172a",
-    marginTop: 16,
+    marginTop: 12,
     fontWeight: "700",
     textAlign: "center",
   },
-  hint: { color: "#94a3b8", fontSize: 11, marginTop: 16, textAlign: "center" },
+  hint: {
+    color: "#94a3b8",
+    fontSize: 11,
+    marginTop: 16,
+    textAlign: "center",
+  },
   meta: { color: colors.muted, marginTop: 16 },
   btn: {
     marginTop: 24,

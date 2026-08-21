@@ -1,4 +1,5 @@
 import { api } from "./client";
+import { baca, simpan } from "./cache";
 import { BASE_URL, PAGE_SIZE } from "../config";
 
 const POSTER_FILE = {
@@ -15,14 +16,34 @@ const POSTER_FILE = {
   11: "11-4eve.jpg",
 };
 
-/** GET /events?page&size */
-export function ambilDaftarKonser(halaman = 1) {
-  return api.get(`/events?page=${halaman}&size=${PAGE_SIZE}`);
+/** GET /events?page&size — cache halaman 1 untuk offline */
+export async function ambilDaftarKonser(halaman = 1) {
+  const kunci = `events_p${halaman}`;
+  try {
+    const json = await api.get(`/events?page=${halaman}&size=${PAGE_SIZE}`);
+    await simpan(kunci, json);
+    if (halaman === 1) await simpan("events_last", json);
+    return { data: json, dariCache: false };
+  } catch (e) {
+    const cache = await baca(kunci);
+    const fallback = cache || (halaman === 1 ? await baca("events_last") : null);
+    if (fallback) return { data: fallback.data, dariCache: true };
+    throw e;
+  }
 }
 
-/** GET /events/:id */
-export function ambilDetailKonser(id) {
-  return api.get(`/events/${id}`);
+/** GET /events/:id — cache detail */
+export async function ambilDetailKonser(id) {
+  const kunci = `event_${id}`;
+  try {
+    const json = await api.get(`/events/${id}`);
+    await simpan(kunci, json);
+    return { data: json, dariCache: false };
+  } catch (e) {
+    const cache = await baca(kunci);
+    if (cache) return { data: cache.data, dariCache: true };
+    throw e;
+  }
 }
 
 /** POST /orders */

@@ -1,11 +1,14 @@
-// Satu-satunya tempat alamat API squad.
-// HP fisik (Expo Go): pakai IPv4 laptop satu Wi‑Fi — JANGAN localhost.
-// Emulator Android: http://10.0.2.2:3000
-// Expo web di PC yang sama: http://localhost:3000
+// Satu-satunya tempat alamat API squad (materi Mobile).
+// JANGAN localhost di HP.
+// JANGAN IP vEthernet/WSL (172.x) — HP tidak bisa ke situ.
+//
+// Pakai IPv4 adapter Wi‑Fi laptop (ipconfig → "Wi-Fi" / "Wireless LAN").
+// Saat ini Wi‑Fi laptop: 10.87.96.26
+//
+// Hotspot Windows: nyalakan Mobile hotspot dulu, lalu ipconfig lagi
+//   → sering 192.168.137.1 (bukan 172.28.128.1)
 
-// Ganti jika IP laptop berubah (ipconfig → IPv4).
 export const BASE_URL = "http://10.87.96.26:3000";
 
-// Aturan baseurl Scalable
 export const PAGE_SIZE = 20;
 export const RATE_LIMIT_PER_MIN = 60;
