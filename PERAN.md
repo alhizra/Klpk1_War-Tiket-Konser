@@ -1,4 +1,4 @@
-# PERAN.md — Klpk1 War Tiket Konser
+# PERAN.md — Kelompok1 War Tiket Konser
 
 | Peran | Nama | Fokus file |
 |-------|------|------------|
