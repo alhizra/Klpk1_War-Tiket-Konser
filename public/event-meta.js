@@ -5,7 +5,7 @@
 window.EVENT_META = {
   1: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaa-frX1nEdRmwd1hNjBfhCMird0bDEmzAXrxSr-1meis1wCwmH6VkSko&s=10",
+      "/posters/01-treasure.jpg",
     genre: "Concert · K-POP",
     tag: "단독판매",
     benefits: {
@@ -37,7 +37,7 @@ window.EVENT_META = {
   },
   2: {
     poster:
-      "https://static.wikia.nocookie.net/thai_entertainment/images/c/cc/LYKN_Unleashed_Concert.png/revision/latest?cb=20250509173222",
+      "/posters/02-lykn.png",
     genre: "Concert · T-POP",
     tag: "HOT",
     benefits: {
@@ -66,7 +66,7 @@ window.EVENT_META = {
   },
   3: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF1Z_ss_2oDTUDkvADChmV3-UtHL3HsEosIxwKzq-Ofc_KK2pw3BM1K9I_&s=10",
+      "/posters/03-blackpink.jpg",
     genre: "Concert · K-POP",
     tag: "WORLD TOUR",
     benefits: {
@@ -95,7 +95,7 @@ window.EVENT_META = {
   },
   4: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxFyNzrJG9YWLUZ-gpsqH9zeTlL0ZLJhKtNfDGQ_ab-fD0MhAe8gdq5CY&s=10",
+      "/posters/04-nctdream.jpg",
     genre: "Concert · K-POP",
     tag: "DOME",
     benefits: {
@@ -124,7 +124,7 @@ window.EVENT_META = {
   },
   5: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8zqe6GqfwnWC6HrkYusDI8gegY2j7Yp3DZBKIvYHBGX5V4b5J6jv2HrVG&s=10",
+      "/posters/05-exo.jpg",
     genre: "Concert · K-POP",
     tag: "SPECIAL",
     benefits: {
@@ -148,7 +148,7 @@ window.EVENT_META = {
   },
   6: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa95eYUcOtuo9wiQoRtY2V7VNGGpgRzcM5i9F07GXHuLxpjqsaO-3hcrNw&s=10",
+      "/posters/06-ateez.jpg",
     genre: "Concert · K-POP",
     tag: "BUSAN",
     benefits: {
@@ -177,7 +177,7 @@ window.EVENT_META = {
   },
   7: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDpjuZoWBSI_y7mhGFxGv181Wr82Z9sYIX5ej4hGl5FFQKv6UOZhx-L-cD&s=10",
+      "/posters/07-bus.jpg",
     genre: "Concert · T-POP",
     tag: "BANGKOK",
     benefits: {
@@ -206,7 +206,7 @@ window.EVENT_META = {
   },
   8: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88E-tpbHgYRU90CG3Q37u4ZAYAD-Z_801g9jDesKhp4kmY_OGxRJ5qwY&s=10",
+      "/posters/08-straykids.jpg",
     genre: "Concert · K-POP",
     tag: "WORLD TOUR",
     benefits: {
@@ -235,7 +235,7 @@ window.EVENT_META = {
   },
   9: {
     poster:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPX4LHkL8rZC9PS3kFTjZ1wbwBcT5ehzd77X2AmPSVNzSwlw0N6vl5YHY&s=10",
+      "/posters/09-aespa.jpg",
     genre: "Concert · K-POP",
     tag: "SYNK",
     benefits: {
@@ -264,7 +264,7 @@ window.EVENT_META = {
   },
   10: {
     poster:
-      "https://pbs.twimg.com/media/GYSydzUakAEmApe.jpg",
+      "/posters/10-seventeen.jpg",
     genre: "Concert · K-POP",
     tag: "CARAT",
     benefits: {
@@ -293,7 +293,7 @@ window.EVENT_META = {
   },
   11: {
     poster:
-      "https://api.thailandexhibition.com/uploads/4_EVE_UNCHAINED_CONCERT_LIVE_AT_IMPACT_ARENA_505da1d9b0.jpg",
+      "/posters/11-4eve.jpg",
     genre: "Concert · T-POP",
     tag: "BANGKOK",
     benefits: {
