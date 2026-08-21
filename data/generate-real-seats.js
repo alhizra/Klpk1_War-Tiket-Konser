@@ -174,6 +174,100 @@ const LAYOUT_BY_EVENT = {
       section: "C Reserved",
     },
   },
+  // 8 Stray Kids — VIP 40, FLOOR 100, GOLD 120, SILVER 100
+  8: {
+    VIP: {
+      rows: ["VIP1", "VIP2"],
+      perRow: 20,
+      section: "VIP Reserved",
+    },
+    FLOOR: {
+      rows: ["FL1", "FL2"],
+      perRow: 50,
+      section: "Floor Standing",
+      standing: true,
+    },
+    GOLD: {
+      rows: ["GOL1", "GOL2", "GOL3", "GOL4", "GOL5", "GOL6"],
+      perRow: 20,
+      section: "GOLD Reserved",
+    },
+    SILVER: {
+      rows: ["SIL1", "SIL2", "SIL3", "SIL4", "SIL5"],
+      perRow: 20,
+      section: "SILVER Reserved",
+    },
+  },
+  // 9 aespa — MY 40, A 90, B 100, C 70
+  9: {
+    MY: {
+      rows: ["MY1", "MY2"],
+      perRow: 20,
+      section: "MY Package",
+    },
+    A: {
+      rows: ["A1", "A2", "A3", "A4", "A5"],
+      perRow: 20,
+      section: "A Reserved",
+    },
+    B: {
+      rows: ["B1", "B2", "B3", "B4", "B5"],
+      perRow: 20,
+      section: "B Reserved",
+    },
+    C: {
+      rows: ["C1", "C2", "C3", "C4"],
+      perRow: 20,
+      section: "C Reserved",
+    },
+  },
+  // 10 SEVENTEEN — DIA 80, GOLD 120, SILVER 140, BRONZE 110
+  10: {
+    DIA: {
+      rows: ["D1", "D2"],
+      perRow: 40,
+      section: "Diamond Standing",
+      standing: true,
+    },
+    GOLD: {
+      rows: ["G1", "G2", "G3", "G4", "G5", "G6"],
+      perRow: 20,
+      section: "Gold Side",
+    },
+    SILVER: {
+      rows: ["S1", "S2", "S3", "S4", "S5", "S6", "S7"],
+      perRow: 20,
+      section: "Silver Rear",
+    },
+    BRONZE: {
+      rows: ["B1", "B2", "B3", "B4", "B5", "B6"],
+      perRow: 20,
+      section: "Bronze Upper",
+    },
+  },
+  // 11 4EVE — VVIP 30, A 70, B 90, C 70
+  11: {
+    VVIP: {
+      rows: ["VVI1", "VVI2"],
+      perRow: 20,
+      section: "VVIP Reserved",
+    },
+    A: {
+      rows: ["A1", "A2", "A3", "A4"],
+      perRow: 20,
+      section: "A Reserved",
+    },
+    B: {
+      rows: ["B1", "B2", "B3", "B4", "B5"],
+      perRow: 20,
+      section: "B Reserved",
+    },
+    C: {
+      rows: ["C1", "C2", "C3", "C4"],
+      perRow: 20,
+      section: "C Reserved",
+    },
+  },
 };
 
 function pad(n, width) {

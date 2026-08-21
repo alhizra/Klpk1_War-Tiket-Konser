@@ -5,7 +5,7 @@ info:
   description: |
     **DIBEKUKAN (draft siap P4)** — salinan v1 + penanda freeze.
     Setelah instruktur verifikasi, hanya perubahan aditif yang diizinkan.
-    Data domain: Excel dataset — TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS (7 events / 2480 seats).
+    Data domain: Excel dataset — TREASURE … 4EVE (11 events / 3850 seats).
   x-frozen: true
   x-frozen-date: "2026-08-19"
   x-baseurl-rules:

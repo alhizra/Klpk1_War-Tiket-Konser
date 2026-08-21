@@ -20,8 +20,12 @@ npm run data:excel
 | 5 | EVT005 | EXO | Jamsil Indoor | Seoul | 320 |
 | 6 | EVT006 | ATEEZ | BEXCO Auditorium | Busan | 380 |
 | 7 | EVT007 | BUS | Thunder Dome | Bangkok | 250 |
+| 8 | EVT008 | Stray Kids | Inspire Arena | Incheon | 360 |
+| 9 | EVT009 | aespa | Olympic Hall | Seoul | 300 |
+| 10 | EVT010 | SEVENTEEN | Busan Asiad Main Stadium | Busan | 450 |
+| 11 | EVT011 | 4EVE | IMPACT Exhibition Hall 3 | Bangkok | 260 |
 
-**Total denah: 2.480 seat codes** (`seats.manual.csv`)
+**Total denah: 3.850 seat codes** (`seats.manual.csv`)
 
 ---
 
@@ -36,8 +40,12 @@ npm run data:excel
 | 5 EXO | R 60 · S 120 · A 140 |
 | 6 ATEEZ | PIT 60 · A 110 · B 120 · C 90 |
 | 7 BUS | VVIP 30 · A 70 · B 90 · C 60 |
+| 8 Stray Kids | VIP 40 · FLOOR 100 · GOLD 120 · SILVER 100 |
+| 9 aespa | MY 40 · A 90 · B 100 · C 70 |
+| 10 SEVENTEEN | DIA 80 · GOLD 120 · SILVER 140 · BRONZE 110 |
+| 11 4EVE | VVIP 30 · A 70 · B 90 · C 70 |
 
-Harga dalam **IDR** untuk lab; di dunia nyata biasanya **KRW** + currency gateway.
+Harga dalam **IDR** untuk lab.
 
 ---
 
@@ -48,7 +56,7 @@ Harga dalam **IDR** untuk lab; di dunia nyata biasanya **KRW** + currency gatewa
 | `DATA_WAR_TIKET_KONSER.xlsx` | **Sumber kebenaran** events/kategori |
 | `events.manual.json` | Master event + kategori (hasil import) |
 | `generate-real-seats.js` | Generator denah dari quota kategori |
-| `seats.manual.csv` | 2480 baris kursi |
+| `seats.manual.csv` | 3850 baris kursi |
 | `categories.manual.json` | Ringkas kategori |
 | `data-summary.json` | Verifikasi seats = quota |
 | `generate_init_sql.py` | Regenerasi `db/init.sql` untuk Docker |
@@ -59,23 +67,14 @@ Harga dalam **IDR** untuk lab; di dunia nyata biasanya **KRW** + currency gatewa
 ## Cara load
 
 ```bash
-# Postgres + Redis harus hidup
 npm run data:excel      # dari Excel (disarankan)
 # atau:
-npm run data:generate   # ulang denah dari events.manual.json
-npm run data:manual     # insert DB + reset Redis kuota
+npm run data:generate
+npm run data:manual
 npm start
 ```
 
-Buka web:
-- http://localhost:3000/           → daftar 7 event
-- http://localhost:3000/?event=1  → TREASURE
-- http://localhost:3000/?event=2  → LYKN
-- http://localhost:3000/?event=3  → BLACKPINK
-- http://localhost:3000/?event=4  → NCT DREAM
-- http://localhost:3000/?event=5  → EXO
-- http://localhost:3000/?event=6  → ATEEZ
-- http://localhost:3000/?event=7  → BUS
+Buka web: http://localhost:3000/ → daftar 11 event · `/?event=1` … `/?event=11`
 
 ---
 
@@ -84,14 +83,14 @@ Buka web:
 1. `sum(categories.quota) === quota_total` per event  
 2. `COUNT(seats) === quota_total` setelah generate  
 3. `seat_code` unik per `event_id`  
-4. Redis `quota:event:{id}` di-set = sisa saat load/seed  
-5. Anti-oversell tetap di backend (Lua DECR), bukan di file CSV  
+4. Redis `quota:event:{id}` di-set saat load/seed  
+5. Anti-oversell di backend (Lua DECR), bukan di CSV  
 
 ---
 
 ## Edit
 
-1. Ubah Excel → `npm run data:excel` (atau edit `events.manual.json`).  
-2. Sesuaikan `LAYOUT_BY_EVENT` di `generate-real-seats.js` jika pola baris berubah.  
+1. Ubah Excel → `npm run data:excel`  
+2. Sesuaikan `LAYOUT_BY_EVENT` di `generate-real-seats.js` bila pola baris berubah  
 3. `npm run data:generate && npm run data:manual`  
-4. `npm run data:init-sql` agar Docker/Codespace seed ikut terbaru.
+4. `npm run data:init-sql` agar Docker seed ikut terbaru  

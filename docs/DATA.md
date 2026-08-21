@@ -42,7 +42,7 @@ Panduan lengkap: `data/README-DATA-MANUAL.md`
 
 ## 2. Skema Postgres (`db/init.sql`)
 
-- `events` — catalog + `quota_total` (seed Excel: 7 event, event_id=1 TREASURE quota=400)
+- `events` — catalog + `quota_total` (seed Excel: 11 event, event_id=1 TREASURE quota=400)
 - `orders` — setiap pemesanan sukses (`CONFIRMED`)
 - `order_events_audit` — jejak ORDER_CONFIRMED / ETICKET_SENT
 - Index: `idx_orders_event`, `idx_orders_created`
@@ -114,7 +114,7 @@ Invalidasi: hapus `cache:event:{id}` saat admin ubah catalog (belum ada admin AP
 
 ## 8. Checklist verifikasi Data
 
-- [ ] `docker compose up -d --build` → Postgres init seed 7 event (Excel), total 2480 seats  
+- [ ] `docker compose up -d --build` → Postgres init seed 11 event (Excel), total 3850 seats  
 - [ ] `curl /events/1` → TREASURE, `sisa` ≈ quota, panggilan ke-2 `from: cache`  
 - [ ] Load test `POST /orders` qty=1 → `terjual <= quota_total`, sisa >= 0  
 - [ ] Banyak 409 setelah kuota habis = **benar**, bukan bug  
@@ -124,7 +124,7 @@ Invalidasi: hapus `cache:event:{id}` saat admin ubah catalog (belum ada admin AP
 
 ## 9. Hubungan dengan Excel dataset
 
-Sumber kebenaran: **`data/DATA_WAR_TIKET_KONSER.xlsx`** (7 event / 2480 seats).
+Sumber kebenaran: **`data/DATA_WAR_TIKET_KONSER.xlsx`** (11 event / 3850 seats).
 
 ```bash
 npm run data:excel       # import + load DB/Redis

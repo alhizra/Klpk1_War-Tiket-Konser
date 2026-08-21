@@ -9,8 +9,8 @@
 | QA, Load-Test & Dokumentasi | TRI WAHYUNI | `loadtest/`, `docs/BASELINE.md`, `README.md` uji |
 
 ## Tema data
-War tiket Asia — TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS  
-Sumber: `data/DATA_WAR_TIKET_KONSER.xlsx` → `data/events.manual.json` (7 event, 2480 seats).
+War tiket Asia — TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS, Stray Kids, aespa, SEVENTEEN, 4EVE  
+Sumber: `data/DATA_WAR_TIKET_KONSER.xlsx` → `data/events.manual.json` (11 event, 3850 seats).
 
 ## Endpoint kritis
 | Method | Path | PIC |

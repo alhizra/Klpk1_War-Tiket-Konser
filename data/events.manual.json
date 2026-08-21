@@ -404,5 +404,241 @@
         "color": "#A78BFA"
       }
     ]
+  },
+  {
+    "event_id": 8,
+    "event_code": "EVT008",
+    "title": "Stray Kids (스트레이 키즈) Live",
+    "artist": "Stray Kids (스트레이 키즈)",
+    "venue": "Inspire Arena",
+    "venue_id": "VEN008",
+    "venue_code": "INSPIRE-ARENA",
+    "starts_at": "2027-04-10T18:00:00+09:00",
+    "sales_opens_at": "2027-02-15T20:00:00+09:00",
+    "sales_closes_at": "2027-04-09T23:59:59+09:00",
+    "ends_at": "2027-04-10T18:00:00+09:00",
+    "quota_total": 360,
+    "price_idr": 1800000,
+    "status": "PUBLISHED",
+    "city": "Incheon",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket Stray Kids (스트레이 키즈) di Inspire Arena, Incheon. Kuota total 360 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Soundcheck",
+        "price_idr": 4500000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3300000,
+        "quota": 100,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2500000,
+        "quota": 120,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1800000,
+        "quota": 100,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 9,
+    "event_code": "EVT009",
+    "title": "aespa (에스파) Live",
+    "artist": "aespa (에스파)",
+    "venue": "Olympic Hall, Olympic Park",
+    "venue_id": "VEN009",
+    "venue_code": "OLYMPIC-HALL",
+    "starts_at": "2027-05-02T18:30:00+09:00",
+    "sales_opens_at": "2027-03-10T20:00:00+09:00",
+    "sales_closes_at": "2027-05-01T23:59:59+09:00",
+    "ends_at": "2027-05-02T18:30:00+09:00",
+    "quota_total": 300,
+    "price_idr": 1500000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket aespa (에스파) di Olympic Hall, Olympic Park, Seoul. Kuota total 300 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "MY",
+        "name": "MY Package Front",
+        "price_idr": 4000000,
+        "quota": 40,
+        "color": "#64748B"
+      },
+      {
+        "code": "A",
+        "name": "Seat A Center",
+        "price_idr": 2800000,
+        "quota": 90,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "Seat B Side",
+        "price_idr": 2100000,
+        "quota": 100,
+        "color": "#34D399"
+      },
+      {
+        "code": "C",
+        "name": "Seat C Upper",
+        "price_idr": 1500000,
+        "quota": 70,
+        "color": "#A78BFA"
+      }
+    ]
+  },
+  {
+    "event_id": 10,
+    "event_code": "EVT010",
+    "title": "SEVENTEEN (세븐틴) Live",
+    "artist": "SEVENTEEN (세븐틴)",
+    "venue": "Busan Asiad Main Stadium",
+    "venue_id": "VEN010",
+    "venue_code": "BUSAN-ASIAD",
+    "starts_at": "2027-05-23T19:00:00+09:00",
+    "sales_opens_at": "2027-03-25T20:00:00+09:00",
+    "sales_closes_at": "2027-05-22T23:59:59+09:00",
+    "ends_at": "2027-05-23T19:00:00+09:00",
+    "quota_total": 450,
+    "price_idr": 1700000,
+    "status": "PUBLISHED",
+    "city": "Busan",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket SEVENTEEN (세븐틴) di Busan Asiad Main Stadium, Busan. Kuota total 450 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "DIA",
+        "name": "DIA Standing",
+        "price_idr": 4000000,
+        "quota": 80,
+        "color": "#22D3EE"
+      },
+      {
+        "code": "GOLD",
+        "name": "GOLD Lower",
+        "price_idr": 3000000,
+        "quota": 120,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "SILVER Rear",
+        "price_idr": 2300000,
+        "quota": 140,
+        "color": "#94A3B8"
+      },
+      {
+        "code": "BRONZE",
+        "name": "BRONZE Upper",
+        "price_idr": 1700000,
+        "quota": 110,
+        "color": "#B45309"
+      }
+    ]
+  },
+  {
+    "event_id": 11,
+    "event_code": "EVT011",
+    "title": "4EVE (ฟอร์อีฟ) Live",
+    "artist": "4EVE (ฟอร์อีฟ)",
+    "venue": "IMPACT Exhibition Hall 3",
+    "venue_id": "VEN011",
+    "venue_code": "IMPACT-HALL3",
+    "starts_at": "2027-06-12T19:00:00+07:00",
+    "sales_opens_at": "2027-04-20T10:00:00+07:00",
+    "sales_closes_at": "2027-06-11T22:00:00+07:00",
+    "ends_at": "2027-06-12T19:00:00+07:00",
+    "quota_total": 260,
+    "price_idr": 1200000,
+    "status": "PUBLISHED",
+    "city": "Bangkok Metro",
+    "country": "Thailand",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Bangkok",
+    "description": "War tiket 4EVE (ฟอร์อีฟ) di IMPACT Exhibition Hall 3, Bangkok Metro. Kuota total 260 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VVIP",
+        "name": "VVIP Front",
+        "price_idr": 3300000,
+        "quota": 30,
+        "color": "#EF4444"
+      },
+      {
+        "code": "A",
+        "name": "Zone A",
+        "price_idr": 2300000,
+        "quota": 70,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "Zone B",
+        "price_idr": 1600000,
+        "quota": 90,
+        "color": "#34D399"
+      },
+      {
+        "code": "C",
+        "name": "Zone C",
+        "price_idr": 1200000,
+        "quota": 70,
+        "color": "#A78BFA"
+      }
+    ]
   }
 ]

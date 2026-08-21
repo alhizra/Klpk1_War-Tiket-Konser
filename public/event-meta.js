@@ -204,6 +204,122 @@ window.EVENT_META = {
       ],
     },
   },
+  8: {
+    poster:
+      "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=800&q=80",
+    genre: "Concert · K-POP",
+    tag: "WORLD TOUR",
+    benefits: {
+      VIP: [
+        "VIP package entry",
+        "Exclusive SKZ gift",
+        "Priority lane",
+        "Photocard set",
+      ],
+      FLOOR: [
+        "Floor standing",
+        "Official towel",
+        "Member photocard",
+      ],
+      GOLD: [
+        "Gold lower reserved",
+        "Clear view zone",
+        "Official wristband",
+      ],
+      SILVER: [
+        "Silver upper seat",
+        "Sticker pack",
+        "E-ticket QR",
+      ],
+    },
+  },
+  9: {
+    poster:
+      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80",
+    genre: "Concert · K-POP",
+    tag: "SYNK",
+    benefits: {
+      MY: [
+        "MY package premium",
+        "Special gift box",
+        "Priority entrance",
+        "Exclusive photocard",
+      ],
+      A: [
+        "Zone A center",
+        "Lightstick strap",
+        "Photocard A",
+      ],
+      B: [
+        "Zone B",
+        "Official badge",
+        "E-ticket QR",
+      ],
+      C: [
+        "Zone C",
+        "Digital pack",
+        "E-ticket QR",
+      ],
+    },
+  },
+  10: {
+    poster:
+      "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80",
+    genre: "Concert · K-POP",
+    tag: "CARAT",
+    benefits: {
+      DIA: [
+        "Diamond standing front",
+        "Closest floor block",
+        "DIA pouch",
+        "Lucky draw",
+      ],
+      GOLD: [
+        "Gold side lower",
+        "Official lightstick pouch",
+        "Photocard GOLD",
+      ],
+      SILVER: [
+        "Silver rear lower",
+        "Official badge",
+        "E-ticket QR",
+      ],
+      BRONZE: [
+        "Bronze upper",
+        "Digital benefits",
+        "E-ticket QR",
+      ],
+    },
+  },
+  11: {
+    poster:
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80",
+    genre: "Concert · T-POP",
+    tag: "BANGKOK",
+    benefits: {
+      VVIP: [
+        "VVIP barrier",
+        "Welcome drink",
+        "Signed postcard lottery",
+        "Lounge access",
+      ],
+      A: [
+        "Zone A lower",
+        "Lightstick strap",
+        "Photocard A",
+      ],
+      B: [
+        "Zone B",
+        "Official badge",
+        "E-ticket QR",
+      ],
+      C: [
+        "Zone C",
+        "Sticker pack",
+        "E-ticket QR",
+      ],
+    },
+  },
 };
 
 window.defaultBenefits = function (code) {

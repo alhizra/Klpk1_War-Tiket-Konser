@@ -23,13 +23,17 @@ thin = Border(
     bottom=Side(style="thin", color="CBD5E1"),
 )
 fills = {
-    1: PatternFill("solid", fgColor="EDE9FE"),  # TREASURE
-    2: PatternFill("solid", fgColor="DBEAFE"),  # LYKN
-    3: PatternFill("solid", fgColor="FCE7F3"),  # BLACKPINK
-    4: PatternFill("solid", fgColor="FEF3C7"),  # NCT DREAM
-    5: PatternFill("solid", fgColor="DCFCE7"),  # EXO
-    6: PatternFill("solid", fgColor="FFEDD5"),  # ATEEZ
-    7: PatternFill("solid", fgColor="E0E7FF"),  # BUS
+    1: PatternFill("solid", fgColor="EDE9FE"),
+    2: PatternFill("solid", fgColor="DBEAFE"),
+    3: PatternFill("solid", fgColor="FCE7F3"),
+    4: PatternFill("solid", fgColor="FEF3C7"),
+    5: PatternFill("solid", fgColor="DCFCE7"),
+    6: PatternFill("solid", fgColor="FFEDD5"),
+    7: PatternFill("solid", fgColor="E0E7FF"),
+    8: PatternFill("solid", fgColor="FCE7F3"),
+    9: PatternFill("solid", fgColor="F3E8FF"),
+    10: PatternFill("solid", fgColor="DBEAFE"),
+    11: PatternFill("solid", fgColor="FEF3C7"),
 }
 wrap = Alignment(wrap_text=True, vertical="center")
 
@@ -83,12 +87,12 @@ def main():
     ws.title = "00_Panduan"
     ws["A1"] = "DATA REAL — War Tiket Konser (Excel dataset)"
     ws["A1"].font = title_font
-    ws["A2"] = "Squad Klpk1 · Sumber: DATA_WAR_TIKET_KONSER.xlsx · Total 2.480 kursi · 7 event"
+    ws["A2"] = "Squad Klpk1 · Sumber: DATA_WAR_TIKET_KONSER.xlsx · Total 3.850 kursi · 11 event"
     ws["A2"].font = Font(italic=True, color="475569")
     lines = [
         "",
         "Isi workbook:",
-        "01_Events — 7 konser (TREASURE, LYKN, BLACKPINK, NCT DREAM, EXO, ATEEZ, BUS)",
+        "01_Events — 11 konser (TREASURE … 4EVE)",
         "02_Categories — zona/harga/kuota per event",
         "03_Seats — denah lengkap semua seat_code",
         "04_Summary — cek seats = quota_total",
@@ -308,7 +312,7 @@ def main():
         "2. Setelah edit Events/Categories: sesuaikan data/events.manual.json (atau minta Data Engineer sync).",
         "3. Setelah edit denah besar: lebih aman edit generator data/generate-real-seats.js lalu npm run data:generate.",
         "4. Load ke DB: npm run data:excel  (atau npm run data:reload).",
-        "5. Web: http://localhost:3000/ — event 1–7 (TREASURE … BUS).",
+        "5. Web: http://localhost:3000/ — event 1–11 (TREASURE … 4EVE).",
         "6. Filter sheet 03_Seats pakai AutoFilter (baris header) → filter event_id atau category.",
         "7. Jangan mengandalkan Excel untuk cegah oversell — itu tugas Redis DECR di backend.",
     ]

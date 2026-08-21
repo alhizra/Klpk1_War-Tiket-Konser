@@ -47,8 +47,12 @@ Ditunda (sesuai revisi Jumat): `payment-service`, `notification-service` ekstern
 | 5 | EXO | Jamsil Indoor Stadium | 320 |
 | 6 | ATEEZ | BEXCO Auditorium, Busan | 380 |
 | 7 | BUS | Thunder Dome, Bangkok | 250 |
+| 8 | Stray Kids | Inspire Arena, Incheon | 360 |
+| 9 | aespa | Olympic Hall, Seoul | 300 |
+| 10 | SEVENTEEN | Busan Asiad Main Stadium | 450 |
+| 11 | 4EVE | IMPACT Exhibition Hall 3, Bangkok | 260 |
 
-Total denah: **2480** seat codes · sumber `data/DATA_WAR_TIKET_KONSER.xlsx`.
+Total denah: **3850** seat codes · sumber `data/DATA_WAR_TIKET_KONSER.xlsx`.
 
 ```bash
 npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
