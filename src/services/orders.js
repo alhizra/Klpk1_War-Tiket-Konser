@@ -128,7 +128,25 @@ async function createOrder({
   }
 
   const orderId = uuidv4();
-  const amountIdr = event.priceIdr * q;
+  // Harga per kursi dari denah bila seatCodes ada; fallback price event
+  let amountIdr = event.priceIdr * q;
+  if (seats.length && Array.isArray(event.seats) && event.seats.length) {
+    const byCode = new Map(
+      event.seats.map((s) => [String(s.code || s.seat_code).toUpperCase(), s])
+    );
+    let sum = 0;
+    let ok = true;
+    for (const code of seats) {
+      const row = byCode.get(code);
+      const p = Number(row?.priceIdr ?? row?.price_idr);
+      if (!Number.isFinite(p) || p < 1) {
+        ok = false;
+        break;
+      }
+      sum += p;
+    }
+    if (ok) amountIdr = sum;
+  }
   const buyerEmail = buyer.email;
   const name = buyer.buyerName;
 

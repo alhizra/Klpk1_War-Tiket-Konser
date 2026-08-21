@@ -443,9 +443,12 @@
     renderMap();
   }
 
-  async function loadEventDetail(id) {
-    toast("");
-    el("orderResult").classList.add("hidden");
+  async function loadEventDetail(id, opts = {}) {
+    const keepResult = opts.keepResult === true;
+    if (!keepResult) {
+      toast("");
+      el("orderResult").classList.add("hidden");
+    }
     const res = await fetch(`/api/events/${id}`);
     if (!res.ok) {
       toast("Event tidak ditemukan", "err");
@@ -454,9 +457,34 @@
     eventData = await res.json();
     buildLayoutFromEvent(eventData);
     markSold();
+    // Jangan hapus pilihan kursi user saat refresh sisa (keepSelection)
+    if (!opts.keepSelection) {
+      /* selected tetap jika keepSelection — renderMap pakai selected */
+    }
     renderDetail();
-    if (Number(eventData.sisa) <= 0) {
-      toast("Sold out — sisa 0. Kuota lab bisa di-reset, lalu refresh halaman.", "err");
+    if (!keepResult && Number(eventData.sisa) <= 0) {
+      toast("Sold out — sisa 0. Reset kuota lab lalu refresh.", "err");
+    }
+  }
+
+  /** Refresh sisa/sold tanpa menghapus checkout / hasil booking */
+  async function refreshLiveQuiet(id) {
+    try {
+      const res = await fetch(`/api/events/${id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      eventData = data;
+      buildLayoutFromEvent(data);
+      markSold();
+      // buang dari selected yang sudah sold
+      for (const c of [...selected]) {
+        if (soldCodes.has(c)) selected.delete(c);
+      }
+      if (el("dSisa")) el("dSisa").textContent = `${data.sisa ?? "—"} seats`;
+      if (el("dSisaSm")) el("dSisaSm").textContent = String(data.sisa ?? "—");
+      renderMap();
+    } catch {
+      /* ignore */
     }
   }
 
@@ -638,16 +666,16 @@
           };
         }
         selected.clear();
-        await loadEventDetail(currentEventId);
+        // keepResult: jangan sembunyikan kartu sukses saat refresh denah
+        await loadEventDetail(currentEventId, { keepResult: true });
       } else if (res.status === 409) {
-        // Kursi/kuota habis — penolakan sah, pesan ramah
         toast(
           data.error ||
             "Kursi ini baru saja diambil orang lain / kuota habis. Pilih kursi lain.",
           "err"
         );
         selected.clear();
-        await loadEventDetail(currentEventId);
+        await loadEventDetail(currentEventId, { keepResult: true });
       } else if (res.status === 429) {
         toast(
           "Server sedang sibuk (batas laju). Coba lagi beberapa detik.",
@@ -659,7 +687,6 @@
         toast(data.error || `Gagal memesan (${res.status}). Coba lagi.`, "err");
       }
     } catch (e) {
-      // Jaringan putus — app tetap hidup, pesan jelas
       toast(
         e.message ||
           "Jaringan bermasalah. Periksa koneksi lalu ulangi.",
@@ -668,7 +695,7 @@
     } finally {
       memesan = false;
       btn.classList.remove("loading");
-      btn.innerHTML = "예매하기 · Pesan";
+      btn.innerHTML = "예매하기 · Bayar";
       updateCheckout();
     }
   }
@@ -737,8 +764,12 @@
     }
     setInterval(() => {
       loadHealth().catch(() => {});
-      if (currentEventId > 0) loadEventDetail(currentEventId).catch(() => {});
-      else loadEventList().catch(() => {});
+      if (currentEventId > 0) {
+        // Jangan full reload (itu mengosongkan checkout & hasil booking)
+        refreshLiveQuiet(currentEventId).catch(() => {});
+      } else {
+        loadEventList().catch(() => {});
+      }
     }, 12000);
   }
 
