@@ -70,6 +70,17 @@ npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
 | `loadtest/oversell-check.ps1` | Cek cepat anti-oversell |
 | `loadtest/run-p1-local.ps1` | Baseline autocannon P1 |
 
+## Mobile (Expo)
+
+```bash
+cd mobile
+npm install
+# edit config.js → BASE_URL = http://<IPv4-laptop>:3000
+npx expo start
+```
+
+Detail: [`mobile/README.md`](./mobile/README.md) · laporan: [`docs/mobile/LAPORAN.md`](./docs/mobile/LAPORAN.md)
+
 ## Kontrak API
 
 | File | Versi | Status |

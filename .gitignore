@@ -12,4 +12,8 @@ Thumbs.db
 coverage/
 dist/
 loadtest/p1-local-result.txt
-loadtest/p1-local-result.txt 
+mobile/.expo/
+mobile/dist/
+*.apk
+*.aab
+

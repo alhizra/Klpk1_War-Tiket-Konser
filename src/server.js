@@ -10,6 +10,18 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(express.json({ limit: "32kb" }));
 
+// CORS — Expo Go / web / HP di LAN
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, x-reset-token, x-request-id"
+  );
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  return next();
+});
+
 // Web Jumat (static) + API di /api/*
 const publicDir = path.join(__dirname, "..", "public");
 app.use(express.static(publicDir));
