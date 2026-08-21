@@ -6,17 +6,30 @@
       "moby": true
     }
   },
-  "forwardPorts": [3000, 8080],
+  "forwardPorts": [3000, 8080, 8081, 19000, 19001],
   "portsAttributes": {
     "3000": {
-      "label": "Web + API (Node dev)",
+      "label": "Web + API monolit",
       "onAutoForward": "notify"
     },
     "8080": {
-      "label": "Gateway (Docker Compose)",
+      "label": "Gateway Docker",
       "onAutoForward": "notify"
+    },
+    "8081": {
+      "label": "Expo Web / Metro",
+      "onAutoForward": "notify"
+    },
+    "19000": {
+      "label": "Expo",
+      "onAutoForward": "silent"
+    },
+    "19001": {
+      "label": "Expo",
+      "onAutoForward": "silent"
     }
   },
+
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "postStartCommand": "bash .devcontainer/start.sh",
   "customizations": {

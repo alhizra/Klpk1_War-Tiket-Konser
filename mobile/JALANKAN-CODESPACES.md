@@ -1,92 +1,95 @@
-# Jalankan Mobile di GitHub Codespaces (Modul 3)
+# Jalankan di GitHub Codespaces saja
 
-Codespace = **Linux**. Jangan pakai `ipconfig` (hanya Windows).
+Tanpa laptop IP, tanpa `ipconfig`. Semua dari browser Codespace.
 
 ---
 
-## 1. Base URL = URL publik port API Codespace
+## Cara paling mudah: **Expo Web** (disarankan)
 
-Bukan IP Wi‑Fi laptop.
+Tidak perlu akun Expo, tidak perlu tunnel, tidak perlu HP.
 
-1. Di Codespace, jalankan API monolit (terminal 1):
+### Terminal 1 — API
 
 ```bash
 cd /workspaces/Klpk1_War-Tiket-Konser
-# Postgres+Redis dari compose monolit (jika belum)
+git pull origin main
+bash scripts/codespace-api.sh
+```
+
+Tab **PORTS**:
+- Port **3000** → ⋮ → **Port Visibility** → **Public**
+- Klik ikon globe / Open in Browser → harus muncul health/web
+
+### Terminal 2 — Mobile (web)
+
+```bash
+cd /workspaces/Klpk1_War-Tiket-Konser
+bash scripts/codespace-mobile-web.sh
+```
+
+Tab **PORTS**:
+- Port **8081** → **Public** → **Open in Browser**
+
+Browser menampilkan app mobile (daftar konser → booking).
+
+`config.js` di-set otomatis ke:
+`https://<nama-codespace>-3000.app.github.dev`
+
+---
+
+## Manual (tanpa skrip)
+
+```bash
+# Terminal 1
+cd /workspaces/Klpk1_War-Tiket-Konser
 docker compose up -d postgres redis
 export DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
 export REDIS_URL=redis://localhost:6379
 export PORT=3000
 npm start
-# atau: node src/server.js
-```
+# PORTS 3000 → Public
 
-2. Tab **PORTS** → port **3000**  
-   - Klik kanan → **Port Visibility** → **Public**  
-   - Salin URL, contoh:  
-     `https://vigilant-eureka-x5596556jrvgcr49-3000.app.github.dev`
-
-3. Edit `mobile/config.js`:
-
-```js
-export const BASE_URL = "https://vigilant-eureka-x5596556jrvgcr49-3000.app.github.dev";
-// tanpa slash di akhir
-export const PAGE_SIZE = 20;
-```
-
-4. Uji di browser laptop:
-   `https://...-3000.app.github.dev/health`  
-   harus `{"ok":true,...}`
-
----
-
-## 2. Expo di Codespace (materi: tunnel jika beda jaringan)
-
-HP di rumah ≠ jaringan internal Codespace → materi: pakai **tunnel**.
-
-```bash
+# Terminal 2
 cd /workspaces/Klpk1_War-Tiket-Konser/mobile
-git pull origin main
+node scripts/set-codespace-url.js
+cat config.js    # cek BASE_URL
 npm install
-
-# akun Expo gratis (sekali) — dibutuhkan tunnel
-npx expo login
-
-npx expo start --tunnel
-```
-
-- Jangan: `ipconfig` / `npx start`  
-- Benar: `npx expo start --tunnel`  
-- Scan QR dengan **Expo Go** di HP
-
-Kalau error `@expo/ngrok`:
-
-```bash
-npm install @expo/ngrok@^4.1.0 --save-dev
-npx expo start --tunnel
+npx expo install react-dom react-native-web @expo/metro-runtime
+npx expo start --web --port 8081
+# PORTS 8081 → Public → Open in Browser
 ```
 
 ---
 
-## 3. Cek IP di Linux (opsional, jarang dipakai di Codespace)
+## Opsional: HP + Expo Go (masih di GitHub API)
 
-```bash
-hostname -I
-# atau
-ip addr
-```
+Hanya jika butuh Expo Go di HP:
 
-Di Codespace, IP internal **tidak** bisa dijangkau HP. Selalu pakai **URL port Public** GitHub.
+1. API tetap Codespace, port **3000 Public**
+2. `node scripts/set-codespace-url.js`
+3. Tunnel sering gagal di Codespace. Alternatif:
+   ```bash
+   npx expo login          # akun expo.dev
+   npx expo start --tunnel
+   ```
+   Kalau timeout → pakai **Expo Web** di atas (lebih andal).
 
 ---
 
-## Ringkas
+## Yang dilarang di Codespace
 
-| Langkah | Perintah / aksi |
-|---------|------------------|
-| API | `npm start` di root, port **3000 Public** |
-| config.js | `BASE_URL = https://<codespace>-3000.app.github.dev` |
-| Expo | `cd mobile && npx expo login && npx expo start --tunnel` |
-| HP | Expo Go → scan QR tunnel |
+| Jangan | Kenapa |
+|--------|--------|
+| `ipconfig` | Hanya Windows |
+| `localhost` di HP | HP tidak ke container |
+| `BASE_URL` `http://10.x` | IP laptop, bukan Codespace |
+| Port Private | HP/browser luar tidak bisa akses |
 
-Lihat juga `docs/BASEURL.md` dan materi P1 (tunnel jika beda jaringan).
+---
+
+## Checklist
+
+- [ ] `...-3000.app.github.dev/health` → `ok: true`
+- [ ] `config.js` BASE_URL = URL **https** port 3000
+- [ ] `...-8081.app.github.dev` buka UI mobile
+- [ ] Daftar 11 event tampil
