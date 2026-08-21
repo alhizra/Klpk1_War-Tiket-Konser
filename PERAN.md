@@ -3,7 +3,7 @@
 | Peran | Nama | Fokus file |
 |-------|------|------------|
 | Arsitek Sistem | Andi Hilyatul Mar'ah | `docs/adr/`, `architecture/`, `openapi*.yaml` |
-| Backend/API Engineer | (Milikmu) | `src/`, `public/`, `docs/BACKEND.md` |
+| Backend/API Engineer | Yusuf sewang | `src/`, `public/`, `docs/BACKEND.md` |
 | Infrastructure & DevOps | AL-HIZRA | `docker-compose.yml`, `nginx/`, `services/api/Dockerfile`, `docs/DEPLOY.md` |
 | Data & Persistence | ASTRID TIAR | `data/`, `db/`, `docs/DATA.md`, `src/load-manual-data.js` |
 | QA, Load-Test & Dokumentasi | TRI WAHYUNI | `loadtest/`, `docs/BASELINE.md`, `README.md` uji |
