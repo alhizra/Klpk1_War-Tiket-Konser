@@ -70,6 +70,25 @@ npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
 | `loadtest/oversell-check.ps1` | Cek cepat anti-oversell |
 | `loadtest/run-p1-local.ps1` | Baseline autocannon P1 |
 
+## Microservices (4 layanan — materi Modul 2)
+
+```bash
+docker compose -f docker-compose.ms.yml up --build -d
+# Gateway http://localhost:8080
+curl -s http://localhost:8080/v1/events?size=5
+```
+
+| Service | Port | Peran |
+|---------|-----:|--------|
+| event | 3001 | Catalog |
+| ticket | 3002 | **Kunci kursi** (anti-oversell) |
+| payment | 3003 | JWT + bayar + publish `ticket.issued` |
+| notification | 3004 | E-ticket async |
+
+Docs: [`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) · [`docs/ARSITEKTUR.md`](./docs/ARSITEKTUR.md) · kontrak [`openapi-ms.yaml`](./openapi-ms.yaml)
+
+Monolit Scalable tetap di `docker-compose.yml` + `src/` (jangan dicampur port 8080 bersamaan).
+
 ## Mobile (Expo)
 
 ```bash

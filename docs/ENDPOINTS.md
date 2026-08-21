@@ -1,4 +1,6 @@
-# docs/ENDPOINTS.md — Endpoint kritis (final Scalable)
+# docs/ENDPOINTS.md — Endpoint kritis (final Scalable / monolit)
+
+> Microservices (4 service): lihat [`ENDPOINTS-MS.md`](./ENDPOINTS-MS.md) + `openapi-ms.yaml`.
 
 **Tema:** War Tiket Konser · **Sumber daya rebutan:** kursi (kuota per event)  
 **Base URL:** lihat [`BASEURL.md`](./BASEURL.md) · **Kontrak:** `openapi.yaml` / `openapi-final.yaml` v2

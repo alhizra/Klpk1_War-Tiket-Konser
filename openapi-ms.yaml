@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: API Microservices — War Tiket Konser (Klpk1)
+  version: 1.0.0
+  description: |
+    Kontrak 4 layanan: event, ticket, payment, notification.
+    Gateway: http://localhost:8080
+    Sumber daya rebutan: kursi (ticket-service).
+  x-frozen: false
+
+servers:
+  - url: http://localhost:8080
+    description: Nginx gateway MS
+
+paths:
+  /health:
+    get:
+      summary: Gateway health
+      responses:
+        "200": { description: OK }
+
+  /v1/events:
+    get:
+      tags: [event]
+      summary: Daftar konser
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, default: 20, maximum: 50 }
+      responses:
+        "200": { description: OK }
+
+  /v1/events/{id}:
+    get:
+      tags: [event]
+      summary: Detail event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+        "404": { description: Not found }
+
+  /v1/events/{id}/seats:
+    get:
+      tags: [ticket]
+      summary: Snapshot kursi (available/sold)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /v1/tickets/lock:
+    post:
+      tags: [ticket]
+      summary: Kunci kursi (anti-oversell atomik)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId]
+              properties:
+                eventId: { type: integer }
+                qty: { type: integer, minimum: 1, maximum: 4 }
+                seatCodes:
+                  type: array
+                  items: { type: string }
+      responses:
+        "201": { description: Held }
+        "409": { description: Kursi tidak tersedia }
+
+  /v1/tickets/confirm:
+    post:
+      tags: [ticket]
+      summary: Konfirmasi hold → SOLD
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [holdId]
+              properties:
+                holdId: { type: string }
+      responses:
+        "200": { description: Confirmed }
+        "409": { description: Hold invalid }
+
+  /v1/login:
+    post:
+      tags: [payment]
+      summary: Terbitkan JWT (lab)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: { type: string }
+      responses:
+        "200": { description: token }
+
+  /v1/payments:
+    post:
+      tags: [payment]
+      summary: Bayar + lock + confirm + publish ticket.issued
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId]
+              properties:
+                eventId: { type: integer }
+                qty: { type: integer }
+                seatCodes:
+                  type: array
+                  items: { type: string }
+      responses:
+        "201": { description: Paid + ticket confirmed }
+        "401": { description: No/invalid token }
+        "409": { description: Kursi habis }
+        "503": { description: Dependency down }
+
+  /v1/catalog:
+    get:
+      tags: [payment]
+      summary: Proxy catalog + fallback stale
+      responses:
+        "200": { description: OK }
+        "503": { description: No cache }
+
+  /v1/notifications/recent:
+    get:
+      tags: [notification]
+      summary: Riwayat e-ticket terkirim
+      responses:
+        "200": { description: OK }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

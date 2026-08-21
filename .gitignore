@@ -16,4 +16,7 @@ mobile/.expo/
 mobile/dist/
 *.apk
 *.aab
+services/**/node_modules/
+services/**/*.db
+services/**/*-test.db
 

@@ -89,3 +89,21 @@ Minimal 5 entri bermakna per anggota.
 - **Diterima:** QR dari `orderId` + metadata yang sudah di hand; simpan AsyncStorage.
 - **Ditolak:** wajib online untuk menggambar QR. Ditolak — melanggar kemampuan wajib tema (QR luring).
 - **Verifikasi:** `ETicketScreen` + `tickets.js`.
+
+---
+
+## Backend + Data + Infra — Microservices 4 service (2026-08-21)
+
+### Entri 11 — Seed kursi penuh di ticket hang
+- **Konteks:** ticket-service Docker “Up” tapi port 3002 connection refused.
+- **Prompt:** "Insert semua 3850 seats seperti monolit."
+- **Diterima:** seed dengan transaksi batch + `SEED_MAX_PER_CAT=40` untuk lab MS (cepat start).
+- **Ditolak:** 3850 INSERT tanpa transaction di cold start container. Ditolak — proses hang, health tidak pernah listen.
+- **Verifikasi:** `curl /svc/ticket/health` ok; E2E payment 201 + notification SENT.
+
+### Entri 12 — Payment 503 jujur saat ticket down
+- **Konteks:** resiliency materi P4.
+- **Prompt:** "Kalau ticket mati, payment tetap 201 palsu."
+- **Diterima:** 503 + pesan ticket-service tidak tersedia; tidak memalsukan kursi terkunci.
+- **Ditolak:** sukses bayar tanpa lock. Ditolak — menjual kursi yang tidak di-hold.
+- **Verifikasi:** saat ticket 502, pay → 503; setelah ticket sehat, pay → 201 + ticket.issued.

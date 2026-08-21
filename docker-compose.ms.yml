@@ -1,0 +1,96 @@
+# Microservices stack — War Tiket (materi Modul 2)
+# Jalankan: docker compose -f docker-compose.ms.yml up --build
+# Gateway: http://localhost:8080
+
+services:
+  redis:
+    image: redis:7-alpine
+    # internal only — hindari bentrok monolit wtk-redis :6379 di host
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  event:
+    build: ./services/event
+    environment:
+      PORT: "3001"
+      DB_PATH: /data/event.db
+    volumes:
+      - event-data:/data
+    expose:
+      - "3001"
+    restart: unless-stopped
+
+  ticket:
+    build: ./services/ticket
+    environment:
+      PORT: "3002"
+      EVENT_URL: http://event:3001
+      DB_PATH: /data/ticket.db
+    volumes:
+      - ticket-data:/data
+    depends_on:
+      - event
+    expose:
+      - "3002"
+    restart: unless-stopped
+
+  payment:
+    build: ./services/payment
+    environment:
+      PORT: "3003"
+      EVENT_URL: http://event:3001
+      TICKET_URL: http://ticket:3002
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-wtk-dev-secret-ganti}
+      DB_PATH: /data/payment.db
+    volumes:
+      - payment-data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+      event:
+        condition: service_started
+      ticket:
+        condition: service_started
+    expose:
+      - "3003"
+    restart: unless-stopped
+
+  notification:
+    build: ./services/notification
+    environment:
+      PORT: "3004"
+      REDIS_URL: redis://redis:6379
+      DB_PATH: /data/notification.db
+    volumes:
+      - notification-data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    expose:
+      - "3004"
+    restart: unless-stopped
+
+  gateway:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/ms.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - event
+      - ticket
+      - payment
+      - notification
+    restart: unless-stopped
+
+volumes:
+  event-data:
+  ticket-data:
+  payment-data:
+  notification-data:

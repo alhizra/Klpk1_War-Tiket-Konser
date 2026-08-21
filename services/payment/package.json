@@ -1,0 +1,16 @@
+{
+  "name": "wtk-payment-service",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "redis": "^4.7.0",
+    "uuid": "^11.0.5"
+  }
+}
