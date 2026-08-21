@@ -1,9 +1,6 @@
 # War Tiket Konser — Klpk1
 
-Praktikum **Scalable Systems Design** · Tema war tiket · **Data K-pop Korea** (bukan copy dataset lab lain).
 
-Pola repo mengikuti lab microservices (gateway · services · openapi · ADR · compose),  
-implementasi **revisi Jumat**: backend monolit `event + ticket + web`.
 
 ---
 
