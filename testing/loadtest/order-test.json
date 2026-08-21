@@ -1,0 +1,7 @@
+﻿{
+  "eventId": 1,
+  "qty": 1,
+  "seatCodes": ["FL1-001"],
+  "email": "test@example.com",
+  "buyerName": "Test User"
+}
