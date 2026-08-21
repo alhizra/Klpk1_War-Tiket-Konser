@@ -46,3 +46,21 @@ Minimal 5 entri bermakna per anggota.
 
 ## Anggota lain
 (Arsitek / Infra / QA isi bagian masing-masing di bawah.)
+
+---
+
+## QA + Backend — Rapikan Scalable (2026-08-21)
+
+### Entri 6 — Base URL vs loadtest rate limit
+- **Konteks:** Menyelaraskan artefak baseurl (60 req/menit) dengan skenario war 5000 POST.
+- **Prompt:** "Samakan RATE_LIMIT compose ke 60 agar cocok openapi-final."
+- **Diterima:** default app `config.rateLimit = 60` untuk Mobile/demo; dokumentasi di `docs/BASEURL.md`.
+- **Ditolak:** memaksa compose production-like 60 saat loadtest P1. Ditolak karena 429 akan menutupi 409 kuota dan merusak bukti anti-oversell. Lab memakai `RATE_LIMIT=10000` eksplisit.
+- **Verifikasi:** openapi-final `x-baseurl-rules.rateLimitPerMinute: 60`; compose tetap override lab.
+
+### Entri 7 — Skrip oversell tanpa mengklaim race k6 palsu
+- **Konteks:** Butuh cek konsistensi kursi cepat di Windows tanpa k6.
+- **Prompt:** "Loop 500 POST /orders paralel dengan Start-Job."
+- **Diterima:** `loadtest/oversell-check.ps1` berurutan + hitung 201/409 + cek `terjual <= quota`.
+- **Ditolak:** mengklaim loop paralel PowerShell sebagai pengganti load test profesional. Ditolak — ceiling jujur berurutan; race/peak tetap autocannon/k6 di `run-p1-local.ps1` / `k6-orders.js`.
+- **Verifikasi:** skrip exit 2 jika oversell; baseline historis P1 tetap di `docs/BASELINE.md`.

@@ -1,102 +1,141 @@
-# docs/BASELINE.md — Logbook Uji Beban
+# docs/BASELINE.md — Logbook Uji Beban (Scalable)
 
 **Tema:** War Tiket Konser  
-**Base URL:** `http://localhost:8080`  
-**Endpoint panas:** `POST /orders`  
-**Endpoint baca:** `GET /events/1`  
-**Kuota:** 500 kursi  
+**Dataset:** 11 event / 3850 seats (`DATA_WAR_TIKET_KONSER.xlsx`)  
+**Base URL dev:** `http://localhost:3000` · **Gateway:** `http://localhost:8080`  
+**Endpoint panas:** `POST /orders` · **Baca:** `GET /events/{id}`  
+**Aturan baseurl:** 60 req/menit (Mobile) · lab war: `RATE_LIMIT=10000`  
+**Detail URL:** [`BASEURL.md`](./BASEURL.md) · **Endpoint:** [`ENDPOINTS.md`](./ENDPOINTS.md)
 
-Isi angka dari output autocannon/k6 yang **nyata**. Jangan menebak.
+Isi angka dari output **nyata**. 409 = penolakan kuota **sah** (bukan 5xx).
 
 ---
 
 ## Perintah acuan
 
 ```bash
-BASE=http://localhost:8080
+# API lokal
+set BASE=http://127.0.0.1:3000
+set RATE_LIMIT=10000
+npm start
 
-# Baca
-npx autocannon -c 50 -d 15 $BASE/events/1
+# Reset kuota event 1
+curl -s -X POST %BASE%/internal/reset-quota/1 -H "x-reset-token: dev-reset"
 
-# Panas (skenario P1: 5000 request)
-# Body dari file order-body.json (di PowerShell: $b = Get-Content -Raw loadtest/order-body.json)
-npx autocannon -c 200 -a 5000 \
-  -m POST -H "Content-Type: application/json" \
-  -b "{\"eventId\":1,\"qty\":1}" \
-  $BASE/orders
-# Atau: powershell -File loadtest/p1-baseline.ps1 / run-p1-local.ps1
+# Uji cepat anti-oversell (PowerShell, tanpa k6)
+powershell -File loadtest/oversell-check.ps1
+# event kecil: $env:EVENT_ID=11; $env:SHOTS=80; powershell -File loadtest/oversell-check.ps1
 
-# Cek konsistensi (setelah serbuan)
-curl -s $BASE/events/1
-# terjual <= 500, sisa >= 0, terjual + sisa == 500
+# Baseline P1 penuh (butuh npx autocannon)
+powershell -File loadtest/run-p1-local.ps1
+
+# k6 (jika terpasang)
+k6 run -e BASE=http://127.0.0.1:3000 -e EVENT_ID=1 loadtest/k6-orders.js
 ```
 
-**Catatan:** 409 (kuota habis) adalah penolakan **sah**, bukan kegagalan sistem. Hitung error 5xx terpisah dari 409.
+**Konsistensi setelah serbuan:**
 
-Sebelum uji ulang kuota, reset:
-
-```bash
-docker compose exec api node src/seed.js
-# atau: docker compose down -v && docker compose up -d --build
+```text
+terjual <= quota_total
+sisa >= 0
+terjual + sisa == quota_total   (ideal; cek Redis vs sold DB bila beda)
 ```
 
 ---
 
-## P1 — Baseline "sebelum"
+## P1 — Baseline "sebelum" (local :3000, 2026-08-18)
 
-### Endpoint baca (local :3000, 2026-08-18)
+Kuota saat itu: **500** (seed lama). Pola sama untuk dataset 11 event (ganti `eventId` / reset).
 
-| Endpoint | Beban | p50 | p95/p97.5 | p99 | Throughput (req/s) | Error non-2xx |
-|----------|-------|-----|-----------|-----|--------------------|---------------|
-| GET /events/1 | -c 50 -d 15 | 13ms | 33ms | 60ms | ~3349 | 0 |
+### Endpoint baca
 
-### Endpoint panas (local :3000, body file `loadtest/order-body.json`)
+| Endpoint | Beban | p50 | p95/p97.5 | p99 | Throughput | Error non-2xx |
+|----------|-------|-----|-----------|-----|------------|---------------|
+| GET /events/1 | -c 50 -d 15 | 13ms | 33ms | 60ms | ~3349 rps | 0 |
 
-| Endpoint | Beban | p50 | p99 | Throughput | 2xx | non-2xx (≈409) | 5xx | Oversell? |
-|----------|-------|-----|-----|------------|-----|----------------|-----|-----------|
-| POST /orders | -c 200 -a 5000 | 164ms | 1620ms | ~714 rps | **500** | 4500 | 0 | **TIDAK** (terjual=500, sisa=0) |
+### Endpoint panas `POST /orders`
 
-Catatan: tepat 500 × 201, sisanya 409 kuota habis (sah). p99 tinggi = baseline "sebelum" optimasi P2–P4.
+| Beban | p50 | p99 | Throughput | 201 | non-2xx (≈409) | 5xx | Oversell? |
+|-------|-----|-----|------------|-----|-----------------|-----|-----------|
+| -c 200 -a 5000 | 164ms | 1620ms | ~714 rps | **500** | 4500 | 0 | **TIDAK** (terjual=500, sisa=0) |
 
-### Titik jenuh (concurrency, d=10, reset kuota tiap run)
+### Titik jenuh (d=10, reset tiap run)
 
-| Concurrency | Throughput (req/s) | p99 | 2xx (max 500) | Timeouts |
-|-------------|--------------------|-----|---------------|----------|
-| 10 | ~844 | 39ms | 500 | 0 |
-| 100 | ~1510 | 249ms | 500 | 0 |
-| 500 | ~1394 | 1561ms | 500 | 0 |
+| Concurrency | Throughput | p99 | 201 (max kuota) | Timeouts |
+|-------------|------------|-----|-----------------|----------|
+| 10 | ~844 rps | 39ms | 500 | 0 |
+| 100 | ~1510 rps | 249ms | 500 | 0 |
+| 500 | ~1394 rps | 1561ms | 500 | 0 |
 
-**Lutut kurva (knee):** sekitar concurrency **100→500** — throughput tidak naik (bahkan sedikit turun), p99 meledak 249ms → 1561ms.
-
----
-
-## P2 — Sesudah LB + multi-salinan
-
-| Konfigurasi | Throughput | p99 | Error 5xx |
-|-------------|------------|-----|-----------|
-| 1 salinan | | | |
-| 3 salinan (via Nginx) | | | |
-
-Failover (stop 1 container di tengah beban): error rate ≈ ___ %
+**Knee:** concurrency **100→500** — throughput stagnan/turun, p99 meledak.
 
 ---
 
-## P3 — Cache + indeks + antrean
+## P1-b — Dataset Excel 11 event (2026-08-21)
 
-| Teknik | p95 | Throughput | Error 5xx | Oversell? |
-|--------|-----|------------|-----------|-----------|
-| Baseline P1 | | | | |
-| + LB & stateless P2 | | | | |
-| + Cache baca | | | | |
-| + Antrean e-ticket | | | | |
+| Item | Nilai |
+|------|------:|
+| Events / seats | 11 / 3850 |
+| Event contoh | id=1 TREASURE quota=400 · id=11 4EVE quota=260 |
+| Skrip cepat | `loadtest/oversell-check.ps1` |
+| Hasil run mesin ini | *Isi setelah API+Redis hidup — lihat tabel di bawah* |
+
+### Hasil oversell-check (isi saat dijalankan)
+
+| Tanggal | BASE | eventId | shots | 201 | 409 | 429 | 5xx | terjual | sisa | Oversell |
+|---------|------|--------:|------:|----:|----:|----:|----:|--------:|-----:|----------|
+| _(pending Docker/API)_ | | | | | | | | | | |
+
+Jalankan lalu tempel baris hasil:
+
+```powershell
+$env:BASE="http://127.0.0.1:3000"
+$env:EVENT_ID="1"
+$env:SHOTS="500"
+powershell -File loadtest/oversell-check.ps1
+```
 
 ---
 
-## P4/P5 — Capstone (final artefak loadtest)
+## P2 — LB + multi-salinan
 
-| Tahap | p95 | Throughput (req/s) | Error 5xx | Oversell |
-|-------|-----|--------------------|-----------|----------|
-| Sebelum (baseline P1) | | | | |
-| Sesudah (produk akhir) | | | | 0 |
+| Konfigurasi | Throughput | p99 | 5xx |
+|-------------|------------|-----|-----|
+| 1 salinan api | (baseline P1) | | 0 |
+| 3 salinan `docker compose up -d --scale api=3` | _belum diukur di sesi ini_ | | |
 
-**Sasaran lulus:** 0 oversell, p95 < 500ms, 5xx < 1%.
+Failover: stop 1 container di tengah beban → catat error rate.
+
+---
+
+## P3 — Cache + antrean
+
+| Teknik | Status di kode | Catatan |
+|--------|----------------|---------|
+| Cache-aside catalog | Ada (`eventCache.js`) | `sisa` selalu live Redis |
+| Antrean e-ticket | Ada (`worker` + Redis list) | Order path tidak block email |
+| Rate limit | Ada (default 60/mnt) | Lab war: naikkan `RATE_LIMIT` |
+
+---
+
+## P4/P5 — Capstone (target)
+
+| Metrik | Target |
+|--------|--------|
+| Oversell | **0** |
+| p95 POST /orders (setelah optimasi) | < 500ms |
+| 5xx | < 1% |
+| 201 count | = kuota setelah reset + serbuan ≥ kuota |
+
+---
+
+## Checklist Scalable rapi
+
+- [x] Dataset Excel 11 event ter-load (`events` / `init.sql` / web)
+- [x] `docs/BASEURL.md` + aturan 60/20/50
+- [x] `docs/ENDPOINTS.md` selaras routes
+- [x] `openapi.yaml` + `openapi-final.yaml` (page/size, orders, 409/429)
+- [x] Loadtest scripts: `run-p1-local.ps1`, `k6-orders.js`, `oversell-check.ps1`
+- [x] Baseline angka P1 historis tersimpan
+- [ ] Ulangi oversell-check + autocannon di mesin dengan Docker/API hidup (isi tabel P1-b)
+- [ ] Opsional: ukur scale api=3 di gateway :8080

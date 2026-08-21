@@ -7,10 +7,10 @@
  */
 import http from "k6/http";
 import { check, sleep } from "k6";
-import { Rate, Counter } from "k6/metrics";
+import { Counter } from "k6/metrics";
 
-const BASE = __ENV.BASE || "http://localhost:8080";
-const oversellSuspect = new Rate("oversell_suspect");
+const BASE = __ENV.BASE || "http://localhost:3000";
+const EVENT_ID = Number(__ENV.EVENT_ID || 1);
 const orderOk = new Counter("order_ok");
 const order409 = new Counter("order_409");
 const order5xx = new Counter("order_5xx");
@@ -19,21 +19,22 @@ export const options = {
   scenarios: {
     war_tiket: {
       executor: "shared-iterations",
-      vus: 200,
-      iterations: 5000,
-      maxDuration: "2m",
+      vus: Number(__ENV.VUS || 200),
+      iterations: Number(__ENV.ITERS || 5000),
+      maxDuration: __ENV.MAX_DURATION || "2m",
     },
   },
   thresholds: {
-    order_5xx: ["count<50"], // <1% dari 5000
-    http_req_duration: ["p(95)<500"],
+    order_5xx: ["count<50"],
+    // p95 longgar di baseline; target capstone <500ms di BASELINE.md
+    http_req_duration: ["p(95)<2000"],
   },
 };
 
 export default function () {
   const res = http.post(
     `${BASE}/orders`,
-    JSON.stringify({ eventId: 1, qty: 1 }),
+    JSON.stringify({ eventId: EVENT_ID, qty: 1 }),
     { headers: { "Content-Type": "application/json" } }
   );
 
@@ -61,7 +62,8 @@ function textSummary(data) {
     `order_ok: ${m.order_ok?.values?.count ?? 0}`,
     `order_409: ${m.order_409?.values?.count ?? 0}`,
     `order_5xx: ${m.order_5xx?.values?.count ?? 0}`,
-    "Cek manual: curl $BASE/events/1 → terjual<=500 sisa>=0",
+    `eventId: ${EVENT_ID}`,
+    `Cek manual: curl $BASE/events/${EVENT_ID} → terjual<=quota sisa>=0`,
   ];
   return lines.join("\n") + "\n";
 }

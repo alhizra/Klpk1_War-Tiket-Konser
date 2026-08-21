@@ -7,15 +7,20 @@ info:
     Setelah instruktur verifikasi, hanya perubahan aditif yang diizinkan.
     Data domain: Excel dataset — TREASURE … 4EVE (11 events / 3850 seats).
   x-frozen: true
-  x-frozen-date: "2026-08-19"
+  x-frozen-date: "2026-08-21"
   x-baseurl-rules:
     rateLimitPerMinute: 60
     defaultPageSize: 20
     maxPageSize: 50
+    maxQtyPerOrder: 4
+    contestedResource: seat-quota
+  x-baseurl-doc: docs/BASEURL.md
 
 servers:
   - url: http://localhost:8080
-    description: Gateway (isi baseurl artefak di sini saat deploy)
+    description: Gateway Docker / Codespace public port
+  - url: http://localhost:3000
+    description: API Node dev langsung
 
 # Implementasi path sama dengan openapi.yaml v1 — lihat file itu untuk schema penuh.
 # File ini menandai status beku untuk artefak openapi-final.

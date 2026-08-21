@@ -60,12 +60,22 @@ npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
 
 ---
 
+## Base URL & beban
+
+| Dokumen | Isi |
+|---------|-----|
+| [`docs/BASEURL.md`](./docs/BASEURL.md) | URL dev/gateway/HP + rate 60/mnt + page 20/50 |
+| [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) | Endpoint kritis final |
+| [`docs/BASELINE.md`](./docs/BASELINE.md) | Angka loadtest + cara ulang uji |
+| `loadtest/oversell-check.ps1` | Cek cepat anti-oversell |
+| `loadtest/run-p1-local.ps1` | Baseline autocannon P1 |
+
 ## Kontrak API
 
 | File | Versi | Status |
 |------|-------|--------|
 | [`openapi.yaml`](./openapi.yaml) | 1.0.0 | Development |
-| [`openapi-final.yaml`](./openapi-final.yaml) | 2.0.0 | Draft beku (P4) |
+| [`openapi-final.yaml`](./openapi-final.yaml) | 2.0.0 | Beku + `x-baseurl-rules` |
 
 ### Endpoint kritis
 
