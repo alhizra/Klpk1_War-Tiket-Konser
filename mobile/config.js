@@ -1,12 +1,18 @@
-// Materi P1 Langkah 6 — satu-satunya tempat alamat API squad.
-// Ganti nilai ini dengan base URL dari lapisan Scalable (artefak baseurl).
+// Materi P1 — satu-satunya tempat alamat API squad.
 //
-// JANGAN localhost / 127.0.0.1 di HP (materi: localhost = HP itu sendiri).
-// Windows: ipconfig → IPv4 adapter Wi-Fi (bukan 172.x vEthernet/WSL).
+// === GitHub Codespaces (yang kamu pakai sekarang) ===
+// 1) Jalankan API di root, port 3000 → PORTS → Visibility Public
+// 2) Salin URL port 3000, tempel di bawah (HTTPS, tanpa / di akhir)
+// Contoh bentuk: https://NAMA-CODESPACE-3000.app.github.dev
 //
-// Aturan baseurl: 20 data per halaman, batas 60 permintaan/menit.
+// === Laptop Windows + HP satu Wi‑Fi ===
+// ipconfig → IPv4 Wi‑Fi → http://x.x.x.x:3000
+// JANGAN localhost di HP. JANGAN 172.x (WSL).
+//
+// Aturan baseurl: page 20, rate 60/menit.
 
-export const BASE_URL = "http://10.87.96.26:3000";
+export const BASE_URL =
+  "https://vigilant-eureka-x5596556jrvgcr49-3000.app.github.dev";
 
 export const PAGE_SIZE = 20;
 export const RATE_LIMIT_PER_MIN = 60;
