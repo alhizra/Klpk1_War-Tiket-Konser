@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
+    "scheme": "wtkticket",
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#0f172a"
@@ -20,14 +21,14 @@
       "package": "com.klpk1.wtkticket",
       "usesCleartextTraffic": true
     },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-asset", "expo-font"],
     "extra": {
       "eas": {
         "projectId": "replace-when-eas-init"
       }
-    },
-    "plugins": [
-      "expo-asset",
-      "expo-font"
-    ]
+    }
   }
 }

@@ -33,7 +33,8 @@ Monolit revisi Jumat: catalog event, `POST /orders`, worker e-ticket. ADR & arsi
 | QR e-ticket lokal | Ya (`react-native-qrcode-svg`) |
 | Banner mode luring | Ya (NetInfo) |
 
-Detail: `docs/mobile/ARSITEKTUR-MOBILE.md`, `DATA-MOBILE.md`, `BUILD.md`.
+Detail: `docs/mobile/ARSITEKTUR-MOBILE.md`, `DATA-MOBILE.md`, `BUILD.md`.  
+**Ceklist Modul 3 + troubleshooting HP:** [`MODUL-3-CEKLIST.md`](./MODUL-3-CEKLIST.md).
 
 ## 5. Apa yang Dipelajari
 
