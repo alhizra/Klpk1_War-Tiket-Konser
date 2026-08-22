@@ -1,22 +1,18 @@
+import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { enableScreens } from "react-native-screens";
 import AntreanScreen from "./screens/AntreanScreen";
 import DaftarScreen from "./screens/DaftarScreen";
 import DenahScreen from "./screens/DenahScreen";
 import ETicketScreen from "./screens/ETicketScreen";
 import PembayaranScreen from "./screens/PembayaranScreen";
+import { BASE_URL } from "./config";
 import { colors } from "./theme";
-
-try {
-  enableScreens(true);
-} catch {
-  /* ignore */
-}
 
 const Stack = createNativeStackNavigator();
 
@@ -36,7 +32,7 @@ class ErrorBoundary extends React.Component {
     return { err };
   }
   componentDidCatch(err, info) {
-    console.error("[WTK App]", err, info?.componentStack);
+    console.error("[WTK]", err, info?.componentStack);
   }
   render() {
     if (this.state.err) {
@@ -46,6 +42,7 @@ class ErrorBoundary extends React.Component {
           <Text style={eb.msg}>
             {String(this.state.err?.message || this.state.err)}
           </Text>
+          <Text style={eb.api}>API: {BASE_URL}</Text>
           <Pressable
             style={eb.btn}
             onPress={() => this.setState({ err: null })}
@@ -68,6 +65,7 @@ const eb = StyleSheet.create({
   },
   title: { color: colors.danger, fontSize: 18, fontWeight: "800" },
   msg: { color: colors.muted, marginTop: 12, lineHeight: 20 },
+  api: { color: colors.accent2, marginTop: 12, fontSize: 12 },
   btn: {
     marginTop: 20,
     backgroundColor: colors.accent2,
@@ -80,39 +78,41 @@ const eb = StyleSheet.create({
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <NavigationContainer>
-          <StatusBar style="light" />
-          <Stack.Navigator initialRouteName="Daftar" screenOptions={header}>
-            <Stack.Screen
-              name="Daftar"
-              component={DaftarScreen}
-              options={{ title: "WTK Ticket · Open Concert" }}
-            />
-            <Stack.Screen
-              name="Denah"
-              component={DenahScreen}
-              options={{ title: "Denah & pilih kursi" }}
-            />
-            <Stack.Screen
-              name="Antrean"
-              component={AntreanScreen}
-              options={{ title: "Antrean virtual" }}
-            />
-            <Stack.Screen
-              name="Pembayaran"
-              component={PembayaranScreen}
-              options={{ title: "Pembayaran" }}
-            />
-            <Stack.Screen
-              name="ETicket"
-              component={ETicketScreen}
-              options={{ title: "E-Ticket", headerBackVisible: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ErrorBoundary>
+          <NavigationContainer>
+            <StatusBar style="light" />
+            <Stack.Navigator initialRouteName="Daftar" screenOptions={header}>
+              <Stack.Screen
+                name="Daftar"
+                component={DaftarScreen}
+                options={{ title: "WTK Ticket · Open Concert" }}
+              />
+              <Stack.Screen
+                name="Denah"
+                component={DenahScreen}
+                options={{ title: "Denah & pilih kursi" }}
+              />
+              <Stack.Screen
+                name="Antrean"
+                component={AntreanScreen}
+                options={{ title: "Antrean virtual" }}
+              />
+              <Stack.Screen
+                name="Pembayaran"
+                component={PembayaranScreen}
+                options={{ title: "Pembayaran" }}
+              />
+              <Stack.Screen
+                name="ETicket"
+                component={ETicketScreen}
+                options={{ title: "E-Ticket", headerBackVisible: false }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ErrorBoundary>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
