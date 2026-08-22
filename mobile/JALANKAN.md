@@ -57,15 +57,21 @@ Cari **IPv4** adapter **Wi‑Fi** (bukan `172.x` vEthernet/WSL).
 Edit **hanya** `mobile/config.js`:
 
 ```js
-export const BASE_URL = "http://10.87.96.26:3000"; // ganti ke IPv4 Wi‑Fi kamu
+// Expo web / emulator di laptop:
+export const BASE_URL = "http://127.0.0.1:3000";
+// HP fisik Expo Go (ganti IPv4 Wi‑Fi kamu):
+// export const BASE_URL = "http://10.87.96.26:3000";
 export const PAGE_SIZE = 20; // aturan baseurl materi
 ```
 
 | Situasi | BASE_URL |
 |---------|----------|
+| Expo **web** / emulator di laptop | `http://127.0.0.1:3000` |
 | HP + laptop Wi‑Fi sama | `http://<IPv4-Wi-Fi>:3000` |
-| HP ke **hotspot laptop** | `http://192.168.137.1:3000` (cek `ipconfig` setelah hotspot ON) |
-| Dilarang materi | `localhost`, `127.0.0.1` |
+| HP ke **hotspot laptop** | `http://192.168.137.1:3000` (cek `ipconfig`) |
+| Dilarang di **HP fisik** | `localhost`, `127.0.0.1` |
+
+Layar **Pembayaran** wajib isi nama + email (backend menolak 400 jika kosong).
 
 ---
 

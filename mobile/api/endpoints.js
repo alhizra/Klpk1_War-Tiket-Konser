@@ -26,7 +26,8 @@ export async function ambilDaftarKonser(halaman = 1) {
     return { data: json, dariCache: false };
   } catch (e) {
     const cache = await baca(kunci);
-    const fallback = cache || (halaman === 1 ? await baca("events_last") : null);
+    const fallback =
+      cache || (halaman === 1 ? await baca("events_last") : null);
     if (fallback) return { data: fallback.data, dariCache: true };
     throw e;
   }
@@ -46,9 +47,17 @@ export async function ambilDetailKonser(id) {
   }
 }
 
-/** POST /orders */
-export function buatPesanan({ eventId, qty = 1, seatCodes }) {
-  const body = { eventId, qty };
+/**
+ * POST /orders
+ * Backend wajib: email + buyerName (selain eventId, qty)
+ */
+export function buatPesanan({ eventId, qty = 1, seatCodes, email, buyerName }) {
+  const body = {
+    eventId,
+    qty,
+    email: String(email || "").trim(),
+    buyerName: String(buyerName || "").trim(),
+  };
   if (seatCodes?.length) body.seatCodes = seatCodes;
   return api.post("/orders", body);
 }

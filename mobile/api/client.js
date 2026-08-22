@@ -4,15 +4,38 @@ function tidur(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function pesanError(teks, status) {
+  if (!teks) return `HTTP ${status}`;
+  try {
+    const j = JSON.parse(teks);
+    if (j.error) return j.error;
+    if (j.message) return j.message;
+  } catch {
+    /* plain text */
+  }
+  return teks.length > 200 ? teks.slice(0, 200) + "…" : teks;
+}
+
 async function minta(path, opsi = {}, percobaan = 0) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(opsi.headers || {}),
-    },
-    ...opsi,
-  });
+  const url = `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(opsi.headers || {}),
+      },
+      ...opsi,
+    });
+  } catch (e) {
+    const err = new Error(
+      e.message ||
+        `Tidak bisa hubungi API (${BASE_URL}). Cek server & config.js`
+    );
+    err.status = 0;
+    throw err;
+  }
 
   // 429 = batas laju — mundur teratur (max 3x)
   if (res.status === 429 && percobaan < 3) {
@@ -27,7 +50,7 @@ async function minta(path, opsi = {}, percobaan = 0) {
 
   if (!res.ok) {
     const teks = await res.text().catch(() => "");
-    const err = new Error(teks || `HTTP ${res.status}`);
+    const err = new Error(pesanError(teks, res.status));
     err.status = res.status;
     throw err;
   }

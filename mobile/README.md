@@ -22,7 +22,8 @@ npx expo start
 
 1. Daftar 11 event muncul (poster dari `/posters/...` di API)  
 2. Pilih event → pilih 1–4 kursi → antrean → bayar  
-3. 201 → e-ticket; 409 → pesan kursi habis  
+3. Di **Pembayaran**: isi **nama + email** (wajib, sama seperti web)  
+4. 201 → e-ticket QR; 400 nama/email; 409 kursi habis  
 
 ## API yang dipakai
 
@@ -30,7 +31,8 @@ Lihat `../docs/BASEURL.md` dan `../openapi-final.yaml`:
 
 - `GET /events?page&size`  
 - `GET /events/{id}`  
-- `POST /orders`  
+- `POST /orders` body: `eventId`, `qty`, `seatCodes?`, **`email`**, **`buyerName`**  
+
 
 ## Fitur P3–P4 (sudah)
 
