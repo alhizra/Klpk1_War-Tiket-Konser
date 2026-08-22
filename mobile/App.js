@@ -4,12 +4,19 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { enableScreens } from "react-native-screens";
 import AntreanScreen from "./screens/AntreanScreen";
 import DaftarScreen from "./screens/DaftarScreen";
 import DenahScreen from "./screens/DenahScreen";
 import ETicketScreen from "./screens/ETicketScreen";
 import PembayaranScreen from "./screens/PembayaranScreen";
 import { colors } from "./theme";
+
+try {
+  enableScreens(true);
+} catch {
+  /* ignore */
+}
 
 const Stack = createNativeStackNavigator();
 
@@ -28,13 +35,21 @@ class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(err) {
     return { err };
   }
+  componentDidCatch(err, info) {
+    console.error("[WTK App]", err, info?.componentStack);
+  }
   render() {
     if (this.state.err) {
       return (
         <View style={eb.wrap}>
           <Text style={eb.title}>Error di app</Text>
-          <Text style={eb.msg}>{String(this.state.err?.message || this.state.err)}</Text>
-          <Pressable style={eb.btn} onPress={() => this.setState({ err: null })}>
+          <Text style={eb.msg}>
+            {String(this.state.err?.message || this.state.err)}
+          </Text>
+          <Pressable
+            style={eb.btn}
+            onPress={() => this.setState({ err: null })}
+          >
             <Text style={eb.btnText}>Coba lagi</Text>
           </Pressable>
         </View>
@@ -69,7 +84,7 @@ export default function App() {
       <ErrorBoundary>
         <NavigationContainer>
           <StatusBar style="light" />
-          <Stack.Navigator screenOptions={header}>
+          <Stack.Navigator initialRouteName="Daftar" screenOptions={header}>
             <Stack.Screen
               name="Daftar"
               component={DaftarScreen}
