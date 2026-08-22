@@ -14,6 +14,8 @@ dist/
 loadtest/p1-local-result.txt
 mobile/.expo/
 mobile/dist/
+mobile-next/node_modules/
+mobile-next/.next/
 *.apk
 *.aab
 services/**/node_modules/
