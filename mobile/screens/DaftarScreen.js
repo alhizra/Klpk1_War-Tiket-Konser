@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { ambilDaftarKonser, posterUrl } from "../api/endpoints";
-import { BASE_URL, PAGE_SIZE } from "../config";
+import { API_HINT, BASE_URL, PAGE_SIZE } from "../config";
 import { useJaringan } from "../hooks/useJaringan";
 import { useSinkronOtomatis } from "../hooks/useSinkronOtomatis";
 import { colors } from "../theme";
@@ -99,9 +99,14 @@ export default function DaftarScreen({ navigation }) {
         <Text style={styles.err}>Gagal memuat: {galat}</Text>
         <Text style={styles.debug}>API: {BASE_URL}</Text>
         <Text style={styles.info}>
-          1) API laptop hidup? buka /health di browser laptop{"\n"}
-          2) config.js = IPv4 Wi‑Fi laptop (bukan 172.x, bukan localhost){"\n"}
-          3) HP Wi‑Fi sama / hotspot laptop{"\n"}
+          {API_HINT}
+          {"\n\n"}
+          1) Terminal root: node src/server.js — buka http://127.0.0.1:3000/api/health
+          {"\n"}
+          2) Expo WEB: config otomatis 127.0.0.1:3000 (refresh halaman)
+          {"\n"}
+          3) Expo Go HP: Wi‑Fi sama, IP di config LAN (bukan 172.x)
+          {"\n"}
           4) Firewall izinkan port 3000
         </Text>
         <Pressable
