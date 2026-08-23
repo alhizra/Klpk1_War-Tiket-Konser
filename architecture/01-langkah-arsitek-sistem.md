@@ -1,10 +1,10 @@
-# Add Arsitektur — Langkah kerja
+# Langkah-langkah Arsitek Sistem
 
-**Label:** **Add Arsitektur** · Arsitek Sistem (Andi Hilyatul Mar'ah)  
+**Peran:** Arsitek Sistem (Andi Hilyatul Mar'ah) · tag: `add arsitektur`  
 **Tema:** Penjualan tiket dengan antrean virtual dan kursi terbatas  
 **Sumber daya rebutan:** Kursi — satu kursi hanya boleh terjual satu kali  
 **Mata kuliah:** Praktikum Scalable Systems Design  
-**Handoff:** Add Backend · Add Data · Add Infra · Add QA
+**Handoff tugas:** `add backend` · `add data` · `add infra` · `add qa`
 
 ---
 
@@ -418,12 +418,12 @@ flowchart TB
 
 # BAGIAN I — Handoff ke peran lain
 
-| Label | Yang diterima dari Add Arsitektur |
-|-------|----------------------------------|
-| **Add Backend** | Sequence + endpoint + aturan lock/confirm |
-| **Add Data** | Ownership tabel, indeks seat, TTL hold, seed Excel, migrasi |
-| **Add Infra** | Container diagram, port, Redis/Postgres, healthcheck, scale |
-| **Add QA** | Skenario load: hold kursi sama; 409/oversell; webhook double; baseline |
+| Tag tugas | Yang diterima dari arsitek |
+|-----------|----------------------------|
+| `add backend` | Sequence + endpoint + aturan lock/confirm |
+| `add data` | Ownership tabel, indeks seat, TTL hold, seed Excel, migrasi |
+| `add infra` | Container diagram, port, Redis/Postgres, healthcheck, scale |
+| `add qa` | Skenario load: hold kursi sama; 409/oversell; webhook double; baseline |
 
 ---
 

@@ -1,24 +1,39 @@
 # PERAN.md — Kelompok 1 · War Tiket Konser
 
-| Label | Peran formal | Nama | Fokus file |
-|-------|--------------|------|------------|
-| **Add Arsitektur** | Arsitek Sistem | Andi Hilyatul Mar'ah | `docs/adr/`, `architecture/`, `openapi*.yaml`, diagram PNG |
-| **Add Backend** | Backend / API Engineer | Yusuf Sewang | `src/`, `public/`, `docs/BACKEND.md`, mobile API client |
-| **Add Infra** | Infrastructure & DevOps | AL-HIZRA | `docker-compose.yml`, `nginx/`, Dockerfile, `docs/DEPLOY.md`, Codespaces |
-| **Add Data** | Data & Persistence | Astrid Tiar | `data/`, `db/`, `docs/DATA.md`, `src/load-manual-data.js`, poster catalog |
-| **Add QA** | QA, Load-Test & Dokumentasi | Tri Wahyuni | `loadtest/`, `docs/BASELINE.md`, uji README, skenario demo |
+## Anggota & peran formal
 
-## Tema data (Add Data)
+| Peran | Nama | Folder utama |
+|-------|------|--------------|
+| Arsitek Sistem | Andi Hilyatul Mar'ah | `architecture/`, `docs/adr/`, `openapi*.yaml` |
+| Backend / API Engineer | Yusuf Sewang | `src/`, `public/`, `docs/BACKEND.md` |
+| Infrastructure & DevOps | AL-HIZRA | `docker-compose.yml`, `nginx/`, `docs/DEPLOY.md` |
+| Data & Persistence | Astrid Tiar | `data/`, `db/`, `docs/DATA.md` |
+| QA, Load-Test & Dokumentasi | Tri Wahyuni | `loadtest/`, `docs/BASELINE.md` |
 
-War tiket Asia — **30 konser** (TREASURE … KATSEYE) · **10.890 kursi**  
-Sumber: Excel squad → `data/events.manual.json` + `data/seats.manual.csv` + `public/posters/`.
+## Tag tugas (bukan ganti nama peran)
 
-## Endpoint kritis
+Setiap pekerjaan ditandai terpisah:
 
-| Method | Path | PIC |
+| Tag | Arti | PIC |
+|-----|------|-----|
+| `add arsitektur` | ADR, diagram, kontrak OpenAPI, batasan monolit/MS | Arsitek |
+| `add backend` | API, anti-oversell, payment lab, admin API, worker | Backend |
+| `add data` | Excel/CSV, seed seats, skema DB, kuota Redis seed | Data |
+| `add infra` | Docker, Nginx, deploy, Codespaces, firewall | Infra |
+| `add qa` | Loadtest, baseline, skenario demo, ceklist | QA |
+| `add mobile` | Expo screens, config LAN, offline/outbox | (mobile / squad) |
+| `add web` | UI `public/`, role gate, admin HTML | Backend + UI |
+
+## Endpoint kritis + tag
+
+| Method | Path | Tag |
 |--------|------|-----|
-| GET | `/events`, `/events/{id}` | Add Backend + Add Data |
-| POST | `/orders` | Add Backend (anti-oversell) |
-| POST | `/payments/simulate`, `/mail/outbox/*` | Add Backend |
-| GET/POST/PATCH/DELETE | `/admin/*` | Add Backend + Add Infra (token) |
-| GET | `/health` | Add Backend + Add Infra |
+| GET | `/events`, `/events/{id}` | `add backend` + `add data` |
+| POST | `/orders` | `add backend` |
+| POST | `/payments/simulate`, `/mail/outbox/*` | `add backend` |
+| GET/POST/PATCH/DELETE | `/admin/*` | `add backend` (+ token `add infra`) |
+| GET | `/health` | `add backend` + `add infra` |
+
+## Dataset
+
+**30 konser** · **10.890 kursi** — sumber Excel → `data/events.manual.json` + `data/seats.manual.csv` · tag: `add data`

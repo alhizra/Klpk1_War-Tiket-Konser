@@ -6,19 +6,19 @@
 
 ## Kelompok & peran
 
-| Label | Nama | Fokus |
+| Peran | Nama | Fokus |
 |-------|------|--------|
-| **Add Arsitektur** | Andi Hilyatul Mar'ah | ADR, diagram [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md), OpenAPI |
-| **Add Backend** | Yusuf Sewang | `src/`, API monolit, web `public/`, anti-oversell |
-| **Add Infra** | AL-HIZRA | Docker, Nginx gateway, deploy, Codespaces |
-| **Add Data** | Astrid Tiar | Dataset Excel/CSV (**30 event / 10.890 seats**), `db/`, load seats, poster |
-| **Add QA** | Tri Wahyuni | Loadtest, baseline, uji konsistensi, dokumentasi |
+| Arsitek Sistem | Andi Hilyatul Mar'ah | ADR, diagram, OpenAPI |
+| Backend / API Engineer | Yusuf Sewang | `src/`, API, web `public/`, anti-oversell |
+| Infrastructure & DevOps | AL-HIZRA | Docker, Nginx, deploy, Codespaces |
+| Data & Persistence | Astrid Tiar | Excel/CSV (**30 event / 10.890 seats**), `db/`, seed |
+| QA, Load-Test & Dokumentasi | Tri Wahyuni | Loadtest, baseline, skenario demo |
 
-Detail file & endpoint PIC: [`PERAN.md`](./PERAN.md).
+Tag per **tugas** (bukan ganti nama peran): `add arsitektur` · `add backend` · `add data` · `add infra` · `add qa` · `add web` · `add mobile` — lihat [`PERAN.md`](./PERAN.md).
 
 ---
 
-## Add Arsitektur (monolit lab — jalur utama)
+## Arsitektur (monolit lab — jalur utama) · `add arsitektur`
 
 ![Monolit lab](./architecture/diagrams/07-monolit.png)
 
@@ -97,45 +97,53 @@ Pilih peran (User/Admin)
 
 ## Fitur yang sudah fix (status terkini)
 
-### Add Backend (monolit)
-- [x] `GET /events` paginasi · `GET /events/:id` detail + categories + seats + `soldSeats` + `sisa` live
-- [x] `POST /orders` anti-oversell · max 4 · email + buyerName wajib · 409/429
-- [x] `POST /payments/simulate` + webhook mock · e-ticket outbox lab
-- [x] Admin: CRUD event, reset kuota, **regenerate denah multi-zona**, hapus event
-- [x] Poster: path seed + upload base64 → `/posters/uploads/…`
-- [x] Migrasi ringan kolom order/event saat start (`ensureOrderColumns` / `ensureEventColumns`)
-- [x] Edit harga sinkron ke `seat_categories` / `seats`
+Setiap baris = **satu tugas** + tag-nya (tidak digabung jadi nama peran).
 
-### Add Data
-- [x] **30 event** · **10.890** seat codes (`events.manual.json` + `seats.manual.csv`)
+### `add arsitektur`
+- [x] ADR-001 paginasi · ADR-002 Redis seat lock · ADR-003 monolit Jumat
+- [x] OpenAPI monolit (`openapi.yaml` / `openapi-final.yaml`)
+- [x] Diagram PNG + Mermaid · [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md)
+- [x] Context map monolit + batasan track MS (Modul 2 terpisah)
+
+### `add backend`
+- [x] `GET /events` paginasi · `GET /events/:id` (+ seats, categories, soldSeats, sisa live)
+- [x] `POST /orders` anti-oversell · max 4 · email + buyerName wajib · 409/429
+- [x] `POST /payments/simulate` + webhook mock · enqueue e-ticket
+- [x] Admin API: CRUD event · reset kuota · regenerate denah · list orders
+- [x] Poster upload base64 → `/posters/uploads/…`
+- [x] Migrasi kolom order/event saat start · sync harga → seats
+- [x] Worker e-ticket (`src/worker.js`) · outbox lab
+
+### `add data`
+- [x] Dataset **30 event** · **10.890** seat codes (`events.manual.json` + `seats.manual.csv`)
 - [x] Import Excel · `npm run data:reload` / `data:excel` · seed Redis kuota
 - [x] Poster catalog `public/posters/01`…`30` · `data-summary.json`
+- [x] Skema Postgres `db/init.sql` · load manual seats
 
-### Add Arsitektur
-- [x] ADR-001…003 · OpenAPI · diagram PNG + Mermaid di `architecture/DIAGRAMS.md`
-- [x] Context map monolit + target MS (Modul 2 terpisah)
-
-### Web (`public/`)
+### `add web`
 - [x] Role gate User / Admin
 - [x] Open sale list + tag/genre (`event-meta.js`)
 - [x] Detail: artist, rating, gate, jadwal, deskripsi, harga zona
 - [x] Tab Detail · Denah · Benefit · Notice
-- [x] Denah berwarna per zona · legend · venue sketch · max 4
+- [x] Denah berwarna · legend · venue sketch · max 4
 - [x] Checkout + bayar lab + receipt + poll outbox
-- [x] Admin UI: form lengkap, poster, regenerate seats, orders
+- [x] Admin UI HTML: form, poster, regenerate seats, orders
 
-### Mobile Expo (`mobile/`)
-- [x] Role gate · daftar (tag/genre/artist/poster) · detail bertab (sama web)
-- [x] Denah: semua zona / per zona · sketch · legend+harga · live refresh 12s
-- [x] Benefit + terms · antrean · bayar + **simulate pay** · e-ticket receipt + QR + outbox
+### `add mobile`
+- [x] Role gate · daftar (tag/genre/artist/poster) · detail bertab
+- [x] Denah: semua/per zona · sketch · legend+harga · live refresh 12s
+- [x] Benefit + terms · antrean · bayar + simulate pay · e-ticket QR + outbox
 - [x] Offline: cache list/detail · outbox orders
-- [x] Admin: field setara web (kota, negara, jadwal, status, deskripsi, denah multi-zona)
-- [x] **Upload poster** galeri (`expo-image-picker` → data URL ke API)
-- [x] Meta UI: `mobile/data/eventMeta.js` (port dari `public/event-meta.js`)
+- [x] Admin mobile: field setara web + upload poster galeri
+- [x] Meta UI `mobile/data/eventMeta.js`
 
-### Dataset
-- [x] **30 event** (EVT001–030) · seats CSV · poster 01–30
-- [x] Import Excel OneDrive / `data/import_excel_dataset.py` · `npm run data:manual` / `data:excel`
+### `add infra`
+- [x] `docker-compose.yml` · gateway Nginx · scale API
+- [x] Codespaces / env example · firewall lab (opsional)
+
+### `add qa`
+- [x] Loadtest oversell / baseline · skenario 409 sah
+- [x] Ceklist Modul 3 mobile · dokumentasi uji
 
 ---
 
@@ -178,7 +186,7 @@ PAYMENT_AUTO_CAPTURE=1
 
 ---
 
-## Add Data — dataset (30 konser)
+## Dataset (30 konser) · `add data`
 
 Sumber: Excel squad + `data/events.manual.json` + `data/seats.manual.csv` + poster di `public/posters/`.
 
@@ -281,7 +289,7 @@ curl -s http://localhost:8080/v1/events?size=5
 ## Struktur repo
 
 ```
-├── src/                    # Add Backend (monolit API)
+├── src/                    # monolit API (`add backend`)
 │   ├── server.js · routes.js · db.js · redis.js
 │   ├── services/           # orders, quota, admin, eventCache, mail, poster…
 │   ├── middleware/         # rateLimit, adminAuth
@@ -312,16 +320,15 @@ curl -s http://localhost:8080/v1/events?size=5
 | Dokumen | Isi |
 |---------|-----|
 | [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) | Kontrak monolit |
-| [`docs/BACKEND.md`](./docs/BACKEND.md) | **Add Backend** — detail API monolit |
+| [`docs/BACKEND.md`](./docs/BACKEND.md) | Detail API · tag `add backend` |
 | [`docs/BASEURL.md`](./docs/BASEURL.md) | URL + rate + page size |
-| [`docs/DATA.md`](./docs/DATA.md) | Dataset |
-| [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) | Arsitektur Expo |
-| [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md) | **Add Arsitektur** — diagram PNG + Mermaid |
-| [`architecture/diagrams.html`](./architecture/diagrams.html) | Diagram interaktif (buka lokal) |
-| [`docs/adr/`](./docs/adr/) | ADR paginasi, Redis lock, monolit Jumat |
-| [`docs/DATA.md`](./docs/DATA.md) | **Add Data** — skema, Redis, seed |
+| [`docs/DATA.md`](./docs/DATA.md) | Skema/seed · tag `add data` |
+| [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) | Arsitektur Expo · `add mobile` |
+| [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md) | Diagram PNG + Mermaid · `add arsitektur` |
+| [`architecture/diagrams.html`](./architecture/diagrams.html) | Diagram interaktif (lokal) |
+| [`docs/adr/`](./docs/adr/) | ADR · `add arsitektur` |
 | [`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) | 4 service Modul 2 |
-| [`PERAN.md`](./PERAN.md) · [`AI-LOG.md`](./AI-LOG.md) | Label Add * · log AI |
+| [`PERAN.md`](./PERAN.md) · [`AI-LOG.md`](./AI-LOG.md) | Peran formal + tag tugas · log AI |
 
 ---
 

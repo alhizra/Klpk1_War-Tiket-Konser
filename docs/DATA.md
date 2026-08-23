@@ -1,6 +1,7 @@
-# Add Data — Strategi Data & Persistence
+# Data & Persistence — Strategi data
 
-**Label:** **Add Data** · Data & Persistence (Astrid Tiar)  
+**Peran:** Data & Persistence (Astrid Tiar)  
+**Tag tugas:** `add data`  
 **Tema:** War Tiket Konser  
 **Dataset:** **30 event / 10.890 seats**  
 **Sumber daya rebutan:** Kursi — satu unit kuota hanya boleh terjual satu kali.

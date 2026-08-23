@@ -1,6 +1,6 @@
 # docs/DEPLOY.md — Infrastructure & DevOps
 
-**Label:** **Add Infra** · PIC AL-HIZRA (Infrastructure & DevOps)  
+**Peran:** Infrastructure & DevOps (AL-HIZRA) · tag tugas: `add infra`  
 **Repo:** https://github.com/alhizra/Klpk1_War-Tiket-Konser  
 **Fokus file:** `docker-compose.yml`, `docker-compose.ms.yml`, `nginx/`, `services/api/Dockerfile`, `.env.example`
 

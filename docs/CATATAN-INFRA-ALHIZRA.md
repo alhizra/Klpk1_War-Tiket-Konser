@@ -23,9 +23,9 @@ Bukti scale (contoh instance id berbeda):
 
 ## Backlog bug (bukan Infra — diteruskan ke tim)
 
-### B1. Validasi email + nama pembeli (Add Backend + UI)
+### B1. Validasi email + nama pembeli (`add backend` + `add web`)
 - **Gejala:** tombol Pesan tetap booking meski email e-ticket & nama pembeli kosong.
-- **PIC:** Yusuf (**Add Backend**) ± form di `public/`
+- **PIC:** Yusuf (Backend) · tugas `add backend` ± form `add web` di `public/`
 - **Perbaikan yang diminta:**
   1. Frontend: jangan submit jika kosong; tampilkan error
   2. Backend `POST /orders`: 400 jika email/nama kosong atau email invalid

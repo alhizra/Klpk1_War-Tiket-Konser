@@ -5,7 +5,7 @@ Minimal 5 entri bermakna per anggota.
 
 ---
 
-## Add Backend + Add Data
+## Backend + Data (`add backend` · `add data`)
 
 ### Entri 1 — Anti-oversell atomik
 - **Konteks:** Implementasi `POST /orders` agar 5000 request tidak menjual > 500 kursi multi-replika.
@@ -49,7 +49,7 @@ Minimal 5 entri bermakna per anggota.
 
 ---
 
-## QA + Add Backend — Rapikan Scalable (2026-08-21)
+## QA + Backend (`add qa` · `add backend`) — Rapikan Scalable (2026-08-21)
 
 ### Entri 6 — Base URL vs loadtest rate limit
 - **Konteks:** Menyelaraskan artefak baseurl (60 req/menit) dengan skenario war 5000 POST.
@@ -67,7 +67,7 @@ Minimal 5 entri bermakna per anggota.
 
 ---
 
-## Add Backend + Add Data — Mobile offline (2026-08-21)
+## Backend + Data — Mobile offline (2026-08-21) · `add backend` · `add data` · `add mobile`
 
 ### Entri 8 — BASE_URL WSL ditolak
 - **Konteks:** HP tidak memuat data meski IPv4 diisi.
@@ -92,7 +92,7 @@ Minimal 5 entri bermakna per anggota.
 
 ---
 
-## Add Backend + Add Data + Add Infra — Microservices 4 service (2026-08-21)
+## Backend + Data + Infra — Microservices 4 service · `add backend` · `add data` · `add infra`
 
 ### Entri 11 — Seed kursi penuh di ticket hang
 - **Konteks:** ticket-service Docker “Up” tapi port 3002 connection refused.

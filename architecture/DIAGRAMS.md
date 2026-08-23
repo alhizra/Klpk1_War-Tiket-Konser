@@ -1,6 +1,7 @@
-# Add Arsitektur — Diagram sistem
+# Diagram arsitektur sistem
 
-**Label:** **Add Arsitektur** · Arsitek Sistem (Andi Hilyatul Mar'ah)  
+**Peran:** Arsitek Sistem (Andi Hilyatul Mar'ah)  
+**Tag tugas:** `add arsitektur`  
 **Penjualan tiket + antrean virtual + kursi terbatas** (satu kursi hanya terjual sekali)
 
 > Gambar PNG di folder [`diagrams/`](./diagrams/) · sumber Mermaid live: blok di bawah · HTML lokal: [`diagrams.html`](./diagrams.html)

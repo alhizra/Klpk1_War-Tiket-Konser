@@ -1,8 +1,9 @@
-# Add QA — Logbook Uji Beban (Scalable)
+# Baseline — Logbook Uji Beban (Scalable)
 
-**Label:** **Add QA** · Load-test & dokumentasi (Tri Wahyuni)  
+**Peran:** QA, Load-Test & Dokumentasi (Tri Wahyuni)  
+**Tag tugas:** `add qa`  
 **Tema:** War Tiket Konser  
-**Dataset (Add Data):** **30 event / 10.890 seats**
+**Dataset (`add data`):** **30 event / 10.890 seats**
 **Base URL dev:** `http://localhost:3000` · **Gateway:** `http://localhost:8080`  
 **Endpoint panas:** `POST /orders` · **Baca:** `GET /events/{id}`  
 **Aturan baseurl:** 60 req/menit (Mobile) · lab war: `RATE_LIMIT=10000`  

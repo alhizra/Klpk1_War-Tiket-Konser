@@ -1,8 +1,9 @@
-# Add Backend — War Tiket Konser
+# Backend — War Tiket Konser
 
-**Label:** **Add Backend** · API Engineer (Yusuf Sewang)  
+**Peran:** Backend / API Engineer (Yusuf Sewang)  
+**Tag tugas:** `add backend` (satu tugas = satu baris di checklist README)  
 **Tema:** War tiket konser — sumber daya rebutan = **kursi / kuota per event**  
-**Tujuan dokumen:** ringkasan **Add Backend** — API monolit, file terkait, dan alur order/anti-oversell.
+**Tujuan dokumen:** API monolit, file terkait, alur order / anti-oversell.
 
 ---
 
@@ -288,7 +289,7 @@ Detail: `docs/MICROSERVICES.md`, `docs/ENDPOINTS-MS.md`, `openapi-ms.yaml`.
 
 ---
 
-## 11. Apa yang **bukan** cakupan Add Backend
+## 11. Apa yang **bukan** cakupan `add backend`
 
 | Area | PIC / folder |
 |------|----------------|
@@ -302,7 +303,7 @@ Backend **menyediakan API**; mobile/web **memakai** API itu.
 
 ---
 
-## 12. Checklist Add Backend sudah benar
+## 12. Checklist `add backend` sudah benar
 
 - [ ] `GET /api/health` → `ok: true`  
 - [ ] `GET /api/events` → ada 30 event  
@@ -317,7 +318,7 @@ Backend **menyediakan API**; mobile/web **memakai** API itu.
 
 ## 13. Satu kalimat penutup
 
-> **Add Backend** monolit memastikan **setiap kursi hanya terjual sekali** (Redis atomik), menerima pesanan dengan **identitas pembeli wajib**, mensimulasikan **bayar**, lalu menerbitkan **e-ticket async** lewat worker — siap diuji beban dan didemo lewat web di port 3000.
+> Backend monolit (`add backend`) memastikan **setiap kursi hanya terjual sekali** (Redis atomik), menerima pesanan dengan **identitas pembeli wajib**, mensimulasikan **bayar**, lalu menerbitkan **e-ticket async** lewat worker — siap diuji beban dan didemo lewat web di port 3000.
 
 ---
 
