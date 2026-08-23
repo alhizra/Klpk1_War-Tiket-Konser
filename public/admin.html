@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — WTK Ticket</title>
+  <link rel="stylesheet" href="/styles.css?v=ui5" />
+  <link rel="stylesheet" href="/admin.css?v=adm2" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-body">
+  <header class="gnb">
+    <div class="gnb-inner">
+      <a class="logo" href="/">WTK<span>TICKET</span></a>
+      <nav class="gnb-nav">
+        <a href="/?role=user">User · Concert</a>
+        <a href="/admin.html" class="active">Admin</a>
+      </nav>
+      <div class="gnb-right">
+        <a href="/" class="chip chip-btn" style="text-decoration:none">Ganti peran</a>
+        <span id="apiStatus" class="chip">API …</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap admin-wrap">
+    <div class="admin-hero">
+      <div>
+        <p class="eyebrow">Panel admin</p>
+        <h1>Kelola konser</h1>
+        <p class="muted">Tambah event, ubah status, reset stok, pantau order.</p>
+      </div>
+      <button type="button" id="btnLoad" class="btn-pri">Refresh data</button>
+    </div>
+    <!-- token admin dikirim otomatis di JS (tidak ditampilkan) -->
+    <input id="adminToken" type="hidden" value="admin-wtk" />
+
+    <div id="adminMsg" class="admin-toast hidden" role="status" aria-live="polite">
+      <span class="admin-toast-icon" aria-hidden="true"></span>
+      <span class="admin-toast-text"></span>
+      <button type="button" class="admin-toast-close" id="adminMsgClose" aria-label="Tutup">×</button>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-card form-sticky">
+        <h2>Tambah konser</h2>
+        <form id="formCreate" class="admin-form">
+          <label>Judul * <input name="title" required placeholder="WORLD TOUR JAKARTA" /></label>
+          <label>Artist * <input name="artist" required placeholder="Artist Name" /></label>
+          <label>Venue * <input name="venue" required placeholder="ICE BSD" /></label>
+          <div class="row2">
+            <label>Kota <input name="city" placeholder="Tangerang" /></label>
+            <label>Negara <input name="country" placeholder="Indonesia" /></label>
+          </div>
+          <div class="row2">
+            <label>Mulai konser * <input name="startsAt" type="datetime-local" required /></label>
+            <label>Buka penjualan <input name="salesOpensAt" type="datetime-local" /></label>
+          </div>
+          <div class="row2">
+            <label>Kuota total * <input name="quotaTotal" type="number" min="1" max="5000" value="100" required /></label>
+            <label>Harga (IDR) * <input name="priceIdr" type="number" min="0" step="1000" value="750000" required /></label>
+          </div>
+          <div class="row2">
+            <label>Status
+              <select name="status">
+                <option value="PUBLISHED">PUBLISHED</option>
+                <option value="DRAFT">DRAFT</option>
+                <option value="CLOSED">CLOSED</option>
+              </select>
+            </label>
+            <label class="chk">
+              <input name="generateSeats" type="checkbox" checked /> Denah multi-zona
+            </label>
+          </div>
+          <label>Deskripsi <textarea name="description" rows="2" placeholder="Opsional"></textarea></label>
+          <div class="poster-field">
+            <span class="poster-label">Poster / gambar</span>
+            <div class="poster-pick">
+              <div id="posterPreview" class="poster-preview empty">Belum ada gambar</div>
+              <div class="poster-actions">
+                <label class="btn-sec file-btn">
+                  Pilih gambar
+                  <input id="posterFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+                </label>
+                <button type="button" id="btnClearPoster" class="btn-sec">Hapus</button>
+                <p class="hint">JPG/PNG/WebP · maks 2.5 MB</p>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-pri full">Buat konser</button>
+        </form>
+      </section>
+
+      <section class="admin-card grow">
+        <div class="card-head">
+          <h2>Daftar event <span id="eventCountLabel" class="muted" style="font-weight:600;font-size:.85rem"></span></h2>
+          <button type="button" id="btnRefreshEvents" class="btn-sec">Refresh</button>
+        </div>
+        <div id="eventsBody" class="event-list">
+          <div class="empty-state">Belum dimuat</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="admin-card orders-section">
+      <div class="card-head">
+        <h2>Order terbaru</h2>
+        <button type="button" id="btnRefreshOrders" class="btn-sec">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Event</th>
+              <th>Pembeli</th>
+              <th>Qty</th>
+              <th>Status</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="6" class="muted">Belum dimuat</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal konfirmasi -->
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card">
+      <p class="modal-kicker">Konfirmasi</p>
+      <h2 id="confirmTitle">Hapus konser?</h2>
+      <p id="confirmBody" class="modal-body">Tindakan ini tidak bisa dibatalkan.</p>
+      <div class="modal-actions">
+        <button type="button" id="confirmCancel" class="btn-sec">Batal</button>
+        <button type="button" id="confirmOk" class="btn-danger-solid">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal edit konser -->
+  <div id="editModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editModalHeading">
+    <div class="modal-backdrop" data-edit-close></div>
+    <div class="modal-card modal-card-wide">
+      <p class="modal-kicker">Edit konser</p>
+      <h2 id="editModalHeading">Ubah data</h2>
+      <form id="formEdit" class="admin-form" action="javascript:void(0)" method="post">
+        <input type="hidden" name="eventId" id="editEventId" value="" />
+        <label>Judul * <input name="title" id="editTitleInput" required autocomplete="off" /></label>
+        <label>Artist * <input name="artist" id="editArtist" required autocomplete="off" /></label>
+        <label>Venue * <input name="venue" id="editVenue" required autocomplete="off" /></label>
+        <div class="row2">
+          <label>Kota <input name="city" id="editCity" autocomplete="off" /></label>
+          <label>Negara <input name="country" id="editCountry" autocomplete="off" /></label>
+        </div>
+        <div class="row2">
+          <label>Mulai konser * <input name="startsAt" id="editStartsAt" type="datetime-local" required /></label>
+          <label>Buka penjualan <input name="salesOpensAt" id="editSalesOpensAt" type="datetime-local" /></label>
+        </div>
+        <div class="row2">
+          <label>Kuota total * <input name="quotaTotal" id="editQuotaTotal" type="number" min="1" max="5000" required /></label>
+          <label>Harga (IDR) * <input name="priceIdr" id="editPriceIdr" type="number" min="0" step="1000" required /></label>
+        </div>
+        <label>Status
+          <select name="status" id="editStatus">
+            <option value="PUBLISHED">PUBLISHED</option>
+            <option value="DRAFT">DRAFT</option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+        </label>
+        <label>Deskripsi <textarea name="description" id="editDescription" rows="2"></textarea></label>
+        <div class="poster-field">
+          <span class="poster-label">Poster (opsional ganti)</span>
+          <div class="poster-pick">
+            <div id="editPosterPreview" class="poster-preview empty">Tanpa ganti</div>
+            <div class="poster-actions">
+              <label class="btn-sec file-btn">
+                Ganti gambar
+                <input id="editPosterFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+              </label>
+              <button type="button" id="btnClearEditPoster" class="btn-sec">Batal ganti</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions" style="margin-top:.5rem">
+          <button type="button" id="editCancel" class="btn-sec">Batal</button>
+          <button type="submit" id="btnSaveEdit" class="btn-pri">Simpan perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin.js?v=adm-ui2"></script>
+</body>
+</html>

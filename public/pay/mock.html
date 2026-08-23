@@ -3,38 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WTK Mock Payment</title>
+  <title>Pembayaran — WTK Ticket</title>
+  <link rel="stylesheet" href="/styles.css" />
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; display: flex; min-height: 100vh; align-items: center; justify-content: center; margin: 0; }
-    .card { background: #1e293b; padding: 1.5rem 1.75rem; border-radius: 12px; max-width: 420px; width: 92%; }
-    h1 { margin: 0 0 .5rem; font-size: 1.25rem; color: #22c55e; }
-    code { display: block; font-size: .85rem; color: #94a3b8; margin: .25rem 0; word-break: break-all; }
-    button { margin-top: 1rem; width: 100%; padding: .75rem; border: 0; border-radius: 8px; background: #22c55e; color: #052e16; font-weight: 700; cursor: pointer; }
-    button:disabled { opacity: .6; cursor: wait; }
-    .msg { margin-top: .75rem; font-size: .9rem; }
-    .ok { color: #86efac; } .err { color: #fca5a5; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--bg); padding: 1.5rem;
+    }
+    .pay-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 16px;
+      box-shadow: var(--card-shadow); padding: 1.5rem 1.6rem; max-width: 400px; width: 100%;
+    }
+    .pay-card h1 { margin: 0 0 .35rem; font-size: 1.25rem; }
+    .pay-card .sub { margin: 0 0 1.1rem; color: var(--muted); font-size: .9rem; }
+    .pay-row {
+      display: flex; justify-content: space-between; gap: 1rem;
+      padding: .65rem .75rem; background: #f7f8fa; border-radius: 8px; margin-bottom: .5rem;
+      font-size: .9rem;
+    }
+    .pay-row span { color: var(--muted); font-weight: 600; font-size: .78rem; }
+    .pay-row strong { font-weight: 800; }
+    .pay-card button {
+      margin-top: 1rem; width: 100%; padding: .8rem; border: 0; border-radius: 10px;
+      background: var(--green); color: #fff; font-weight: 800; font-size: .95rem; cursor: pointer;
+      font-family: inherit;
+    }
+    .pay-card button:disabled { opacity: .65; cursor: wait; }
+    .pay-card button:hover:not(:disabled) { background: var(--green-d); }
+    .msg { margin-top: .85rem; font-size: .9rem; text-align: center; }
+    .msg.ok { color: #0a7a2f; font-weight: 700; }
+    .msg.err { color: #b42318; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Mock Payment Gateway</h1>
-    <p style="color:#94a3b8;font-size:.9rem;margin:0 0 1rem">Simulasi VA / Snap — klik bayar untuk settlement.</p>
-    <code id="oid">orderId: —</code>
-    <code id="pid">paymentId: —</code>
-    <button id="btn" type="button">Bayar &amp; Settle</button>
+  <div class="pay-card">
+    <h1>Pembayaran</h1>
+    <p class="sub">Konfirmasi pembayaran tiket konser kamu.</p>
+    <div class="pay-row"><span>Kode booking</span><strong id="oid">—</strong></div>
+    <button id="btn" type="button">Bayar sekarang</button>
     <div id="msg" class="msg"></div>
   </div>
   <script>
     const q = new URLSearchParams(location.search);
     const orderId = q.get("orderId") || "";
     const paymentId = q.get("paymentId") || "";
-    document.getElementById("oid").textContent = "orderId: " + (orderId || "—");
-    document.getElementById("pid").textContent = "paymentId: " + (paymentId || "—");
+    const short = orderId ? String(orderId).slice(0, 8).toUpperCase() : "—";
+    document.getElementById("oid").textContent = short;
     document.getElementById("btn").onclick = async () => {
       const btn = document.getElementById("btn");
       const msg = document.getElementById("msg");
-      if (!orderId) { msg.className = "msg err"; msg.textContent = "orderId kosong"; return; }
+      if (!orderId) {
+        msg.className = "msg err";
+        msg.textContent = "Kode booking tidak ditemukan.";
+        return;
+      }
       btn.disabled = true;
+      btn.textContent = "Memproses…";
       try {
         const res = await fetch("/api/payments/simulate", {
           method: "POST",
@@ -44,16 +68,19 @@
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.ok) {
           msg.className = "msg ok";
-          msg.textContent = "Lunas. E-ticket dikirim async. Silakan tutup tab ini.";
+          msg.textContent = "Pembayaran berhasil. E-ticket dikirim ke email kamu.";
+          btn.textContent = "Lunas";
         } else {
           msg.className = "msg err";
-          msg.textContent = data.error || "Gagal";
+          msg.textContent = data.error || "Pembayaran gagal. Coba lagi.";
           btn.disabled = false;
+          btn.textContent = "Bayar sekarang";
         }
       } catch (e) {
         msg.className = "msg err";
-        msg.textContent = e.message;
+        msg.textContent = "Koneksi bermasalah. Coba lagi.";
         btn.disabled = false;
+        btn.textContent = "Bayar sekarang";
       }
     };
   </script>

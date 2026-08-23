@@ -20,9 +20,47 @@
     return map[catCode] || map[String(catCode).toUpperCase()] || window.defaultBenefits(catCode);
   }
 
+  const POSTER_BY_ID = {
+    1: "/posters/01-treasure.jpg",
+    2: "/posters/02-lykn.png",
+    3: "/posters/03-blackpink.jpg",
+    4: "/posters/04-nctdream.jpg",
+    5: "/posters/05-exo.jpg",
+    6: "/posters/06-ateez.jpg",
+    7: "/posters/07-bus.jpg",
+    8: "/posters/08-straykids.jpg",
+    9: "/posters/09-aespa.jpg",
+    10: "/posters/10-seventeen.jpg",
+    11: "/posters/11-4eve.jpg",
+    12: "/posters/12-iu.jpg",
+    13: "/posters/13-newjeans.jpg",
+    14: "/posters/14-seventeen-encore.jpg",
+    15: "/posters/15-twice.jpg",
+    16: "/posters/16-lesserafim.jpg",
+    17: "/posters/17-itzy.jpg",
+    18: "/posters/18-gidle.jpg",
+    19: "/posters/19-enhypen.jpg",
+    20: "/posters/20-ive.jpg",
+    21: "/posters/21-bts.jpg",
+    22: "/posters/22-txt.jpg",
+    23: "/posters/23-riize.jpg",
+    24: "/posters/24-boynextdoor.jpg",
+    25: "/posters/25-zerobaseone.jpg",
+    26: "/posters/26-kissoflife.jpg",
+    27: "/posters/27-nmixx.jpg",
+    28: "/posters/28-babymonster.jpg",
+    29: "/posters/29-illit.jpg",
+    30: "/posters/30-katseye.jpg",
+  };
+
   function posterOf(ev) {
-    return metaOf(ev.eventId).poster ||
-      `https://picsum.photos/seed/wtk${ev.eventId}/600/800`;
+    if (ev && ev.posterUrl) return ev.posterUrl;
+    const id = Number(ev && (ev.eventId || ev.id));
+    return (
+      metaOf(id).poster ||
+      POSTER_BY_ID[id] ||
+      `https://picsum.photos/seed/wtk${id || 0}/600/800`
+    );
   }
 
   function fmtRp(n) {
@@ -134,10 +172,11 @@
       const res = await fetch("/api/health");
       const data = await res.json();
       const chip = el("apiStatus");
-      chip.textContent = data.ok ? "API OK" : "API down";
-      chip.className = data.ok ? "chip ok" : "chip";
+      chip.textContent = data.ok ? "Online" : "Offline";
+      chip.classList.toggle("ok", !!data.ok);
     } catch {
-      el("apiStatus").textContent = "API offline";
+      el("apiStatus").textContent = "Offline";
+      el("apiStatus").classList.remove("ok");
     }
   }
 
@@ -159,16 +198,22 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "event-card";
+      const sisa = ev.sisa ?? "—";
+      const low = Number(ev.sisa) >= 0 && Number(ev.sisa) <= 20;
       btn.innerHTML = `
-        <img class="thumb" src="${posterOf(ev)}" alt="" loading="lazy" />
+        <div class="thumb-wrap">
+          <img class="thumb" src="${posterOf(ev)}" alt="" loading="lazy" />
+          ${m.tag ? `<span class="tag">${m.tag}</span>` : `<span class="tag tag-open">OPEN</span>`}
+        </div>
         <div class="body">
-          ${m.tag ? `<span class="tag">${m.tag}</span>` : ""}
           <h3>${ev.title || ev.artist || "Event"}</h3>
-          <p class="meta">${fmtDateShort(ev.startsAt)}</p>
+          <p class="meta meta-date">${fmtDateShort(ev.startsAt)}</p>
           <p class="meta">${ev.venue || "—"}</p>
-          <p class="meta">${ev.city || ""} · ${ev.quotaTotal ?? "—"} seats</p>
-          <div class="price">${fmtRp(minP)} ~</div>
-          <div class="stock">Sisa ${ev.sisa ?? "—"} / ${ev.quotaTotal ?? "—"}</div>
+          <p class="meta meta-city">${[ev.city, ev.quotaTotal != null ? ev.quotaTotal + " seats" : ""].filter(Boolean).join(" · ")}</p>
+          <div class="card-foot">
+            <div class="price">${fmtRp(minP)} <span class="price-tilde">~</span></div>
+            <div class="stock ${low ? "low" : ""}">Sisa ${sisa}/${ev.quotaTotal ?? "—"}</div>
+          </div>
         </div>
       `;
       btn.addEventListener("click", () => showDetail(ev.eventId));
@@ -253,10 +298,7 @@
     const bp = el("benefitPreview");
     if (habis) {
       bp.innerHTML =
-        "<strong style='color:#fca5a5'>Sold out.</strong> Reset kuota lab: " +
-        "<code style='font-size:.75rem'>POST /internal/reset-quota/" +
-        currentEventId +
-        "</code> lalu refresh.";
+        "<strong style='color:#b91c1c'>Sold out</strong> — kursi untuk event ini sudah habis.";
       bp.classList.add("show");
     } else if (list.length) {
       const cats = [...new Set(list.map(catOf))];
@@ -355,7 +397,7 @@
     }
     const sisa = Number(eventData?.sisa);
     if (Number.isFinite(sisa) && sisa <= 0) {
-      toast("Kuota event habis (sold out). Reset kuota lab lalu refresh.", "err");
+      toast("Kursi untuk event ini sudah habis.", "err");
       return;
     }
     if (selected.has(code)) selected.delete(code);
@@ -433,9 +475,21 @@
       <li>Venue: ${eventData.venue || "—"}</li>
     `;
 
-    el("dTerms").innerHTML = (eventData.terms || [])
-      .map((t) => `<li>${t}</li>`)
-      .join("") || "<li>—</li>";
+    const defaultTerms = [
+      "Maksimal 4 tiket per transaksi / pesanan",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib membawa identitas sesuai nama di e-ticket saat masuk venue",
+      "E-ticket dikirim ke email pembeli setelah pembayaran berhasil",
+      "Tiket non-refundable kecuali event dibatalkan oleh promoter",
+      "Dilarang memindahkan / menjual tiket di atas harga resmi",
+      "Penonton wajib mematuhi aturan keamanan dan dress code venue",
+      "Gate open mengikuti jadwal di detail event; datang lebih awal disarankan",
+    ];
+    const terms =
+      Array.isArray(eventData.terms) && eventData.terms.length
+        ? eventData.terms
+        : defaultTerms;
+    el("dTerms").innerHTML = terms.map((t) => `<li>${t}</li>`).join("");
 
     renderVenueSketch();
     renderLegend();
@@ -463,7 +517,7 @@
     }
     renderDetail();
     if (!keepResult && Number(eventData.sisa) <= 0) {
-      toast("Sold out — sisa 0. Reset kuota lab lalu refresh.", "err");
+      toast("Sold out — kursi sudah habis.", "err");
     }
   }
 
@@ -517,7 +571,64 @@
 
   let memesan = false;
 
-  /** Poll outbox e-ticket (lab). Tanpa SMTP, tiket tampil di sini — bukan Gmail. */
+  function shortId(id) {
+    const s = String(id || "");
+    return s.length > 10 ? s.slice(0, 8).toUpperCase() : s.toUpperCase();
+  }
+
+  function parseTicketFields(text) {
+    const t = String(text || "");
+    const grab = (label) => {
+      const m = t.match(new RegExp(label + "\\s*:\\s*(.+)", "i"));
+      return m ? m[1].trim() : "";
+    };
+    return {
+      seats: grab("Seats") || grab("Kursi"),
+      qty: grab("Qty") || grab("Jumlah"),
+      total: grab("Total"),
+      event: grab("Event"),
+    };
+  }
+
+  function renderReceipt({
+    paid,
+    orderId,
+    seats,
+    amountIdr,
+    email,
+    benefits,
+    pendingPay,
+  }) {
+    const seatStr = Array.isArray(seats) ? seats.join(", ") : seats || "—";
+    const benHtml = (benefits || [])
+      .map((b) => `<li>${String(b).replace(/^•\s*/, "").replace(/^\[[^\]]+\]\s*/, "")}</li>`)
+      .join("");
+    const payHtml = pendingPay
+      ? `<button type="button" class="btn primary" id="btnPayNow" style="margin-top:.75rem;width:100%">Bayar sekarang</button>`
+      : "";
+    return `
+      <div class="receipt">
+        <div class="receipt-badge ${paid ? "ok" : "wait"}">${paid ? "Pembayaran berhasil" : "Menunggu pembayaran"}</div>
+        <h3 class="receipt-title">${paid ? "Tiket kamu siap" : "Selesaikan pembayaran"}</h3>
+        <dl class="receipt-dl">
+          <div><dt>Kode booking</dt><dd>${shortId(orderId)}</dd></div>
+          <div><dt>Kursi</dt><dd>${seatStr}</dd></div>
+          <div><dt>Total</dt><dd>${fmtRp(amountIdr)}</dd></div>
+          ${email ? `<div><dt>E-ticket</dt><dd>${email}</dd></div>` : ""}
+        </dl>
+        ${payHtml}
+        <div id="eticketBox" class="receipt-ticket ${paid ? "" : "hidden"}">
+          ${paid ? "<em>Menyiapkan e-ticket…</em>" : ""}
+        </div>
+        ${
+          benHtml
+            ? `<div class="receipt-ben"><strong>Benefit</strong><ul>${benHtml}</ul></div>`
+            : ""
+        }
+      </div>`;
+  }
+
+  /** Ambil e-ticket di belakang layar; tampilkan ringkas ke user */
   async function pollETicket(orderId, email, attempt = 0) {
     const box = el("eticketBox");
     if (!box) return;
@@ -527,23 +638,17 @@
         const data = await res.json();
         const item = (data.items || [])[0];
         if (item) {
-          const modeNote =
-            item.mode === "smtp"
-              ? `Terkirim SMTP ke ${item.to}`
-              : item.mode === "ethereal"
-                ? `Mode Ethereal (uji). ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" rel="noopener">Buka preview</a>` : ""}`
-                : `Outbox lab → ${item.to}. Bukti modul: GET /api/mail/outbox (SMTP opsional).`;
+          const f = parseTicketFields(item.text);
+          const to = item.to || email || "email kamu";
+          box.classList.remove("hidden");
           box.innerHTML = `
-            <strong style="color:#86efac">✉ E-ticket siap</strong>
-            <div style="font-size:.85rem;margin-top:.35rem">${modeNote}</div>
-            <div style="margin-top:.5rem;padding:.6rem;background:#0f172a;border-radius:6px;font-size:.8rem;white-space:pre-wrap;max-height:180px;overflow:auto">${(item.text || "").replace(/</g, "&lt;")}</div>
-          `;
-          toast(
-            item.mode === "smtp"
-              ? `E-ticket dikirim ke ${email || item.to}`
-              : "E-ticket siap (outbox lab — sesuai modul)",
-            "ok"
-          );
+            <div class="ticket-ready">
+              <strong>E-ticket terkirim</strong>
+              <p>Dikirim ke <b>${to}</b></p>
+              ${f.seats ? `<p class="ticket-meta">Kursi ${f.seats}${f.qty ? ` · ${f.qty} tiket` : ""}</p>` : ""}
+              <p class="ticket-hint">Cek inbox / spam. Simpan kode booking di atas.</p>
+            </div>`;
+          toast(`E-ticket dikirim ke ${to}`, "ok");
           return;
         }
       }
@@ -551,10 +656,10 @@
       /* retry */
     }
     if (attempt < 12) {
-      box.innerHTML = `<em>Menunggu e-ticket… (${attempt + 1})</em>`;
+      box.innerHTML = `<em>Menyiapkan e-ticket…</em>`;
       setTimeout(() => pollETicket(orderId, email, attempt + 1), 800);
     } else {
-      box.innerHTML = `<span style="color:#fca5a5">E-ticket belum muncul. Pastikan worker jalan: <code>npm run worker</code>. Cek <a href="/api/mail/outbox" target="_blank">/api/mail/outbox</a></span>`;
+      box.innerHTML = `<p class="ticket-hint">E-ticket sedang diproses. Cek email kamu beberapa saat lagi.</p>`;
     }
   }
 
@@ -608,34 +713,23 @@
         const seatsDone = data.seatCodes || [...selected];
         const cats = [...new Set(seatsDone.map(catOf))];
         const benLines = cats.flatMap((c) =>
-          benefitsOf(currentEventId, c).map((b) => `• [${c}] ${b}`)
+          benefitsOf(currentEventId, c).map((b) => b)
         );
-        const pay = data.payment || {};
         const paid = data.status === "CONFIRMED";
         toast(
-          paid
-            ? `Berhasil dibayar · sisa ${data.sisa}`
-            : `Order dibuat · selesaikan bayar · sisa ${data.sisa}`,
+          paid ? "Pembayaran berhasil" : "Pesanan dibuat — selesaikan pembayaran",
           paid ? "ok" : ""
         );
         el("orderResult").classList.remove("hidden");
-        const payBlock = paid
-          ? `<code>payment: ${pay.provider || "mock"} · PAID</code>
-             <code>e-ticket → ${data.buyerEmail || "antrean worker"}</code>
-             <div id="eticketBox" class="eticket-box"><em>Menunggu e-ticket dari worker…</em></div>`
-          : `<code>VA: ${pay.vaNumber || "—"} (${pay.bank || "Mock Bank"})</code>
-             <code>paymentId: ${pay.paymentId || "—"}</code>
-             <button type="button" class="btn primary" id="btnPayNow" style="margin-top:.5rem">Bayar sekarang (simulasi)</button>`;
-        el("orderResult").innerHTML = `
-          <strong>${paid ? "예매 완료 · Lunas" : "Menunggu pembayaran"}</strong>
-          <code>orderId: ${data.orderId}</code>
-          <code>kursi: ${seatsDone.join(", ")}</code>
-          <code>total: ${fmtRp(data.amountIdr)}</code>
-          <code>status: ${data.status || "—"}</code>
-          ${payBlock}
-          <code style="margin-top:.5rem;color:#fde68a">Benefit yang didapat:</code>
-          <code style="white-space:pre-wrap;color:#e2e8f0">${benLines.join("\n") || "• E-ticket QR"}</code>
-        `;
+        el("orderResult").innerHTML = renderReceipt({
+          paid,
+          orderId: data.orderId,
+          seats: seatsDone,
+          amountIdr: data.amountIdr,
+          email: data.buyerEmail,
+          benefits: benLines,
+          pendingPay: !paid,
+        });
         if (paid) pollETicket(data.orderId, data.buyerEmail);
         const btnPay = el("btnPayNow");
         if (btnPay) {
@@ -649,24 +743,24 @@
             });
             const pd = await pr.json().catch(() => ({}));
             if (pr.ok && pd.ok) {
-              toast("Pembayaran sukses — e-ticket dikirim async", "ok");
-              el("orderResult").innerHTML = `
-                <strong>예매 완료 · Lunas</strong>
-                <code>orderId: ${data.orderId}</code>
-                <code>status: CONFIRMED</code>
-                <code>e-ticket → ${data.buyerEmail || "worker"}</code>
-                <div id="eticketBox" class="eticket-box"><em>Menunggu e-ticket…</em></div>
-              `;
+              toast("Pembayaran berhasil", "ok");
+              el("orderResult").innerHTML = renderReceipt({
+                paid: true,
+                orderId: data.orderId,
+                seats: seatsDone,
+                amountIdr: data.amountIdr,
+                email: data.buyerEmail,
+                benefits: benLines,
+              });
               pollETicket(data.orderId, data.buyerEmail);
             } else {
               toast(pd.error || "Gagal bayar", "err");
               btnPay.disabled = false;
-              btnPay.textContent = "Bayar sekarang (simulasi)";
+              btnPay.textContent = "Bayar sekarang";
             }
           };
         }
         selected.clear();
-        // keepResult: jangan sembunyikan kartu sukses saat refresh denah
         await loadEventDetail(currentEventId, { keepResult: true });
       } else if (res.status === 409) {
         toast(
@@ -760,7 +854,7 @@
         showList({ nav: "concert" });
       }
     } catch (e) {
-      el("eventGrid").innerHTML = `<p class="muted">${e.message || "Gagal load. Pastikan API & dataset jalan."}</p>`;
+      el("eventGrid").innerHTML = `<p class="muted">${e.message || "Gagal memuat konser. Coba refresh halaman."}</p>`;
     }
     setInterval(() => {
       loadHealth().catch(() => {});

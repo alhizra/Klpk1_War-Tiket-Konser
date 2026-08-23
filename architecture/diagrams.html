@@ -20,6 +20,7 @@
     nav a { color: #93c5fd; margin-right: 1rem; font-size: 0.9rem; }
     ol.steps { line-height: 1.7; }
     code { background: #f1f5f9; padding: 0.1rem 0.35rem; border-radius: 4px; }
+    .note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #1e3a5f; }
   </style>
 </head>
 <body>
@@ -33,33 +34,40 @@
       <a href="#queue">Virtual Queue</a>
       <a href="#seq">Sequence</a>
       <a href="#state">State Kursi</a>
+      <a href="#monolit">Monolit lab</a>
     </nav>
   </header>
   <main>
+    <p class="note">
+      Di <strong>GitHub</strong> diagram tampil lewat Markdown:
+      <code>architecture/DIAGRAMS.md</code> (buka file itu di repo).
+      File HTML ini untuk preview lokal (double-click / Live Server).
+    </p>
+
     <section id="langkah">
       <h2>1. Langkah kerja Arsitek Sistem</h2>
       <ol class="steps">
-        <li>Pahami domain & constraint (kursi = sumber daya rebutan)</li>
+        <li>Pahami domain &amp; constraint (kursi = sumber daya rebutan)</li>
         <li>Definisikan NFR (correctness seat, latency, peak load)</li>
         <li>Bagi bounded context → 4 service</li>
         <li>Gambar Context + Container diagram</li>
         <li>Desain alur kritis: hold → pay → confirm</li>
-        <li>Data ownership & konsistensi</li>
+        <li>Data ownership &amp; konsistensi</li>
         <li>Sync vs async (REST + queue notifikasi)</li>
-        <li>Antrean virtual & rate limit</li>
+        <li>Antrean virtual &amp; rate limit</li>
         <li>Failure path: timeout bayar → unlock</li>
         <li>Tulis ADR → handoff Backend / Data / Infra / QA</li>
       </ol>
       <pre class="mermaid">
 flowchart TD
-    A[1. Domain & constraint] --> B[2. NFR]
+    A[1. Domain &amp; constraint] --> B[2. NFR]
     B --> C[3. Service boundary]
     C --> D[4. C4 Context + Container]
     D --> E[5. Flow seat lock]
     E --> F[6. Data ownership]
     F --> G[7. Sync / Async]
     G --> H[8. Virtual queue]
-    H --> I[9. Failure & timeout]
+    H --> I[9. Failure &amp; timeout]
     I --> J[10. ADR]
     J --> K[11. Handoff tim]
     K --> L[12. Review vs implementasi]
@@ -96,10 +104,10 @@ flowchart TB
     end
     WEB --> LB --> GW --> VQ
     ADM --> LB
-    VQ --> ES & TS & PS
+    VQ --> ES &amp; TS &amp; PS
     ES --> PG
-    TS --> PG & RD
-    PS --> PG & PGW
+    TS --> PG &amp; RD
+    PS --> PG &amp; PGW
     TS -.-> MQ
     PS -.-> MQ
     MQ --> NS --> MAIL
@@ -173,9 +181,31 @@ stateDiagram-v2
     SOLD --> [*]
       </pre>
       <p style="margin-top:1rem;color:#475569;font-size:0.95rem">
-        Detail lengkap + ADR template ada di folder yang sama:
-        <code>01-langkah-arsitek-sistem.md</code> dan <code>02-adr-template.md</code>
+        Detail: <code>01-langkah-arsitek-sistem.md</code> · <code>02-adr-template.md</code> ·
+        di GitHub buka <code>DIAGRAMS.md</code>
       </p>
+    </section>
+
+    <section id="monolit">
+      <h2>7. Monolit lab (implementasi Klpk1)</h2>
+      <pre class="mermaid">
+flowchart TB
+  subgraph clients [Klien]
+    Web[Web public]
+    Mob[Mobile Expo]
+    Adm[Admin]
+  end
+  API[API monolit :3000]
+  PG[(PostgreSQL)]
+  RD[(Redis)]
+  W[worker e-ticket]
+  Web --> API
+  Mob --> API
+  Adm --> API
+  API --> PG
+  API --> RD
+  API -.-> W
+      </pre>
     </section>
   </main>
 </body>

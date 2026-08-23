@@ -640,5 +640,1147 @@
         "color": "#A78BFA"
       }
     ]
+  },
+  {
+    "event_id": 12,
+    "event_code": "EVT012",
+    "title": "IU (아이유) Live",
+    "artist": "IU (아이유)",
+    "venue": "Jamsil Olympic Main Stadium",
+    "venue_id": "VEN012",
+    "venue_code": "JAMSIL-MAIN",
+    "starts_at": "2026-10-07T19:00:00+09:00",
+    "sales_opens_at": "2026-08-28T10:00:00+09:00",
+    "sales_closes_at": "2026-10-06T22:00:00+09:00",
+    "ends_at": "2026-10-07T19:00:00+09:00",
+    "quota_total": 420,
+    "price_idr": 1900000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket IU (아이유) di Jamsil Olympic Main Stadium, Seoul. Kuota total 420 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4800000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3500000,
+        "quota": 100,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2800000,
+        "quota": 140,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1900000,
+        "quota": 140,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 13,
+    "event_code": "EVT013",
+    "title": "NewJeans (뉴진스) Live",
+    "artist": "NewJeans (뉴진스)",
+    "venue": "KINTEX Exhibition Center Hall A",
+    "venue_id": "VEN013",
+    "venue_code": "KINTEX-HALL",
+    "starts_at": "2026-10-22T19:00:00+09:00",
+    "sales_opens_at": "2026-09-17T10:00:00+09:00",
+    "sales_closes_at": "2026-10-21T22:00:00+09:00",
+    "ends_at": "2026-10-22T19:00:00+09:00",
+    "quota_total": 380,
+    "price_idr": 1700000,
+    "status": "PUBLISHED",
+    "city": "Goyang",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket NewJeans (뉴진스) di KINTEX Exhibition Center Hall A, Goyang. Kuota total 380 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "SCVIP",
+        "name": "Soundcheck VIP",
+        "price_idr": 5200000,
+        "quota": 30,
+        "color": "#C026D3"
+      },
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4100000,
+        "quota": 50,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3200000,
+        "quota": 120,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "ORANGE",
+        "name": "Orange Bowl",
+        "price_idr": 2400000,
+        "quota": 100,
+        "color": "#F97316"
+      },
+      {
+        "code": "NAVY",
+        "name": "Navy Upper",
+        "price_idr": 1700000,
+        "quota": 80,
+        "color": "#1E3A8A"
+      }
+    ]
+  },
+  {
+    "event_id": 14,
+    "event_code": "EVT014",
+    "title": "SEVENTEEN (세븐틴) ENCORE Live",
+    "artist": "SEVENTEEN (세븐틴) ENCORE",
+    "venue": "Goyang Stadium",
+    "venue_id": "VEN014",
+    "venue_code": "GOYANG-STAD",
+    "starts_at": "2026-11-06T19:00:00+09:00",
+    "sales_opens_at": "2026-09-17T10:00:00+09:00",
+    "sales_closes_at": "2026-11-05T22:00:00+09:00",
+    "ends_at": "2026-11-06T19:00:00+09:00",
+    "quota_total": 480,
+    "price_idr": 1800000,
+    "status": "PUBLISHED",
+    "city": "Goyang",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket SEVENTEEN (세븐틴) ENCORE di Goyang Stadium, Goyang. Kuota total 480 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4500000,
+        "quota": 60,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3300000,
+        "quota": 140,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2600000,
+        "quota": 150,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1800000,
+        "quota": 130,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 15,
+    "event_code": "EVT015",
+    "title": "TWICE (트와이스) Live",
+    "artist": "TWICE (트와이스)",
+    "venue": "Kaohsiung Arena",
+    "venue_id": "VEN015",
+    "venue_code": "KAOHSIUNG-ARENA",
+    "starts_at": "2026-11-21T19:00:00+09:00",
+    "sales_opens_at": "2026-10-07T10:00:00+09:00",
+    "sales_closes_at": "2026-11-20T22:00:00+09:00",
+    "ends_at": "2026-11-21T19:00:00+09:00",
+    "quota_total": 340,
+    "price_idr": 1900000,
+    "status": "PUBLISHED",
+    "city": "Kaohsiung",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket TWICE (트와이스) di Kaohsiung Arena, Kaohsiung. Kuota total 340 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VVIP",
+        "name": "VVIP Front",
+        "price_idr": 4600000,
+        "quota": 35,
+        "color": "#EF4444"
+      },
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3800000,
+        "quota": 55,
+        "color": "#A855F7"
+      },
+      {
+        "code": "A",
+        "name": "A Reserved",
+        "price_idr": 2700000,
+        "quota": 120,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "B Reserved",
+        "price_idr": 1900000,
+        "quota": 130,
+        "color": "#34D399"
+      }
+    ]
+  },
+  {
+    "event_id": 16,
+    "event_code": "EVT016",
+    "title": "LE SSERAFIM (르세라핌) Live",
+    "artist": "LE SSERAFIM (르세라핌)",
+    "venue": "Tokyo Dome City Hall",
+    "venue_id": "VEN016",
+    "venue_code": "TOKYO-DOME-C",
+    "starts_at": "2026-12-01T19:00:00+09:00",
+    "sales_opens_at": "2026-10-22T10:00:00+09:00",
+    "sales_closes_at": "2026-11-30T22:00:00+09:00",
+    "ends_at": "2026-12-01T19:00:00+09:00",
+    "quota_total": 310,
+    "price_idr": 1600000,
+    "status": "PUBLISHED",
+    "city": "Tokyo",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket LE SSERAFIM (르세라핌) di Tokyo Dome City Hall, Tokyo. Kuota total 310 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4300000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3000000,
+        "quota": 90,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat",
+        "price_idr": 2300000,
+        "quota": 100,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat",
+        "price_idr": 1600000,
+        "quota": 80,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 17,
+    "event_code": "EVT017",
+    "title": "ITZY (있지) Live",
+    "artist": "ITZY (있지)",
+    "venue": "EXCO Daegu Convention Hall",
+    "venue_id": "VEN017",
+    "venue_code": "DAEGU-EXCO",
+    "starts_at": "2026-12-11T19:00:00+09:00",
+    "sales_opens_at": "2026-11-11T10:00:00+09:00",
+    "sales_closes_at": "2026-12-10T22:00:00+09:00",
+    "ends_at": "2026-12-11T19:00:00+09:00",
+    "quota_total": 290,
+    "price_idr": 1500000,
+    "status": "PUBLISHED",
+    "city": "Daegu",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket ITZY (있지) di EXCO Daegu Convention Hall, Daegu. Kuota total 290 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3600000,
+        "quota": 35,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2700000,
+        "quota": 80,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2100000,
+        "quota": 90,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1500000,
+        "quota": 85,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 18,
+    "event_code": "EVT018",
+    "title": "(G)I-DLE ((여자)아이들) Live",
+    "artist": "(G)I-DLE ((여자)아이들)",
+    "venue": "Jakarta International Stadium",
+    "venue_id": "VEN018",
+    "venue_code": "JAKARTA-JIS",
+    "starts_at": "2026-12-21T19:00:00+09:00",
+    "sales_opens_at": "2026-10-27T10:00:00+09:00",
+    "sales_closes_at": "2026-12-20T22:00:00+09:00",
+    "ends_at": "2026-12-21T19:00:00+09:00",
+    "quota_total": 400,
+    "price_idr": 1200000,
+    "status": "PUBLISHED",
+    "city": "Jakarta",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket (G)I-DLE ((여자)아이들) di Jakarta International Stadium, Jakarta. Kuota total 400 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3200000,
+        "quota": 50,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Festival Standing",
+        "price_idr": 2400000,
+        "quota": 120,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Tribune",
+        "price_idr": 1800000,
+        "quota": 130,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Tribune",
+        "price_idr": 1200000,
+        "quota": 100,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 19,
+    "event_code": "EVT019",
+    "title": "ENHYPEN (엔하이픈) Live",
+    "artist": "ENHYPEN (엔하이픈)",
+    "venue": "Singapore National Stadium",
+    "venue_id": "VEN019",
+    "venue_code": "SINGAPORE-NS",
+    "starts_at": "2027-01-05T19:00:00+09:00",
+    "sales_opens_at": "2026-11-16T10:00:00+09:00",
+    "sales_closes_at": "2027-01-04T22:00:00+09:00",
+    "ends_at": "2027-01-05T19:00:00+09:00",
+    "quota_total": 450,
+    "price_idr": 1800000,
+    "status": "PUBLISHED",
+    "city": "Singapore",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket ENHYPEN (엔하이픈) di Singapore National Stadium, Singapore. Kuota total 450 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "SCVIP",
+        "name": "Soundcheck VIP",
+        "price_idr": 5000000,
+        "quota": 40,
+        "color": "#C026D3"
+      },
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4000000,
+        "quota": 60,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3100000,
+        "quota": 130,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat",
+        "price_idr": 2500000,
+        "quota": 120,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat",
+        "price_idr": 1800000,
+        "quota": 100,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 20,
+    "event_code": "EVT020",
+    "title": "IVE (아이브) Live",
+    "artist": "IVE (아이브)",
+    "venue": "Olympic Gymnastics Arena",
+    "venue_id": "VEN020",
+    "venue_code": "OLYMPIC-GYM",
+    "starts_at": "2027-01-20T19:00:00+09:00",
+    "sales_opens_at": "2026-12-06T10:00:00+09:00",
+    "sales_closes_at": "2027-01-19T22:00:00+09:00",
+    "ends_at": "2027-01-20T19:00:00+09:00",
+    "quota_total": 330,
+    "price_idr": 1550000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket IVE (아이브) di Olympic Gymnastics Arena, Seoul. Kuota total 330 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3900000,
+        "quota": 45,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2900000,
+        "quota": 95,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2200000,
+        "quota": 100,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1550000,
+        "quota": 90,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 21,
+    "event_code": "EVT021",
+    "title": "BTS (방탄소년단) Live",
+    "artist": "BTS (방탄소년단)",
+    "venue": "Seoul Olympic Stadium",
+    "venue_id": "VEN021",
+    "venue_code": "SNU-STAD",
+    "starts_at": "2027-01-30T19:00:00+09:00",
+    "sales_opens_at": "2026-12-11T10:00:00+09:00",
+    "sales_closes_at": "2027-01-29T22:00:00+09:00",
+    "ends_at": "2027-01-30T19:00:00+09:00",
+    "quota_total": 500,
+    "price_idr": 2200000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket BTS (방탄소년단) di Seoul Olympic Stadium, Seoul. Kuota total 500 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 5500000,
+        "quota": 60,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 4200000,
+        "quota": 150,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 3200000,
+        "quota": 160,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 2200000,
+        "quota": 130,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 22,
+    "event_code": "EVT022",
+    "title": "TOMORROW X TOGETHER (투모로우바이투게더) Live",
+    "artist": "TOMORROW X TOGETHER (투모로우바이투게더)",
+    "venue": "Inspire Arena Hall B",
+    "venue_id": "VEN022",
+    "venue_code": "INSPIRE-HALL",
+    "starts_at": "2027-02-09T19:00:00+09:00",
+    "sales_opens_at": "2026-12-31T10:00:00+09:00",
+    "sales_closes_at": "2027-02-08T22:00:00+09:00",
+    "ends_at": "2027-02-09T19:00:00+09:00",
+    "quota_total": 370,
+    "price_idr": 1600000,
+    "status": "PUBLISHED",
+    "city": "Incheon",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket TOMORROW X TOGETHER (투모로우바이투게더) di Inspire Arena Hall B, Incheon. Kuota total 370 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4100000,
+        "quota": 45,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3000000,
+        "quota": 110,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat",
+        "price_idr": 2300000,
+        "quota": 120,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat",
+        "price_idr": 1600000,
+        "quota": 95,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 23,
+    "event_code": "EVT023",
+    "title": "RIIZE (라이즈) Live",
+    "artist": "RIIZE (라이즈)",
+    "venue": "Jamsil Indoor Stadium Hall 2",
+    "venue_id": "VEN023",
+    "venue_code": "JAMSIL-INDOOR2",
+    "starts_at": "2027-02-19T19:00:00+09:00",
+    "sales_opens_at": "2027-01-15T10:00:00+09:00",
+    "sales_closes_at": "2027-02-18T22:00:00+09:00",
+    "ends_at": "2027-02-19T19:00:00+09:00",
+    "quota_total": 340,
+    "price_idr": 1450000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket RIIZE (라이즈) di Jamsil Indoor Stadium Hall 2, Seoul. Kuota total 340 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3600000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2700000,
+        "quota": 100,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2000000,
+        "quota": 110,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1450000,
+        "quota": 90,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 24,
+    "event_code": "EVT024",
+    "title": "BOYNEXTDOOR (보이넥스트도어) Live",
+    "artist": "BOYNEXTDOOR (보이넥스트도어)",
+    "venue": "BEXCO Auditorium 2",
+    "venue_id": "VEN024",
+    "venue_code": "BEXCO-AUD2",
+    "starts_at": "2027-03-01T19:00:00+09:00",
+    "sales_opens_at": "2027-01-30T10:00:00+09:00",
+    "sales_closes_at": "2027-02-28T22:00:00+09:00",
+    "ends_at": "2027-03-01T19:00:00+09:00",
+    "quota_total": 310,
+    "price_idr": 1350000,
+    "status": "PUBLISHED",
+    "city": "Busan",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket BOYNEXTDOOR (보이넥스트도어) di BEXCO Auditorium 2, Busan. Kuota total 310 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3400000,
+        "quota": 35,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2500000,
+        "quota": 90,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat",
+        "price_idr": 1900000,
+        "quota": 100,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat",
+        "price_idr": 1350000,
+        "quota": 85,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 25,
+    "event_code": "EVT025",
+    "title": "ZEROBASEONE (제로베이스원) Live",
+    "artist": "ZEROBASEONE (제로베이스원)",
+    "venue": "KSPO DOME Hall Annex",
+    "venue_id": "VEN025",
+    "venue_code": "KSPO-DOME2",
+    "starts_at": "2027-03-11T19:00:00+09:00",
+    "sales_opens_at": "2027-01-25T10:00:00+09:00",
+    "sales_closes_at": "2027-03-10T22:00:00+09:00",
+    "ends_at": "2027-03-11T19:00:00+09:00",
+    "quota_total": 400,
+    "price_idr": 1550000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket ZEROBASEONE (제로베이스원) di KSPO DOME Hall Annex, Seoul. Kuota total 400 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "SCVIP",
+        "name": "Soundcheck VIP",
+        "price_idr": 4800000,
+        "quota": 30,
+        "color": "#C026D3"
+      },
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3900000,
+        "quota": 50,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2900000,
+        "quota": 120,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2200000,
+        "quota": 110,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1550000,
+        "quota": 90,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 26,
+    "event_code": "EVT026",
+    "title": "KISS OF LIFE (키스오브라이프) Live",
+    "artist": "KISS OF LIFE (키스오브라이프)",
+    "venue": "Tokyo International Forum Hall A",
+    "venue_id": "VEN026",
+    "venue_code": "TOKYO-FORUM",
+    "starts_at": "2027-03-21T19:00:00+09:00",
+    "sales_opens_at": "2027-02-09T10:00:00+09:00",
+    "sales_closes_at": "2027-03-20T22:00:00+09:00",
+    "ends_at": "2027-03-21T19:00:00+09:00",
+    "quota_total": 340,
+    "price_idr": 1400000,
+    "status": "PUBLISHED",
+    "city": "Tokyo",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket KISS OF LIFE (키스오브라이프) di Tokyo International Forum Hall A, Tokyo. Kuota total 340 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3700000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "A",
+        "name": "A Reserved",
+        "price_idr": 2600000,
+        "quota": 100,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "B Reserved",
+        "price_idr": 1900000,
+        "quota": 110,
+        "color": "#34D399"
+      },
+      {
+        "code": "C",
+        "name": "C Reserved",
+        "price_idr": 1400000,
+        "quota": 90,
+        "color": "#A78BFA"
+      }
+    ]
+  },
+  {
+    "event_id": 27,
+    "event_code": "EVT027",
+    "title": "NMIXX (엔믹스) Live",
+    "artist": "NMIXX (엔믹스)",
+    "venue": "IMPACT Exhibition Hall 5",
+    "venue_id": "VEN027",
+    "venue_code": "IMPACT-HALL5",
+    "starts_at": "2027-03-31T19:00:00+07:00",
+    "sales_opens_at": "2027-02-24T10:00:00+07:00",
+    "sales_closes_at": "2027-03-30T22:00:00+07:00",
+    "ends_at": "2027-03-31T19:00:00+07:00",
+    "quota_total": 300,
+    "price_idr": 1650000,
+    "status": "PUBLISHED",
+    "city": "Bangkok Metro",
+    "country": "Thailand",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Bangkok",
+    "description": "War tiket NMIXX (엔믹스) di IMPACT Exhibition Hall 5, Bangkok Metro. Kuota total 300 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VVIP",
+        "name": "VVIP Front",
+        "price_idr": 4000000,
+        "quota": 35,
+        "color": "#EF4444"
+      },
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3200000,
+        "quota": 55,
+        "color": "#A855F7"
+      },
+      {
+        "code": "A",
+        "name": "Zone A",
+        "price_idr": 2300000,
+        "quota": 100,
+        "color": "#38BDF8"
+      },
+      {
+        "code": "B",
+        "name": "Zone B",
+        "price_idr": 1650000,
+        "quota": 110,
+        "color": "#34D399"
+      }
+    ]
+  },
+  {
+    "event_id": 28,
+    "event_code": "EVT028",
+    "title": "BABYMONSTER (베이비몬스터) Live",
+    "artist": "BABYMONSTER (베이비몬스터)",
+    "venue": "Indonesia Convention Exhibition (ICE) BSD",
+    "venue_id": "VEN028",
+    "venue_code": "ICE-BSD",
+    "starts_at": "2027-04-10T19:00:00+09:00",
+    "sales_opens_at": "2027-02-19T10:00:00+09:00",
+    "sales_closes_at": "2027-04-09T22:00:00+09:00",
+    "ends_at": "2027-04-10T19:00:00+09:00",
+    "quota_total": 400,
+    "price_idr": 1150000,
+    "status": "PUBLISHED",
+    "city": "Tangerang",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket BABYMONSTER (베이비몬스터) di Indonesia Convention Exhibition (ICE) BSD, Tangerang. Kuota total 400 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3100000,
+        "quota": 45,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Festival Standing",
+        "price_idr": 2300000,
+        "quota": 120,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Tribune",
+        "price_idr": 1700000,
+        "quota": 130,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Tribune",
+        "price_idr": 1150000,
+        "quota": 105,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 29,
+    "event_code": "EVT029",
+    "title": "ILLIT (아일릿) Live",
+    "artist": "ILLIT (아일릿)",
+    "venue": "Olympic Hall Side A",
+    "venue_id": "VEN029",
+    "venue_code": "OLYMPIC-HALL2",
+    "starts_at": "2027-04-20T19:00:00+09:00",
+    "sales_opens_at": "2027-03-21T10:00:00+09:00",
+    "sales_closes_at": "2027-04-19T22:00:00+09:00",
+    "ends_at": "2027-04-20T19:00:00+09:00",
+    "quota_total": 310,
+    "price_idr": 1300000,
+    "status": "PUBLISHED",
+    "city": "Seoul",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket ILLIT (아일릿) di Olympic Hall Side A, Seoul. Kuota total 310 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 3300000,
+        "quota": 35,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 2400000,
+        "quota": 90,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Seat",
+        "price_idr": 1800000,
+        "quota": 100,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Seat",
+        "price_idr": 1300000,
+        "quota": 85,
+        "color": "#94A3B8"
+      }
+    ]
+  },
+  {
+    "event_id": 30,
+    "event_code": "EVT030",
+    "title": "KATSEYE Live",
+    "artist": "KATSEYE",
+    "venue": "Crypto.com Arena",
+    "venue_id": "VEN030",
+    "venue_code": "CRYPTO-COM",
+    "starts_at": "2027-04-30T19:00:00+09:00",
+    "sales_opens_at": "2027-03-16T10:00:00+09:00",
+    "sales_closes_at": "2027-04-29T22:00:00+09:00",
+    "ends_at": "2027-04-30T19:00:00+09:00",
+    "quota_total": 370,
+    "price_idr": 1750000,
+    "status": "PUBLISHED",
+    "city": "Los Angeles",
+    "country": "South Korea",
+    "currency_note": "Harga IDR demo praktikum",
+    "age_rating": "All ages",
+    "gate_open": "16:00",
+    "timezone": "Asia/Seoul",
+    "description": "War tiket KATSEYE di Crypto.com Arena, Los Angeles. Kuota total 370 kursi. Satu seat code hanya terjual sekali (anti-oversell).",
+    "terms": [
+      "Maksimal 4 tiket per transaksi",
+      "Satu kursi hanya boleh terjual satu kali",
+      "Wajib identitas sesuai pemesan saat masuk venue",
+      "Tiket non-refundable kecuali event dibatalkan promoter"
+    ],
+    "categories": [
+      {
+        "code": "VIP",
+        "name": "VIP Package",
+        "price_idr": 4500000,
+        "quota": 40,
+        "color": "#A855F7"
+      },
+      {
+        "code": "FLOOR",
+        "name": "Floor Standing",
+        "price_idr": 3300000,
+        "quota": 110,
+        "color": "#7C3AED"
+      },
+      {
+        "code": "GOLD",
+        "name": "Gold Lower",
+        "price_idr": 2500000,
+        "quota": 120,
+        "color": "#EAB308"
+      },
+      {
+        "code": "SILVER",
+        "name": "Silver Upper",
+        "price_idr": 1750000,
+        "quota": 100,
+        "color": "#94A3B8"
+      }
+    ]
   }
 ]

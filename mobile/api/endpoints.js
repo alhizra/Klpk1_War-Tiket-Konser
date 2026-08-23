@@ -14,6 +14,25 @@ const POSTER_FILE = {
   9: "09-aespa.jpg",
   10: "10-seventeen.jpg",
   11: "11-4eve.jpg",
+  12: "12-iu.jpg",
+  13: "13-newjeans.jpg",
+  14: "14-seventeen-encore.jpg",
+  15: "15-twice.jpg",
+  16: "16-lesserafim.jpg",
+  17: "17-itzy.jpg",
+  18: "18-gidle.jpg",
+  19: "19-enhypen.jpg",
+  20: "20-ive.jpg",
+  21: "21-bts.jpg",
+  22: "22-txt.jpg",
+  23: "23-riize.jpg",
+  24: "24-boynextdoor.jpg",
+  25: "25-zerobaseone.jpg",
+  26: "26-kissoflife.jpg",
+  27: "27-nmixx.jpg",
+  28: "28-babymonster.jpg",
+  29: "29-illit.jpg",
+  30: "30-katseye.jpg",
 };
 
 /** GET /events?page&size — cache halaman 1 untuk offline */
@@ -62,8 +81,31 @@ export function buatPesanan({ eventId, qty = 1, seatCodes, email, buyerName }) {
   return api.post("/orders", body);
 }
 
-export function posterUrl(eventId) {
+/** poster dari API (posterUrl) atau file bawaan seed */
+export function posterUrl(eventId, eventObj) {
+  const fromApi = eventObj?.posterUrl || eventObj?.poster;
+  if (fromApi) {
+    if (/^https?:\/\//i.test(fromApi)) return fromApi;
+    return `${BASE_URL}${fromApi.startsWith("/") ? "" : "/"}${fromApi}`;
+  }
   const f = POSTER_FILE[eventId];
   if (!f) return null;
   return `${BASE_URL}/posters/${f}`;
+}
+
+/** GET /health */
+export function cekHealth() {
+  return api.get("/health");
+}
+
+/**
+ * POST /payments/simulate — lab settle mock (sama web)
+ */
+export function simulasikanBayar(orderId) {
+  return api.post("/payments/simulate", { orderId });
+}
+
+/** GET /mail/outbox/:orderId — status e-ticket email lab */
+export function ambilOutboxTiket(orderId) {
+  return api.get(`/mail/outbox/${encodeURIComponent(orderId)}`);
 }

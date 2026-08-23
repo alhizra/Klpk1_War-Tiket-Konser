@@ -1,168 +1,272 @@
 # War Tiket Konser — Klpk1
 
+Lab **Scalable Systems**: war tiket konser dengan kuota kursi atomik (Redis), catalog di PostgreSQL, web Melon-style, dan **mobile Expo** yang diselaraskan fitur/data dengan web.
 
+Repo: [alhizra/Klpk1_War-Tiket-Konser](https://github.com/alhizra/Klpk1_War-Tiket-Konser)
 
 ---
 
-## Context Map
+## Kelompok & peran
+
+| Peran | Nama | Fokus |
+|-------|------|--------|
+| **Arsitek Sistem** | Andi Hilyatul Mar'ah | ADR, diagram [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md), OpenAPI |
+| **Backend / API Engineer** | Yusuf Sewang | `src/`, API monolit, web `public/`, anti-oversell |
+| **Infrastructure & DevOps** | AL-HIZRA | Docker, Nginx gateway, deploy, Codespaces |
+| **Data & Persistence** | Astrid Tiar | Dataset Excel/CSV, `db/`, load seats, poster catalog |
+| **QA, Load-Test & Dokumentasi** | Tri Wahyuni | Loadtest, baseline, uji konsistensi, dokumentasi |
+
+Detail file & endpoint PIC: [`PERAN.md`](./PERAN.md).
+
+---
+
+## Arsitektur (monolit lab — jalur utama)
+
+![Monolit lab](./architecture/diagrams/07-monolit.png)
+
+Diagram lengkap (PNG + Mermaid): **[`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md)**
+
+| Diagram | Preview |
+|---------|---------|
+| Container (target MS) | [02-container.png](./architecture/diagrams/02-container.png) |
+| Seat lock | [03-seat-lock.png](./architecture/diagrams/03-seat-lock.png) |
+| Sequence booking | [05-sequence.png](./architecture/diagrams/05-sequence.png) |
+| State kursi | [06-state.png](./architecture/diagrams/06-state.png) |
+
+```mermaid
+flowchart TB
+  subgraph clients [Klien]
+    Web[Web UI<br/>public/]
+    Mob[Mobile Expo<br/>mobile/]
+    Adm[Admin<br/>web + mobile]
+  end
+
+  subgraph monolit [API monolit :3000]
+    GW[Express + static]
+    Routes[routes: events / orders / payments / admin]
+    Cache[eventCache + Redis TTL]
+    Quota[quota Lua anti-oversell]
+    Orders[orders + seat claim]
+    Mail[mail outbox / SMTP]
+    Poster[poster upload]
+  end
+
+  PG[(PostgreSQL<br/>events seats orders)]
+  RD[(Redis<br/>quota · sold seats · cache · queue)]
+  Worker[worker e-ticket]
+
+  Web --> GW
+  Mob --> GW
+  Adm --> GW
+  GW --> Routes
+  Routes --> Cache
+  Routes --> Quota
+  Routes --> Orders
+  Routes --> Mail
+  Routes --> Poster
+  Cache --> PG
+  Cache --> RD
+  Quota --> RD
+  Orders --> PG
+  Orders --> RD
+  Mail --> RD
+  Worker --> RD
+  Worker --> PG
+```
+
+| Lapisan | Isi |
+|---------|-----|
+| **Klien** | Web `public/` · Mobile Expo `mobile/` · Admin (`/admin.html` + layar Admin mobile) |
+| **API** | `src/server.js` + `src/routes.js` — catalog, booking, bayar lab, admin CRUD |
+| **Data** | Postgres = truth catalog/order · Redis = **kuota atomik**, sold seats, cache event, antrean mail |
+| **Worker** | `src/worker.js` — konsumsi queue e-ticket (async) |
+
+**Sumber daya rebutan = kursi** → dipotong hanya lewat Redis (Lua / claim seat). Lihat [ADR-002](./docs/adr/ADR-002-seat-lock-redis.md).
+
+### Alur booking (web & mobile sama)
+
+```
+Pilih peran (User/Admin)
+  → Daftar konser (GET /events)
+  → Detail + denah (GET /events/:id)  · sisa live dari Redis
+  → Pilih max 4 kursi · benefit zona (event-meta)
+  → POST /orders { eventId, qty, seatCodes, email, buyerName }
+  → POST /payments/simulate (lab settle)
+  → E-ticket QR + poll GET /mail/outbox/:orderId
+```
+
+---
+
+## Fitur yang sudah fix (status terkini)
+
+### Backend monolit
+- [x] `GET /events` paginasi · `GET /events/:id` detail + categories + seats + `soldSeats` + `sisa` live
+- [x] `POST /orders` anti-oversell · max 4 · email + buyerName wajib · 409/429
+- [x] `POST /payments/simulate` + webhook mock · e-ticket outbox lab
+- [x] Admin: CRUD event, reset kuota, **regenerate denah multi-zona**, hapus event
+- [x] Poster: path seed + upload base64 → `/posters/uploads/…`
+- [x] Migrasi ringan kolom order/event saat start (`ensureOrderColumns` / `ensureEventColumns`)
+- [x] Edit harga sinkron ke `seat_categories` / `seats`
+
+### Web (`public/`)
+- [x] Role gate User / Admin
+- [x] Open sale list + tag/genre (`event-meta.js`)
+- [x] Detail: artist, rating, gate, jadwal, deskripsi, harga zona
+- [x] Tab Detail · Denah · Benefit · Notice
+- [x] Denah berwarna per zona · legend · venue sketch · max 4
+- [x] Checkout + bayar lab + receipt + poll outbox
+- [x] Admin UI: form lengkap, poster, regenerate seats, orders
+
+### Mobile Expo (`mobile/`)
+- [x] Role gate · daftar (tag/genre/artist/poster) · detail bertab (sama web)
+- [x] Denah: semua zona / per zona · sketch · legend+harga · live refresh 12s
+- [x] Benefit + terms · antrean · bayar + **simulate pay** · e-ticket receipt + QR + outbox
+- [x] Offline: cache list/detail · outbox orders
+- [x] Admin: field setara web (kota, negara, jadwal, status, deskripsi, denah multi-zona)
+- [x] **Upload poster** galeri (`expo-image-picker` → data URL ke API)
+- [x] Meta UI: `mobile/data/eventMeta.js` (port dari `public/event-meta.js`)
+
+### Dataset
+- [x] **30 event** (EVT001–030) · seats CSV · poster 01–30
+- [x] Import Excel OneDrive / `data/import_excel_dataset.py` · `npm run data:manual` / `data:excel`
+
+---
+
+## Context map singkat
 
 ```mermaid
 graph LR
-  Web((Web UI)) --> GW[Gateway :8080]
-  Mobile((Mobile later)) --> GW
-  GW --> API[api monolit<br/>event + ticket + static]
+  Web((Web)) --> API[API monolit :3000]
+  Mobile((Expo)) --> API
   API --> PG[(PostgreSQL)]
-  API --> RD[(Redis kuota atomik)]
+  API --> RD[(Redis)]
   API -.->|queue eticket| W[worker]
 ```
 
-> Panah penuh = request sinkron. Putus-putus = async Redis list.
+Opsional Modul 2 (4 microservices + gateway `:8080`):  
+[`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) · `docker-compose.ms.yml` — **jangan** campur port 8080 dengan monolit full-compose bersamaan tanpa cek.
 
 ---
 
-## Services (mapping)
+## Stack & port
 
-| Komponen | Port / role | Tanggung jawab | Data |
-|----------|-------------|----------------|------|
-| `gateway` (Nginx) | **8080** | Entry Web/API, siap scale | — |
-| `api` | 3000 internal | Event catalog, denah, **POST /orders** anti-oversell, web UI | events, seats, orders |
-| `worker` | — | Konsumsi antrean e-ticket | audit |
-| `postgres` | internal | Persist catalog + order | `wtk` DB |
-| `redis` | internal | **Kuota kursi atomik** + cache + queue | keys `quota:*` |
+| Komponen | Port / role | Catatan |
+|----------|-------------|---------|
+| API monolit + static web | **3000** | `npm start` / container `api` |
+| Gateway Nginx (compose full) | **8080** | Proxy ke api |
+| PostgreSQL | 5432 (internal/host) | DB `wtk` |
+| Redis | 6379 | Kuota + cache + queue |
+| Expo Metro | 8081 | Hanya di folder `mobile/` |
 
-Aturan: **sumber daya rebutan = kursi** → hanya dipotong atomik di Redis (lihat ADR-002).
+Env lab (lihat [`.env.example`](./.env.example)):
 
-Ditunda (sesuai revisi Jumat): `payment-service`, `notification-service` eksternal, payment gateway.
-
----
-
-## Data domain (Excel — milik squad ini)
-
-| ID | Artis | Venue | Kursi |
-|----|--------|--------|------:|
-| 1 | TREASURE | KSPO DOME, Seoul | 400 |
-| 2 | LYKN | Impact Arena, Bangkok | 280 |
-| 3 | BLACKPINK | Seoul World Cup Stadium | 500 |
-| 4 | NCT DREAM | Gocheok Sky Dome, Seoul | 350 |
-| 5 | EXO | Jamsil Indoor Stadium | 320 |
-| 6 | ATEEZ | BEXCO Auditorium, Busan | 380 |
-| 7 | BUS | Thunder Dome, Bangkok | 250 |
-| 8 | Stray Kids | Inspire Arena, Incheon | 360 |
-| 9 | aespa | Olympic Hall, Seoul | 300 |
-| 10 | SEVENTEEN | Busan Asiad Main Stadium | 450 |
-| 11 | 4EVE | IMPACT Exhibition Hall 3, Bangkok | 260 |
-
-Total denah: **3850** seat codes · sumber `data/DATA_WAR_TIKET_KONSER.xlsx`.
-
-```bash
-npm run data:excel   # import Excel → JSON/CSV + load Postgres/Redis
+```
+DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
+REDIS_URL=redis://localhost:6379
+ADMIN_TOKEN=admin-wtk          # header x-admin-token
+RESET_TOKEN=dev-reset          # x-reset-token (internal reset)
+PAYMENT_PROVIDER=mock
+PAYMENT_AUTO_CAPTURE=1
 ```
 
 ---
 
-## Base URL & beban
+## Dataset (30 konser)
 
-| Dokumen | Isi |
-|---------|-----|
-| [`docs/BASEURL.md`](./docs/BASEURL.md) | URL dev/gateway/HP + rate 60/mnt + page 20/50 |
-| [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) | Endpoint kritis final |
-| [`docs/BASELINE.md`](./docs/BASELINE.md) | Angka loadtest + cara ulang uji |
-| `loadtest/oversell-check.ps1` | Cek cepat anti-oversell |
-| `loadtest/run-p1-local.ps1` | Baseline autocannon P1 |
+Sumber: Excel squad + `data/events.manual.json` + `data/seats.manual.csv` + poster di `public/posters/`.
 
-## Microservices (4 layanan — materi Modul 2)
+| ID | Contoh | Venue (ringkas) |
+|----|--------|-----------------|
+| 1–11 | TREASURE … 4EVE | Seoul / Bangkok / Busan / … |
+| 12–30 | IU … KATSEYE | Dataset expand + poster iTunes/seed |
 
 ```bash
-docker compose -f docker-compose.ms.yml up --build -d
-# Gateway http://localhost:8080
-curl -s http://localhost:8080/v1/events?size=5
+# Generate seats + load Postgres/Redis
+npm run data:reload
+# atau dari Excel
+npm run data:excel
 ```
-
-| Service | Port | Peran |
-|---------|-----:|--------|
-| event | 3001 | Catalog |
-| ticket | 3002 | **Kunci kursi** (anti-oversell) |
-| payment | 3003 | JWT + bayar + publish `ticket.issued` |
-| notification | 3004 | E-ticket async |
-
-Docs: [`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) · [`docs/ARSITEKTUR.md`](./docs/ARSITEKTUR.md) · kontrak [`openapi-ms.yaml`](./openapi-ms.yaml)
-
-Monolit Scalable tetap di `docker-compose.yml` + `src/` (jangan dicampur port 8080 bersamaan).
-
-## Mobile (Expo)
-
-```bash
-cd mobile
-npm install
-# edit config.js → BASE_URL = http://<IPv4-laptop>:3000
-npx expo start
-```
-
-Detail: [`mobile/README.md`](./mobile/README.md) · laporan: [`docs/mobile/LAPORAN.md`](./docs/mobile/LAPORAN.md)  
-Arsitektur: [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) · build: [`docs/mobile/BUILD.md`](./docs/mobile/BUILD.md)
-
-## Kontrak API
-
-| File | Versi | Status |
-|------|-------|--------|
-| [`openapi.yaml`](./openapi.yaml) | 1.0.0 | Development |
-| [`openapi-final.yaml`](./openapi-final.yaml) | 2.0.0 | Beku + `x-baseurl-rules` |
-
-### Endpoint kritis
-
-| Endpoint | Keterangan |
-|----------|------------|
-| `GET /events` | Daftar konser + paginasi |
-| `GET /events/{id}` | Detail + seats + **sisa live** |
-| `POST /orders` | **Panas** — lock kuota, 409 jika habis |
-| `GET /health` | Instance id (bukti replika) |
-
-Web UI: `http://localhost:8080/` · API sama host.
 
 ---
 
-## ADR
+## Endpoint kritis
 
-| ADR | Keputusan |
-|-----|-----------|
-| [ADR-001](./docs/adr/ADR-001-pagination.md) | Paginasi wajib |
-| [ADR-002](./docs/adr/ADR-002-seat-lock-redis.md) | Redis Lua anti-oversell |
-| [ADR-003](./docs/adr/ADR-003-monolit-revisi-jumat.md) | Monolit dulu untuk Jumat |
+Detail: [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) · OpenAPI: `openapi.yaml` / `openapi-final.yaml`
+
+| Method | Path | Keterangan |
+|--------|------|------------|
+| GET | `/health` | Instance + payment provider |
+| GET | `/events?page&size` | List + sisa live |
+| GET | `/events/:id` | Detail, categories, seats, soldSeats, terms |
+| POST | `/orders` | **Panas** — lock kursi · email + buyerName wajib |
+| POST | `/payments/simulate` | Lab settle |
+| GET | `/mail/outbox/:orderId` | Status e-ticket lab |
+| GET/POST/PATCH/DELETE | `/admin/events…` | CRUD + `reset-quota` + `regenerate-seats` |
+| GET | `/admin/orders` | Order terbaru |
+
+Alias prefix `/api/*` untuk klien web/mobile.
+
+**Admin header:** `x-admin-token: admin-wtk` (default).
 
 ---
 
 ## Menjalankan
 
-Panduan lengkap (laptop + **GitHub Codespaces**): [`docs/CARA-JALANKAN.md`](./docs/CARA-JALANKAN.md)
+Panduan panjang: [`docs/CARA-JALANKAN.md`](./docs/CARA-JALANKAN.md)
 
-### GitHub Codespaces (teman / demo online)
-1. Repo → **Code** → **Codespaces** → Create / Open  
-2. Tunggu `postCreate` (compose + dataset Excel 7 event)  
-3. Tab **PORTS** → **8080** → Visibility **Public** → Open in Browser  
+### A) Dev lokal (paling sering dipakai lab)
 
-### Laptop (Docker)
 ```bash
+# 1) Infra
+docker compose up -d postgres redis
+
+# 2) API
 copy .env.example .env
+# set DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
+# set REDIS_URL=redis://localhost:6379
+npm install
+npm run data:reload
+npm start
+# → http://localhost:3000/          (user web)
+# → http://localhost:3000/admin.html
+```
+
+Jika `EADDRINUSE :3000` → API sudah jalan; jangan start dobel.
+
+### B) Docker full (+ gateway 8080)
+
+```bash
 docker compose up -d --build
 docker compose exec api node data/generate-real-seats.js
 docker compose exec api node src/load-manual-data.js
-# browser → http://localhost:8080/
+# → http://localhost:8080/
 ```
 
-### Scale API (P2)
-```bash
-docker compose up -d --scale api=3
-```
+Scale API (P2): `docker compose up -d --scale api=3`
 
-### Dev Node lokal (+ Postgres/Redis dari compose)
+### C) Mobile Expo (HP)
+
 ```bash
-docker compose up -d postgres redis
+cd mobile
 npm install
-set DATABASE_URL=postgres://wtk:wtk@localhost:5432/wtk
-set REDIS_URL=redis://localhost:6379
-npm run data:excel
-npm start
-# http://localhost:3000/
+# edit mobile/config.js → LAN_IP = IPv4 Wi‑Fi laptop (ipconfig)
+# contoh: export const LAN_IP = "10.87.96.26";
+npx expo start --lan -c
+```
+
+Syarat HP:
+1. Wi‑Fi **sama** laptop (matikan LTE)
+2. Buka dulu di browser HP: `http://<LAN_IP>:3000/api/health`
+3. Scan QR **Expo Go**
+4. Jalankan Expo **hanya** dari folder `mobile/` (bukan root repo)
+
+Detail: [`mobile/README.md`](./mobile/README.md) · [`mobile/JALANKAN.md`](./mobile/JALANKAN.md)
+
+### D) Microservices (Modul 2, opsional)
+
+```bash
+docker compose -f docker-compose.ms.yml up --build -d
+curl -s http://localhost:8080/v1/events?size=5
 ```
 
 ---
@@ -170,23 +274,69 @@ npm start
 ## Struktur repo
 
 ```
-├── docker-compose.yml
-├── .env.example
-├── openapi.yaml / openapi-final.yaml
-├── nginx/default.conf          # gateway
-├── services/api/Dockerfile     # build context = root
-├── src/                        # kode backend
-├── public/                     # web Jumat
-├── data/                       # Excel dataset + events/seats (7 event)
+├── src/                    # Backend monolit
+│   ├── server.js · routes.js · db.js · redis.js
+│   ├── services/           # orders, quota, admin, eventCache, mail, poster…
+│   ├── middleware/         # rateLimit, adminAuth
+│   ├── load-manual-data.js · seed.js · worker.js
+├── public/                 # Web UI
+│   ├── index.html · app.js · styles.css · event-meta.js
+│   ├── admin.html · admin.js · role-gate.js
+│   └── posters/            # 01–30 + uploads/
+├── mobile/                 # Expo app
+│   ├── App.js · config.js · theme.js
+│   ├── api/ · screens/ · data/eventMeta.js
+│   └── JALANKAN.md
+├── data/                   # Excel import, events/seats manual, generate seats
 ├── db/init.sql
-├── docs/adr/
+├── docs/                   # ARSITEKTUR, ENDPOINTS, BASEURL, mobile/…
+├── nginx/                  # Gateway compose
+├── services/               # MS event/ticket/payment/notification (Modul 2)
 ├── loadtest/
-├── AI-LOG.md
-└── PERAN.md
+├── docker-compose.yml · docker-compose.ms.yml
+├── openapi.yaml · openapi-final.yaml · openapi-ms.yaml
+└── .env.example
 ```
 
 ---
 
-## Peran
+## Dokumen terkait
 
-Lihat [`PERAN.md`](./PERAN.md). AI usage: [`AI-LOG.md`](./AI-LOG.md).
+| Dokumen | Isi |
+|---------|-----|
+| [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) | Kontrak monolit |
+| [`docs/BACKEND.md`](./docs/BACKEND.md) | Detail backend |
+| [`docs/BASEURL.md`](./docs/BASEURL.md) | URL + rate + page size |
+| [`docs/DATA.md`](./docs/DATA.md) | Dataset |
+| [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) | Arsitektur Expo |
+| [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md) | **Diagram Mermaid** (tampil di GitHub) |
+| [`architecture/diagrams.html`](./architecture/diagrams.html) | Diagram interaktif (buka lokal) |
+| [`docs/adr/`](./docs/adr/) | ADR paginasi, Redis lock, monolit Jumat |
+| [`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) | 4 service Modul 2 |
+| [`PERAN.md`](./PERAN.md) · [`AI-LOG.md`](./AI-LOG.md) | Peran squad · log AI |
+
+---
+
+## Uji cepat
+
+```bash
+# Health
+curl -s http://localhost:3000/api/health
+
+# List
+curl -s "http://localhost:3000/api/events?page=1&size=5"
+
+# Admin list (header token)
+curl -s -H "x-admin-token: admin-wtk" http://localhost:3000/api/admin/events
+
+# Loadtest anti-oversell (opsional)
+# loadtest/oversell-check.ps1  ·  loadtest/run-p1-local.ps1
+```
+
+Baseline: [`docs/BASELINE.md`](./docs/BASELINE.md).
+
+---
+
+## AI
+
+Catatan pemakaian AI: [`AI-LOG.md`](./AI-LOG.md)

@@ -278,17 +278,32 @@ async function main() {
   await redis.ping();
   await ensureSchema();
 
-  // generate seats CSV jika diminta / belum ada lengkap
+  const events = readJson("events.manual.json");
+  const seatsPath = path.join(dataDir, "seats.manual.csv");
+  let seats = fs.existsSync(seatsPath) ? readCsv("seats.manual.csv") : [];
+
+  // generate denah hanya jika CSV belum menutupi semua event di JSON
+  const eventIds = new Set(events.map((e) => Number(e.event_id)));
+  const seatEventIds = new Set(
+    seats.map((r) => Number(r.event_id)).filter(Boolean)
+  );
+  const missingSeatEvents = [...eventIds].filter((id) => !seatEventIds.has(id));
   const gen = path.join(dataDir, "generate-real-seats.js");
-  if (fs.existsSync(gen)) {
-    console.log("[load-manual] generate denah dari categories…");
+  if (missingSeatEvents.length && fs.existsSync(gen)) {
+    console.log(
+      "[load-manual] generate denah (CSV kurang event:",
+      missingSeatEvents.join(","),
+      ")"
+    );
     require("child_process").execFileSync(process.execPath, [gen], {
       stdio: "inherit",
     });
+    seats = readCsv("seats.manual.csv");
+  } else {
+    console.log(
+      `[load-manual] pakai seats.manual.csv yang ada (${seats.length} baris, ${seatEventIds.size} event)`
+    );
   }
-
-  const events = readJson("events.manual.json");
-  const seats = readCsv("seats.manual.csv");
 
   await upsertEvents(events);
   await replaceSeats(seats);

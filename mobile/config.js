@@ -35,6 +35,8 @@ function resolveBaseUrl() {
 export const BASE_URL = resolveBaseUrl();
 export const PAGE_SIZE = 20;
 export const RATE_LIMIT_PER_MIN = 60;
+/** Sama dengan ADMIN_TOKEN di monolit (.env) */
+export const ADMIN_TOKEN = "admin-wtk";
 
 export const API_HINT =
   Platform.OS === "web"

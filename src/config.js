@@ -23,4 +23,6 @@ module.exports = {
   rateWindowSec: Number(process.env.RATE_WINDOW_SEC || 60),
   // Hold/order max qty
   maxQtyPerOrder: 4,
+  // Panel admin lab (header x-admin-token)
+  adminToken: process.env.ADMIN_TOKEN || "admin-wtk",
 };

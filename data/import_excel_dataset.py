@@ -78,12 +78,33 @@ def to_iso(val, default_tz="+09:00"):
     if isinstance(val, datetime):
         # Excel naive → assume KST-ish / local; store as +07 for ID lab or +09
         return val.strftime("%Y-%m-%dT%H:%M:%S") + default_tz
+    # Excel serial date (float/int) — openpyxl data_only kadang mengembalikan angka
+    if isinstance(val, (int, float)) and not isinstance(val, bool):
+        try:
+            from openpyxl.utils.datetime import from_excel
+
+            dt = from_excel(val)
+            if isinstance(dt, datetime):
+                return dt.strftime("%Y-%m-%dT%H:%M:%S") + default_tz
+        except Exception:
+            pass
     s = str(val).strip()
     if not s:
         return None
     # already iso-ish
     if "T" in s:
         return s
+    # numeric string serial
+    try:
+        num = float(s)
+        if 20000 < num < 80000:
+            from openpyxl.utils.datetime import from_excel
+
+            dt = from_excel(num)
+            if isinstance(dt, datetime):
+                return dt.strftime("%Y-%m-%dT%H:%M:%S") + default_tz
+    except Exception:
+        pass
     try:
         dt = datetime.fromisoformat(s.replace(" ", "T"))
         return dt.strftime("%Y-%m-%dT%H:%M:%S") + default_tz
@@ -193,11 +214,17 @@ def main():
         print("Excel tidak ditemukan:", xlsx)
         sys.exit(1)
 
-    # copy ke repo
+    # copy ke repo (skip jika path sama / file terkunci)
     import shutil
 
-    shutil.copy2(xlsx, XLSX_IN_REPO)
-    print("Copied Excel ->", XLSX_IN_REPO)
+    try:
+        if xlsx.resolve() != XLSX_IN_REPO.resolve():
+            shutil.copy2(xlsx, XLSX_IN_REPO)
+            print("Copied Excel ->", XLSX_IN_REPO)
+        else:
+            print("Using Excel in-repo:", XLSX_IN_REPO)
+    except PermissionError:
+        print("WARN: tidak bisa copy Excel (file terkunci), pakai path sumber:", xlsx)
 
     wb = openpyxl.load_workbook(xlsx, data_only=True)
     venues = sheet_table(wb["03_venues"])

@@ -18,10 +18,25 @@
 | GET | `/mail/outbox/{orderId}` | lab | Isi e-ticket per order |
 | GET | `/internal/quota/{id}` | debug | Snapshot Redis |
 | POST | `/internal/reset-quota/{id}` | lab | Header `x-reset-token: dev-reset` |
+| GET | `/admin/events` | admin | Semua event + sisa Redis. Header `x-admin-token` |
+| POST | `/admin/events` | admin | Buat konser + denah default + init kuota |
+| PATCH | `/admin/events/{id}` | admin | Ubah status/judul/kuota/… |
+| DELETE | `/admin/events/{id}` | admin | Hapus konser + order/kursi/stok |
+| POST | `/admin/events/{id}/reset-quota` | admin | Reset kuota Redis (token admin) |
+| POST | `/admin/events/{id}/regenerate-seats` | admin | Buat ulang denah multi-zona (kursi diganti) |
+| GET | `/admin/orders` | admin | Order terbaru (`?limit=50`) |
+
+## Admin (lab)
+
+- Header: `x-admin-token: <ADMIN_TOKEN>` (default env `admin-wtk`)
+- UI monolit: http://localhost:3000/admin.html
+- `POST /admin/events` body minimal: `{ title, artist, venue, startsAt, quotaTotal, priceIdr }` · opsional `status`, `generateSeats`, `categories[]`, `city`, `country`, `description`, `salesOpensAt`, **`poster`** (data URL base64 / path `/posters/…`)
+- `PATCH /admin/events/{id}` field sama + `poster` untuk ganti gambar
+- UI monolit: `/admin.html` · Mobile: layar Admin (upload galeri)
 
 ## Alias
 
-Semua path di atas juga tersedia di prefix `/api` (contoh: `/api/events`, `/api/orders`) untuk static web. Halaman mock bayar: `/pay/mock.html`.
+Semua path di atas juga tersedia di prefix `/api` (contoh: `/api/events`, `/api/orders`) untuk static web. Halaman mock bayar: `/pay/mock.html`. Admin: `/admin.html`.
 
 ## Payment & email (modul lab)
 

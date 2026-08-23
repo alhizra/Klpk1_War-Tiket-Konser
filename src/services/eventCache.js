@@ -11,6 +11,17 @@ function ttlWithJitter() {
   return config.cacheTtlSec + Math.floor(Math.random() * config.cacheJitterSec);
 }
 
+const DEFAULT_TERMS = [
+  "Maksimal 4 tiket per transaksi / pesanan",
+  "Satu kursi hanya boleh terjual satu kali (anti-oversell)",
+  "Wajib membawa identitas sesuai nama di e-ticket saat masuk venue",
+  "E-ticket dikirim ke email pembeli setelah pembayaran berhasil",
+  "Tiket non-refundable kecuali event dibatalkan oleh promoter",
+  "Dilarang memindahkan / menjual tiket di atas harga resmi (scalping)",
+  "Penonton wajib mematuhi aturan keamanan dan dress code venue",
+  "Gate open mengikuti jadwal di detail event; datang lebih awal disarankan",
+];
+
 async function getEventView(eventId) {
   const cacheKey = keys.eventCache(eventId);
   let catalog = null;
@@ -57,12 +68,16 @@ async function getEventView(eventId) {
         quotaTotal: row.quota_total,
         priceIdr: Number(row.price_idr),
         status: row.status,
-        description,
-        city: meta.city || null,
-        country: meta.country || "South Korea",
-        gateOpen: meta.gate_open || null,
-        ageRating: meta.age_rating || null,
-        terms: meta.terms || [],
+        description: row.description || description,
+        posterUrl: row.poster_url || meta.poster || null,
+        city: row.city || meta.city || null,
+        country: row.country || meta.country || "South Korea",
+        gateOpen: row.gate_open || meta.gate_open || "16:00",
+        ageRating: row.age_rating || meta.age_rating || "All ages",
+        terms:
+          Array.isArray(meta.terms) && meta.terms.length
+            ? meta.terms
+            : DEFAULT_TERMS,
         categories: (catRows.length
           ? catRows
           : meta.categories || []
@@ -106,8 +121,16 @@ async function getEventView(eventId) {
 
   const soldSeats = await redis.smembers(keys.seatsSold(eventId));
 
+  const terms =
+    Array.isArray(catalog.terms) && catalog.terms.length
+      ? catalog.terms
+      : DEFAULT_TERMS;
+
   return {
     ...catalog,
+    terms,
+    gateOpen: catalog.gateOpen || "16:00",
+    ageRating: catalog.ageRating || "All ages",
     sisa,
     terjual,
     soldSeats,

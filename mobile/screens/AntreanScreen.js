@@ -24,7 +24,7 @@ export default function AntreanScreen({ route, navigation }) {
         <>
           <ActivityIndicator
             size="large"
-            color={colors.accent2}
+            color={colors.accent}
             style={{ marginTop: 40 }}
           />
           <Text style={styles.count}>Masuk gerbang bayar dalam {detik}…</Text>
@@ -58,23 +58,34 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: "center",
   },
-  kicker: { color: colors.accent2, fontWeight: "700", letterSpacing: 1 },
-  title: { color: colors.text, fontSize: 22, fontWeight: "800", marginTop: 8 },
-  meta: { color: colors.muted, marginTop: 8 },
-  count: { color: colors.muted, textAlign: "center", marginTop: 16 },
+  kicker: {
+    color: colors.accent,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    fontSize: 11,
+  },
+  title: {
+    color: colors.text,
+    fontSize: 22,
+    fontWeight: "800",
+    marginTop: 8,
+    letterSpacing: -0.3,
+  },
+  meta: { color: colors.muted, marginTop: 8, fontSize: 14 },
+  count: { color: colors.muted, textAlign: "center", marginTop: 20, fontSize: 14 },
   ready: {
     color: colors.accent,
     fontSize: 18,
-    fontWeight: "700",
-    marginTop: 32,
+    fontWeight: "800",
+    marginTop: 36,
     textAlign: "center",
   },
   btn: {
     marginTop: 20,
-    backgroundColor: colors.accent2,
+    backgroundColor: colors.accent,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
   },
-  btnText: { color: colors.bg, fontWeight: "800" },
+  btnText: { color: colors.onAccent || "#fff", fontWeight: "800", fontSize: 15 },
 });

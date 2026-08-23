@@ -16,6 +16,8 @@ const {
   verifyMidtransSignature,
 } = require("./services/paymentGateway");
 const { listOutbox, getOutboxByOrder } = require("./services/mail");
+const { adminAuth } = require("./middleware/adminAuth");
+const adminSvc = require("./services/admin");
 
 const router = express.Router();
 
@@ -243,6 +245,73 @@ router.post("/internal/reset-quota/:id", async (req, res) => {
   } catch (e) {
     console.error("[reset-quota]", e);
     return res.status(500).json({ error: "internal error" });
+  }
+});
+
+/** ---------- Admin (header x-admin-token) ---------- */
+function adminErr(res, e, tag) {
+  if (e.status === 400 || e.status === 404) {
+    return res.status(e.status).json({ error: e.message });
+  }
+  console.error(tag, e);
+  return res.status(500).json({ error: "internal error", detail: e.message });
+}
+
+router.get("/admin/events", adminAuth, async (_req, res) => {
+  try {
+    return res.json(await adminSvc.adminListEvents());
+  } catch (e) {
+    return adminErr(res, e, "[GET /admin/events]");
+  }
+});
+
+router.post("/admin/events", adminAuth, async (req, res) => {
+  try {
+    const created = await adminSvc.adminCreateEvent(req.body || {});
+    return res.status(201).json(created);
+  } catch (e) {
+    return adminErr(res, e, "[POST /admin/events]");
+  }
+});
+
+router.patch("/admin/events/:id", adminAuth, async (req, res) => {
+  try {
+    const updated = await adminSvc.adminUpdateEvent(req.params.id, req.body || {});
+    return res.json(updated);
+  } catch (e) {
+    return adminErr(res, e, "[PATCH /admin/events/:id]");
+  }
+});
+
+router.post("/admin/events/:id/reset-quota", adminAuth, async (req, res) => {
+  try {
+    return res.json(await adminSvc.adminResetQuota(req.params.id));
+  } catch (e) {
+    return adminErr(res, e, "[POST /admin/events/:id/reset-quota]");
+  }
+});
+
+router.post("/admin/events/:id/regenerate-seats", adminAuth, async (req, res) => {
+  try {
+    return res.json(await adminSvc.adminRegenerateSeats(req.params.id));
+  } catch (e) {
+    return adminErr(res, e, "[POST /admin/events/:id/regenerate-seats]");
+  }
+});
+
+router.delete("/admin/events/:id", adminAuth, async (req, res) => {
+  try {
+    return res.json(await adminSvc.adminDeleteEvent(req.params.id));
+  } catch (e) {
+    return adminErr(res, e, "[DELETE /admin/events/:id]");
+  }
+});
+
+router.get("/admin/orders", adminAuth, async (req, res) => {
+  try {
+    return res.json(await adminSvc.adminListOrders(req.query.limit));
+  } catch (e) {
+    return adminErr(res, e, "[GET /admin/orders]");
   }
 });
 

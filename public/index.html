@@ -4,21 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WTK Ticket — War Tiket Konser</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css?v=ui5" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <!-- ========== ROLE GATE (sebelum dashboard) ========== -->
+  <section id="view-gate" class="role-gate" aria-label="Pilih peran">
+    <div class="role-gate-inner">
+      <p class="role-eyebrow">WAR TIKET KONSER</p>
+      <a class="logo role-logo" href="/">WTK<span>TICKET</span></a>
+      <h1>Masuk sebagai</h1>
+      <p class="role-sub">Pilih peran dulu sebelum membuka dashboard.</p>
+      <div class="role-cards">
+        <button type="button" class="role-card" id="btnRoleUser" data-role="user">
+          <span class="role-icon" aria-hidden="true">👤</span>
+          <strong>User</strong>
+          <span>Beli tiket · lihat konser · denah & booking</span>
+        </button>
+        <button type="button" class="role-card role-card-admin" id="btnRoleAdmin" data-role="admin">
+          <span class="role-icon" aria-hidden="true">🛠️</span>
+          <strong>Admin</strong>
+          <span>Tambah konser · kuota · pantau order</span>
+        </button>
+      </div>
+      <p class="role-foot muted">Pilih peran untuk melanjutkan</p>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
   <!-- TOP BAR (Melon-like) -->
   <header class="gnb">
     <div class="gnb-inner">
       <a class="logo" href="/">WTK<span>TICKET</span></a>
       <nav class="gnb-nav" id="mainNav">
-        <a href="/" data-nav="concert" class="active">Concert</a>
+        <a href="/?role=user" data-nav="concert" class="active">Concert</a>
         <a href="#list" data-nav="opensale">Open Sale</a>
         <a href="#booking" data-nav="booking">Booking</a>
       </nav>
       <div class="gnb-right">
+        <button type="button" id="btnSwitchRole" class="chip chip-btn" title="Ganti peran">Ganti peran</button>
         <span id="apiStatus" class="chip">API …</span>
       </div>
     </div>
@@ -28,15 +54,23 @@
   <section id="view-list" class="view">
     <div class="hero-banner" id="list">
       <div class="hero-text">
-        <p class="eyebrow">WAR TICKET · OPEN SALE</p>
-        <h1>Pilih konser favoritmu</h1>
-        <p>Foto event · harga zona · sisa kursi live · denah berwarna</p>
+        <p class="eyebrow">OPEN SALE</p>
+        <h1>Pilih konser<br/><span class="hero-accent">favoritmu</span></h1>
+        <p class="hero-lead">Denah berwarna · harga per zona · sisa kursi real-time</p>
+        <div class="hero-pills">
+          <span>Live stock</span>
+          <span>E-ticket email</span>
+          <span>Max 4 kursi</span>
+        </div>
       </div>
     </div>
     <div class="wrap">
       <div class="section-head">
-        <h2>Open Concert</h2>
-        <span id="listCount" class="muted">— event</span>
+        <div>
+          <h2>Open Concert</h2>
+          <p class="section-sub">Konser yang sedang dibuka penjualannya</p>
+        </div>
+        <span id="listCount" class="count-pill">— event</span>
       </div>
       <div id="eventGrid" class="event-grid"></div>
     </div>
@@ -163,7 +197,7 @@
           </div>
           <div id="dPriceMin" class="book-price">—</div>
           <button type="button" id="btnGoSeat" class="btn primary block">좌석 선택 · Pilih kursi</button>
-          <p class="book-note">Anti-oversell · 1 seat = 1 penjualan</p>
+          <p class="book-note">Maks. 4 kursi per pesanan</p>
         </div>
       </aside>
     </div>
@@ -171,11 +205,13 @@
 
   <footer class="site-foot">
     <div class="wrap">
-      WTK Ticket · War Tiket Konser lab · Data dari dataset squad · UI inspired by Melon Ticket layout
+      WTK Ticket · War Tiket Konser
     </div>
   </footer>
+  </div><!-- /appShell -->
 
-  <script src="/event-meta.js"></script>
+  <script src="/event-meta.js?v=poster30"></script>
+  <script src="/role-gate.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

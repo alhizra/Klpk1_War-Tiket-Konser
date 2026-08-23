@@ -20,13 +20,14 @@ async function minta(path, opsi = {}, percobaan = 0) {
   const url = `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
   let res;
   try {
+    const { headers: extraHeaders, ...rest } = opsi;
     res = await fetch(url, {
+      ...rest,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        ...(opsi.headers || {}),
+        ...(extraHeaders || {}),
       },
-      ...opsi,
     });
   } catch (e) {
     const err = new Error(
@@ -60,7 +61,22 @@ async function minta(path, opsi = {}, percobaan = 0) {
 }
 
 export const api = {
-  get: (path) => minta(path),
-  post: (path, body) =>
-    minta(path, { method: "POST", body: JSON.stringify(body) }),
+  get: (path, headers) => minta(path, headers ? { headers } : {}),
+  post: (path, body, headers) =>
+    minta(path, {
+      method: "POST",
+      body: JSON.stringify(body ?? {}),
+      ...(headers ? { headers } : {}),
+    }),
+  patch: (path, body, headers) =>
+    minta(path, {
+      method: "PATCH",
+      body: JSON.stringify(body ?? {}),
+      ...(headers ? { headers } : {}),
+    }),
+  del: (path, headers) =>
+    minta(path, {
+      method: "DELETE",
+      ...(headers ? { headers } : {}),
+    }),
 };
