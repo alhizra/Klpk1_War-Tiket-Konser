@@ -6,19 +6,19 @@
 
 ## Kelompok & peran
 
-| Peran | Nama | Fokus |
+| Label | Nama | Fokus |
 |-------|------|--------|
-| **Arsitek Sistem** | Andi Hilyatul Mar'ah | ADR, diagram [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md), OpenAPI |
-| **Backend / API Engineer** | Yusuf Sewang | `src/`, API monolit, web `public/`, anti-oversell |
-| **Infrastructure & DevOps** | AL-HIZRA | Docker, Nginx gateway, deploy, Codespaces |
-| **Data & Persistence** | Astrid Tiar | Dataset Excel/CSV, `db/`, load seats, poster catalog |
-| **QA, Load-Test & Dokumentasi** | Tri Wahyuni | Loadtest, baseline, uji konsistensi, dokumentasi |
+| **Add Arsitektur** | Andi Hilyatul Mar'ah | ADR, diagram [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md), OpenAPI |
+| **Add Backend** | Yusuf Sewang | `src/`, API monolit, web `public/`, anti-oversell |
+| **Add Infra** | AL-HIZRA | Docker, Nginx gateway, deploy, Codespaces |
+| **Add Data** | Astrid Tiar | Dataset Excel/CSV (**30 event / 10.890 seats**), `db/`, load seats, poster |
+| **Add QA** | Tri Wahyuni | Loadtest, baseline, uji konsistensi, dokumentasi |
 
 Detail file & endpoint PIC: [`PERAN.md`](./PERAN.md).
 
 ---
 
-## Arsitektur (monolit lab — jalur utama)
+## Add Arsitektur (monolit lab — jalur utama)
 
 ![Monolit lab](./architecture/diagrams/07-monolit.png)
 
@@ -97,7 +97,7 @@ Pilih peran (User/Admin)
 
 ## Fitur yang sudah fix (status terkini)
 
-### Backend monolit
+### Add Backend (monolit)
 - [x] `GET /events` paginasi · `GET /events/:id` detail + categories + seats + `soldSeats` + `sisa` live
 - [x] `POST /orders` anti-oversell · max 4 · email + buyerName wajib · 409/429
 - [x] `POST /payments/simulate` + webhook mock · e-ticket outbox lab
@@ -105,6 +105,15 @@ Pilih peran (User/Admin)
 - [x] Poster: path seed + upload base64 → `/posters/uploads/…`
 - [x] Migrasi ringan kolom order/event saat start (`ensureOrderColumns` / `ensureEventColumns`)
 - [x] Edit harga sinkron ke `seat_categories` / `seats`
+
+### Add Data
+- [x] **30 event** · **10.890** seat codes (`events.manual.json` + `seats.manual.csv`)
+- [x] Import Excel · `npm run data:reload` / `data:excel` · seed Redis kuota
+- [x] Poster catalog `public/posters/01`…`30` · `data-summary.json`
+
+### Add Arsitektur
+- [x] ADR-001…003 · OpenAPI · diagram PNG + Mermaid di `architecture/DIAGRAMS.md`
+- [x] Context map monolit + target MS (Modul 2 terpisah)
 
 ### Web (`public/`)
 - [x] Role gate User / Admin
@@ -169,7 +178,7 @@ PAYMENT_AUTO_CAPTURE=1
 
 ---
 
-## Dataset (30 konser)
+## Add Data — dataset (30 konser)
 
 Sumber: Excel squad + `data/events.manual.json` + `data/seats.manual.csv` + poster di `public/posters/`.
 
@@ -272,7 +281,7 @@ curl -s http://localhost:8080/v1/events?size=5
 ## Struktur repo
 
 ```
-├── src/                    # Backend monolit
+├── src/                    # Add Backend (monolit API)
 │   ├── server.js · routes.js · db.js · redis.js
 │   ├── services/           # orders, quota, admin, eventCache, mail, poster…
 │   ├── middleware/         # rateLimit, adminAuth
@@ -303,15 +312,16 @@ curl -s http://localhost:8080/v1/events?size=5
 | Dokumen | Isi |
 |---------|-----|
 | [`docs/ENDPOINTS.md`](./docs/ENDPOINTS.md) | Kontrak monolit |
-| [`docs/BACKEND.md`](./docs/BACKEND.md) | Detail backend |
+| [`docs/BACKEND.md`](./docs/BACKEND.md) | **Add Backend** — detail API monolit |
 | [`docs/BASEURL.md`](./docs/BASEURL.md) | URL + rate + page size |
 | [`docs/DATA.md`](./docs/DATA.md) | Dataset |
 | [`docs/mobile/ARSITEKTUR-MOBILE.md`](./docs/mobile/ARSITEKTUR-MOBILE.md) | Arsitektur Expo |
-| [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md) | **Diagram Mermaid** (tampil di GitHub) |
+| [`architecture/DIAGRAMS.md`](./architecture/DIAGRAMS.md) | **Add Arsitektur** — diagram PNG + Mermaid |
 | [`architecture/diagrams.html`](./architecture/diagrams.html) | Diagram interaktif (buka lokal) |
 | [`docs/adr/`](./docs/adr/) | ADR paginasi, Redis lock, monolit Jumat |
+| [`docs/DATA.md`](./docs/DATA.md) | **Add Data** — skema, Redis, seed |
 | [`docs/MICROSERVICES.md`](./docs/MICROSERVICES.md) | 4 service Modul 2 |
-| [`PERAN.md`](./PERAN.md) · [`AI-LOG.md`](./AI-LOG.md) | Peran squad · log AI |
+| [`PERAN.md`](./PERAN.md) · [`AI-LOG.md`](./AI-LOG.md) | Label Add * · log AI |
 
 ---
 

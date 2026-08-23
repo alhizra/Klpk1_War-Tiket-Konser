@@ -1,9 +1,10 @@
-# Langkah-Langkah Arsitek Sistem — War Tiket Konser
+# Add Arsitektur — Langkah kerja
 
+**Label:** **Add Arsitektur** · Arsitek Sistem (Andi Hilyatul Mar'ah)  
 **Tema:** Penjualan tiket dengan antrean virtual dan kursi terbatas  
 **Sumber daya rebutan:** Kursi — satu kursi hanya boleh terjual satu kali  
 **Mata kuliah:** Praktikum Scalable Systems Design  
-**Peran terkait:** Arsitek Sistem (Andi Hilyatul Mar'ah) → lalu diserahkan ke Backend, Data, Infra, QA
+**Handoff:** Add Backend · Add Data · Add Infra · Add QA
 
 ---
 
@@ -417,12 +418,12 @@ flowchart TB
 
 # BAGIAN I — Handoff ke peran lain
 
-| Peran | Yang diterima dari Arsitek |
-|-------|----------------------------|
-| **Backend/API** | Sequence + endpoint + aturan lock/confirm |
-| **Data & Persistence** | Ownership tabel, indeks seat, TTL hold, migrasi |
-| **Infrastructure & DevOps** | Container diagram, port, Redis/Postgres/MQ, healthcheck |
-| **QA / Load-test** | Skenario: 1000 user hold kursi sama; webhook double; TTL expiry |
+| Label | Yang diterima dari Add Arsitektur |
+|-------|----------------------------------|
+| **Add Backend** | Sequence + endpoint + aturan lock/confirm |
+| **Add Data** | Ownership tabel, indeks seat, TTL hold, seed Excel, migrasi |
+| **Add Infra** | Container diagram, port, Redis/Postgres, healthcheck, scale |
+| **Add QA** | Skenario load: hold kursi sama; 409/oversell; webhook double; baseline |
 
 ---
 

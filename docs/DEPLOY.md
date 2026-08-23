@@ -1,6 +1,6 @@
 # docs/DEPLOY.md — Infrastructure & DevOps
 
-**PIC:** AL-HIZRA (Infrastructure & DevOps)  
+**Label:** **Add Infra** · PIC AL-HIZRA (Infrastructure & DevOps)  
 **Repo:** https://github.com/alhizra/Klpk1_War-Tiket-Konser  
 **Fokus file:** `docker-compose.yml`, `docker-compose.ms.yml`, `nginx/`, `services/api/Dockerfile`, `.env.example`
 
@@ -67,7 +67,7 @@ Browser: **http://localhost:8080/**
 Setelah container **healthy**:
 
 ```bash
-# Dataset Excel / manual (11 event)
+# Dataset Excel / manual (30 event)
 docker compose exec api npm run data:excel
 # ATAU pipeline manual yang ada di README:
 docker compose exec api node data/generate-real-seats.js
@@ -224,7 +224,7 @@ Loadtest scripts: folder `loadtest/` · angka: [`BASELINE.md`](./BASELINE.md)
 
 - [x] Compose monolit up (postgres, redis, api, worker, gateway)
 - [x] `GET /health` via :8080
-- [ ] Seed 11 event terverifikasi di browser
+- [ ] Seed 30 event terverifikasi di browser
 - [ ] `--scale api=3` + health multi-instance
 - [ ] `docs/DEPLOY.md` (file ini) dibaca tim
 - [ ] Screenshot `docker compose ps` untuk laporan

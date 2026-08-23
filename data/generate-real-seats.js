@@ -1,6 +1,6 @@
 /**
  * Generate denah kursi dari events.manual.json → seats.manual.csv
- * Layout harus match quota kategori Excel (7 event, 2480 seats).
+  * Layout harus match quota kategori Excel (30 event, 10890 seats).
  *
  * node data/generate-real-seats.js
  */

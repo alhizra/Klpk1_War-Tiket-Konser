@@ -1,7 +1,8 @@
-# docs/BASELINE.md — Logbook Uji Beban (Scalable)
+# Add QA — Logbook Uji Beban (Scalable)
 
+**Label:** **Add QA** · Load-test & dokumentasi (Tri Wahyuni)  
 **Tema:** War Tiket Konser  
-**Dataset:** 11 event / 3850 seats (`DATA_WAR_TIKET_KONSER.xlsx`)  
+**Dataset (Add Data):** **30 event / 10.890 seats**
 **Base URL dev:** `http://localhost:3000` · **Gateway:** `http://localhost:8080`  
 **Endpoint panas:** `POST /orders` · **Baca:** `GET /events/{id}`  
 **Aturan baseurl:** 60 req/menit (Mobile) · lab war: `RATE_LIMIT=10000`  
@@ -45,7 +46,7 @@ terjual + sisa == quota_total   (ideal; cek Redis vs sold DB bila beda)
 
 ## P1 — Baseline "sebelum" (local :3000, 2026-08-18)
 
-Kuota saat itu: **500** (seed lama). Pola sama untuk dataset 11 event (ganti `eventId` / reset).
+Kuota saat itu: **500** (seed lama). Pola sama untuk dataset 30 event (ganti `eventId` / reset).
 
 ### Endpoint baca
 
@@ -71,22 +72,22 @@ Kuota saat itu: **500** (seed lama). Pola sama untuk dataset 11 event (ganti `ev
 
 ---
 
-## P1-b — Dataset Excel 11 event (2026-08-21)
+## P1-b — Dataset Excel (awal 11 event) → expand **30 event**
 
 | Item | Nilai |
 |------|------:|
-| Events / seats | 11 / 3850 |
-| Event contoh | id=1 TREASURE quota=400 · id=11 4EVE quota=260 |
+| Events / seats **sekarang** | **30 / 10.890** |
+| Event contoh | id=1 TREASURE quota=400 · id=11 4EVE · id=30 KATSEYE |
 | Skrip cepat | `loadtest/oversell-check.ps1` |
 | Hasil run mesin ini | *Isi setelah API+Redis hidup — lihat tabel di bawah* |
 
-### Hasil oversell-check (mesin lokal, 2026-08-21)
+### Hasil oversell-check (mesin lokal, 2026-08-21 — masih valid pola anti-oversell)
 
 | Tanggal | BASE | eventId | shots | 201 | 409 | 429 | 5xx | terjual | sisa | Oversell | durasi |
 |---------|------|--------:|------:|----:|----:|----:|----:|--------:|-----:|----------|-------:|
 | 2026-08-21 | http://127.0.0.1:3000 | 1 (TREASURE q=400) | 500 | **400** | 100 | 0 | 0 | 400 | 0 | **TIDAK** | ~12.5s |
 
-**Kesimpulan:** tepat 400× `201` (= kuota), 100× `409` (sah), 0× `5xx`. Anti-oversell OK pada dataset Excel 11 event.
+**Kesimpulan:** tepat 400× `201` (= kuota), 100× `409` (sah), 0× `5xx`. Anti-oversell OK (pola sama di dataset 30 event; ganti `EVENT_ID` bila uji event lain).
 
 Ulangi:
 
@@ -133,7 +134,7 @@ Failover: stop 1 container di tengah beban → catat error rate.
 
 ## Checklist Scalable rapi
 
-- [x] Dataset Excel 11 event ter-load (`events` / `init.sql` / web)
+- [x] Dataset Excel **30 event / 10.890 seats** ter-load (`events` / `init.sql` / web)
 - [x] `docs/BASEURL.md` + aturan 60/20/50
 - [x] `docs/ENDPOINTS.md` selaras routes
 - [x] `openapi.yaml` + `openapi-final.yaml` (page/size, orders, 409/429)

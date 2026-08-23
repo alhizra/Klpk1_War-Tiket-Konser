@@ -2,7 +2,7 @@
 
 ## 1. Ringkasan Produk
 
-Sistem war tiket konser Asia (11 event, 3850 kursi) dengan anti-oversell di backend monolit + Redis, web Melon-style, dan aplikasi Expo (5 layar) sebagai wajah pengguna. Sumber daya rebutan: **kursi/kuota per event**.
+Sistem war tiket konser Asia (**30 event**, **10.890 kursi**) dengan anti-oversell di backend monolit + Redis, web Melon-style, dan aplikasi Expo (5 layar) sebagai wajah pengguna. Sumber daya rebutan: **kursi/kuota per event**.
 
 ## 2. Lapisan Microservices — Apa yang Dirancang
 
@@ -12,7 +12,7 @@ Monolit revisi Jumat: catalog event, `POST /orders`, worker e-ticket. ADR & arsi
 
 | Item | Hasil |
 |------|--------|
-| Dataset | 11 event / 3850 seats |
+| Dataset | 30 event / 10.890 seats |
 | Anti-oversell | 500× POST event TREASURE → **201=400, 409=100, oversell=TIDAK** |
 | Base URL rules | 60 req/menit, page 20 / max 50 |
 | Dokumen | `docs/BASEURL.md`, `docs/BASELINE.md`, `docs/ENDPOINTS.md` |

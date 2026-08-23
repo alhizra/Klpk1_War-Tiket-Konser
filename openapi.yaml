@@ -3,7 +3,7 @@ info:
   title: API Squad — War Tiket Konser (Klpk1)
   version: 1.0.0
   description: |
-    Kontrak API praktikum Scalable Systems — tema War Tiket Konser (dataset Excel 11 event).
+    Kontrak API praktikum Scalable Systems — tema War Tiket Konser (dataset Excel 30 event).
     Monolit: event+ticket+web + payment gateway (mock/Midtrans) + e-ticket email (SMTP/outbox).
     Development — boleh berubah sampai dibekukan di openapi-final.yaml v2.
   x-frozen: false
@@ -54,7 +54,7 @@ paths:
   /events:
     get:
       tags: [events]
-      summary: Daftar konser berpaginasi (11 event Excel — TREASURE … 4EVE)
+      summary: Daftar konser berpaginasi (30 event Excel — TREASURE … KATSEYE)
       operationId: listEvents
       parameters:
         - $ref: "#/components/parameters/Page"

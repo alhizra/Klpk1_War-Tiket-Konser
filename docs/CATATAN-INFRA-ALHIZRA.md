@@ -23,9 +23,9 @@ Bukti scale (contoh instance id berbeda):
 
 ## Backlog bug (bukan Infra — diteruskan ke tim)
 
-### B1. Validasi email + nama pembeli (Backend + UI)
+### B1. Validasi email + nama pembeli (Add Backend + UI)
 - **Gejala:** tombol Pesan tetap booking meski email e-ticket & nama pembeli kosong.
-- **PIC:** Yusuf (Backend) ± form di `public/`
+- **PIC:** Yusuf (**Add Backend**) ± form di `public/`
 - **Perbaikan yang diminta:**
   1. Frontend: jangan submit jika kosong; tampilkan error
   2. Backend `POST /orders`: 400 jika email/nama kosong atau email invalid
@@ -38,7 +38,7 @@ Bukti scale (contoh instance id berbeda):
 
 ## Checklist Infra tersisa
 
-- [ ] Pastikan seed 11 event lengkap di browser (`/?event=1` … `11`)
+- [ ] Pastikan seed 30 event lengkap di browser (`/?event=1` … `30`)
 - [ ] Screenshot `docker compose ps` (api×3) untuk laporan
 - [ ] Uji kill 1 container api → request masih 200
 - [ ] Baca ulang MS compose (jangan tabrakan port dengan monolit)

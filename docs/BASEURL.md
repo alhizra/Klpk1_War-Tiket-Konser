@@ -49,7 +49,7 @@ Internal lab saja: `POST /internal/reset-quota/{id}` + header `x-reset-token: de
 
 ## Dataset (sumber daya rebutan = kursi)
 
-- **11 event** / **3850** seat codes  
+- **30 event** / **10.890** seat codes
 - Sumber: `data/DATA_WAR_TIKET_KONSER.xlsx`  
 - Anti-oversell: Redis atomik (`src/services/quota.js`) — **409 = penolakan sah**
 

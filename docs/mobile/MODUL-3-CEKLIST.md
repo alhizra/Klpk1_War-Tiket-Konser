@@ -116,7 +116,7 @@ atau buat inbound rule **TCP 3000**.
 
 | # | Uji | Hasil diharapkan |
 |---|-----|------------------|
-| 1 | Layar daftar | 11 konser + poster |
+| 1 | Layar daftar | 30 konser + poster |
 | 2 | Ketuk event | Denah kursi |
 | 3 | Pilih 1–4 kursi → lanjut | Antrean countdown |
 | 4 | Isi nama + email → Bayar | 201 → E-ticket QR |

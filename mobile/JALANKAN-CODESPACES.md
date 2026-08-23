@@ -92,4 +92,4 @@ Hanya jika butuh Expo Go di HP:
 - [ ] `...-3000.app.github.dev/health` → `ok: true`
 - [ ] `config.js` BASE_URL = URL **https** port 3000
 - [ ] `...-8081.app.github.dev` buka UI mobile
-- [ ] Daftar 11 event tampil
+- [ ] Daftar 30 event tampil

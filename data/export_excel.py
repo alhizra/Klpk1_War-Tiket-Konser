@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Export dataset Excel (7 event) → workbook multi-sheet."""
+"""Export dataset Excel (30 event) → workbook multi-sheet."""
 import csv
 import json
 from pathlib import Path
@@ -87,12 +87,12 @@ def main():
     ws.title = "00_Panduan"
     ws["A1"] = "DATA REAL — War Tiket Konser (Excel dataset)"
     ws["A1"].font = title_font
-    ws["A2"] = "Squad Klpk1 · Sumber: DATA_WAR_TIKET_KONSER.xlsx · Total 3.850 kursi · 11 event"
+    ws["A2"] = "Squad Klpk1 · Sumber: DATA_WAR_TIKET_KONSER.xlsx · Total 10.890 kursi · 30 event"
     ws["A2"].font = Font(italic=True, color="475569")
     lines = [
         "",
         "Isi workbook:",
-        "01_Events — 11 konser (TREASURE … 4EVE)",
+        "01_Events — 30 konser (TREASURE … KATSEYE)",
         "02_Categories — zona/harga/kuota per event",
         "03_Seats — denah lengkap semua seat_code",
         "04_Summary — cek seats = quota_total",

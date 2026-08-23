@@ -1,7 +1,8 @@
-# docs/DATA.md — Strategi Data & Persistence
+# Add Data — Strategi Data & Persistence
 
-**Peran:** Data & Persistence Engineer  
+**Label:** **Add Data** · Data & Persistence (Astrid Tiar)  
 **Tema:** War Tiket Konser  
+**Dataset:** **30 event / 10.890 seats**  
 **Sumber daya rebutan:** Kursi — satu unit kuota hanya boleh terjual satu kali.
 
 ---
@@ -42,7 +43,7 @@ Panduan lengkap: `data/README-DATA-MANUAL.md`
 
 ## 2. Skema Postgres (`db/init.sql`)
 
-- `events` — catalog + `quota_total` (seed Excel: 11 event, event_id=1 TREASURE quota=400)
+- `events` — catalog + `quota_total` (seed: **30 event**, event_id=1 TREASURE quota=400 · total seats 10.890)
 - `orders` — setiap pemesanan sukses (`CONFIRMED`)
 - `order_events_audit` — jejak ORDER_CONFIRMED / ETICKET_SENT
 - Index: `idx_orders_event`, `idx_orders_created`
@@ -114,7 +115,7 @@ Invalidasi: hapus `cache:event:{id}` saat admin ubah catalog (belum ada admin AP
 
 ## 8. Checklist verifikasi Data
 
-- [ ] `docker compose up -d --build` → Postgres init seed 11 event (Excel), total 3850 seats  
+- [ ] `docker compose up -d --build` → Postgres init seed **30 event** (Excel), total **10.890** seats
 - [ ] `curl /events/1` → TREASURE, `sisa` ≈ quota, panggilan ke-2 `from: cache`  
 - [ ] Load test `POST /orders` qty=1 → `terjual <= quota_total`, sisa >= 0  
 - [ ] Banyak 409 setelah kuota habis = **benar**, bukan bug  
@@ -124,7 +125,7 @@ Invalidasi: hapus `cache:event:{id}` saat admin ubah catalog (belum ada admin AP
 
 ## 9. Hubungan dengan Excel dataset
 
-Sumber kebenaran: **`data/DATA_WAR_TIKET_KONSER.xlsx`** (11 event / 3850 seats).
+Sumber kebenaran: **`data/DATA_WAR_TIKET_KONSER.xlsx`** → artefak **30 event / 10.890 seats** (`events.manual.json`, `seats.manual.csv`).
 
 ```bash
 npm run data:excel       # import + load DB/Redis

@@ -56,7 +56,7 @@ Harga dalam **IDR** untuk lab.
 | `DATA_WAR_TIKET_KONSER.xlsx` | **Sumber kebenaran** events/kategori |
 | `events.manual.json` | Master event + kategori (hasil import) |
 | `generate-real-seats.js` | Generator denah dari quota kategori |
-| `seats.manual.csv` | 3850 baris kursi |
+| `seats.manual.csv` | **10.890** baris kursi (30 event) |
 | `categories.manual.json` | Ringkas kategori |
 | `data-summary.json` | Verifikasi seats = quota |
 | `generate_init_sql.py` | Regenerasi `db/init.sql` untuk Docker |
@@ -74,7 +74,7 @@ npm run data:manual
 npm start
 ```
 
-Buka web: http://localhost:3000/ → daftar 11 event · `/?event=1` … `/?event=11`
+Buka web: http://localhost:3000/ → daftar **30 event** · `/?event=1` … `/?event=30`
 
 ---
 

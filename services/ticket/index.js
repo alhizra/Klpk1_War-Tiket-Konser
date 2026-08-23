@@ -55,7 +55,7 @@ function seedSeats() {
      VALUES (?, ?, ?, ?, 'AVAILABLE')`
   );
   // Lab MS: kuota diperkecil agar seed cepat (anti-oversell tetap diuji).
-  // Full Excel 3850 seats = monolit; di sini max 40/kategori.
+  // Monolit penuh = 30 event / ~10890 seats; di MS lab max 40/kategori.
   const MAX_PER_CAT = Number(process.env.SEED_MAX_PER_CAT || 40);
   let total = 0;
   // node:sqlite — pakai BEGIN/COMMIT (db.transaction belum stabil di semua versi)

@@ -101,7 +101,7 @@ Poster create/update: body `poster` = data URL base64 (sama web).
 
 ## Alur uji demo
 
-1. Role **User** → daftar 30 event + poster  
+1. Role **User** → daftar **30 event** + poster  
 2. Buka event → tab Detail (deskripsi/jadwal) → Denah → pilih 1–4 kursi  
 3. Benefit zona terlihat → Lanjut → Antrean → isi nama+email → Bayar  
 4. E-ticket: kode, total, QR, status mail outbox  

@@ -17,7 +17,7 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-echo "==> Load dataset Excel (11 events + 3850 seats)"
+echo "==> Load dataset Excel (30 events + 10890 seats)"
 docker compose exec -T api node data/generate-real-seats.js || true
 docker compose exec -T api node src/load-manual-data.js || {
   echo "Retry load data setelah api siap..."

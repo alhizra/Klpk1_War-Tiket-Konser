@@ -1,5 +1,6 @@
-# War Tiket Konser — Diagram Arsitek Sistem
+# Add Arsitektur — Diagram sistem
 
+**Label:** **Add Arsitektur** · Arsitek Sistem (Andi Hilyatul Mar'ah)  
 **Penjualan tiket + antrean virtual + kursi terbatas** (satu kursi hanya terjual sekali)
 
 > Gambar PNG di folder [`diagrams/`](./diagrams/) · sumber Mermaid live: blok di bawah · HTML lokal: [`diagrams.html`](./diagrams.html)

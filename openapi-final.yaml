@@ -5,7 +5,7 @@ info:
   description: |
     **DIBEKUKAN v2** — monolit Scalable: events, orders anti-oversell, mock payment,
     mail outbox lab, internal reset. Paritas implementasi src/routes.js.
-    Data: Excel 11 events / 3850 seats.
+    Data: Excel 30 events / 10890 seats.
   x-frozen: true
   x-frozen-date: "2026-08-21"
   x-baseurl-rules:
@@ -62,7 +62,7 @@ paths:
   /events:
     get:
       tags: [events]
-      summary: Daftar konser berpaginasi (11 event Excel — TREASURE … 4EVE)
+      summary: Daftar konser berpaginasi (30 event Excel — TREASURE … KATSEYE)
       operationId: listEvents
       parameters:
         - $ref: "#/components/parameters/Page"
