@@ -1,8 +1,6 @@
-# War Tiket Konser — Klpk1
+# War Tiket Konser — Kelompok1
 
-Lab **Scalable Systems**: war tiket konser dengan kuota kursi atomik (Redis), catalog di PostgreSQL, web Melon-style, dan **mobile Expo** yang diselaraskan fitur/data dengan web.
-
-Repo: [alhizra/Klpk1_War-Tiket-Konser](https://github.com/alhizra/Klpk1_War-Tiket-Konser)
+## war tiket konser dengan kuota kursi atomik (Redis), catalog di PostgreSQL, web Melon-style, dan **mobile Expo** yang diselaraskan fitur/data dengan web.
 
 ---
 
